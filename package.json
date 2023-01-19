@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/LeightonGuang/Q-bot/issues"
   },
-  "homepage": "https://github.com/LeightonGuang/Q-bot#readme"
+  "homepage": "https://github.com/LeightonGuang/Q-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3"
+  }
 }
