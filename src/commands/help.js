@@ -11,6 +11,7 @@ module.exports = {
       .setDescription("list of commands available for Q bot\n vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
       .addFields(
         { name: "/online", value: "Bot online status" },
+        { name: "/setup", value: "Create roles for queue" },
         { name: "/creator", value: "Creator of R0ADX B0T" }
       )
       .setTimestamp()
