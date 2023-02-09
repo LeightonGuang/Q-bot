@@ -1,3 +1,5 @@
+//ONLY DEPLOY WHEN COMMAND IS WORKING OR DONE
+
 const { REST, Routes } = require('discord.js');
 const { config } = require('dotenv');
 const fs = require('node:fs');
@@ -8,6 +10,11 @@ const TOKEN = process.env.TOKEN;
 const GUILD_ID = process.env.GUILD_ID;
 const CLIENT_ID = process.env.CLIENT_ID;
 console.log("LOG: \t .env loaded");
+console.log(`
+TOKEN: ${TOKEN}
+GUILD_ID: ${GUILD_ID}
+CLIENT_ID: ${CLIENT_ID}
+`)
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier
@@ -16,7 +23,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-  console.log("command.data: \t" + command.data);
+  //console.log("command.data: \t" + command.data);
   commands.push(command.data.toJSON());
 }
 
