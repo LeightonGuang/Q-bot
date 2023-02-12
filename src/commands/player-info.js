@@ -66,23 +66,34 @@ module.exports = {
       rank: rank
     }
 
-    for (let i = 0; i < list.length; i++) {
-      let noDuplicate = true;
-      console.log(`playerId: ${playerId}  property value: ${list[i].id} i: ${i}`);
-      //if player already exist
-      if (playerId == list[i].id) {
-        interaction.channel.send("duplicate");
-        console.log("duplicate");
-        noDuplicate = false;
-        break;
-      }
-      if (noDuplicate) {
-        list.push(player);
-        jsonData.list = list;
-        let data = JSON.stringify(jsonData, null, 2);
-        fs.writeFileSync('data.json', data);
+    //if list is empty just add player info to data.json
+    if (list.length === 0) {
+      list.push(player);
+      jsonData.list = list;
+      let data = JSON.stringify(jsonData, null, 2);
+      fs.writeFileSync('data.json', data);
+
+    } else {
+      for (let i = 0; i < list.length; i++) {
+        let noDuplicate = true;
+        console.log(`playerId: ${playerId}  property value: ${list[i].id} i: ${i}`);
+        //if player already exist
+        if (playerId == list[i].id) {
+          interaction.channel.send("duplicate");
+          console.log("duplicate");
+          noDuplicate = false;
+          break;
+        }
+        if (noDuplicate) {
+          list.push(player);
+          jsonData.list = list;
+          let data = JSON.stringify(jsonData, null, 2);
+          fs.writeFileSync('data.json', data);
+        }
       }
     }
+
+
 
     //else then ignore
     await interaction.reply(`${playerTag} \t region: ${region} \t rank: ${rank}`);
