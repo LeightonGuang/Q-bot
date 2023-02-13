@@ -48,35 +48,46 @@ module.exports = {
           { name: "Immortal 3", value: "Im3" },
           { name: "Radiant", value: "R" }
         )
+    )
+    .addStringOption((option) =>
+      option
+        .setName("riot-id")
+        .setDescription("Add your Riot ID")
+        .setRequired(true)
     ),
   async execute(interaction) {
+    function writeToFile(data, file) {
+      fs.writeFileSync(file, data);
+    }
+
     let dataFile = fs.readFileSync('data.json');
     let jsonData = JSON.parse(dataFile);
 
-    let list = jsonData.list;
+    let list = jsonData.playerList;
     let playerId = interaction.member.id;
     let playerTag = interaction.member.user.tag;
     let region = interaction.options.get("region").value;
     let rank = interaction.options.get("rank").value;
+    let riotId = interaction.options.get("riot-id").value;
 
     let player = {
       id: playerId,
       tag: playerTag,
       region: region,
-      rank: rank
+      rank: rank,
+      riotId: riotId
     }
 
     //if list is empty just add player info to data.json
     if (list.length === 0) {
       list.push(player);
-      jsonData.list = list;
+      jsonData.playerList = list;
       let data = JSON.stringify(jsonData, null, 2);
       fs.writeFileSync('data.json', data);
 
     } else {
       for (let i = 0; i < list.length; i++) {
         let noDuplicate = true;
-        console.log(`playerId: ${playerId}  property value: ${list[i].id} i: ${i}`);
         //if player already exist
         if (playerId == list[i].id) {
           interaction.channel.send("duplicate");
@@ -85,10 +96,12 @@ module.exports = {
           break;
         }
         if (noDuplicate) {
+          let update = true;
           list.push(player);
-          jsonData.list = list;
+          jsonData.playerList = list;
           let data = JSON.stringify(jsonData, null, 2);
-          fs.writeFileSync('data.json', data);
+          writeToFile(data, 'data.json');
+          console.log(`playerId: ${playerId}  property value: ${list[i].id} i: ${i}`);
         }
       }
     }
