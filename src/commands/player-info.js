@@ -63,7 +63,7 @@ module.exports = {
     let dataFile = fs.readFileSync('data.json');
     let jsonData = JSON.parse(dataFile);
 
-    let list = jsonData.playerList;
+    let playerList = jsonData.playerList;
     let playerId = interaction.member.id;
     let playerTag = interaction.member.user.tag;
     let region = interaction.options.get("region").value;
@@ -79,34 +79,42 @@ module.exports = {
     }
 
     //if list is empty just add player info to data.json
-    if (list.length === 0) {
-      list.push(player);
-      jsonData.playerList = list;
+    if (playerList.length === 0) {
+      playerList.push(player);
       let data = JSON.stringify(jsonData, null, 2);
-      fs.writeFileSync('data.json', data);
+      writeToFile(data, 'data.json');
 
     } else {
-      for (let i = 0; i < list.length; i++) {
+      for (let i = 0; i < playerList.length; i++) {
         let noDuplicate = true;
         //if player already exist
-        if (playerId == list[i].id) {
-          interaction.channel.send("duplicate");
-          console.log("duplicate");
+        if (playerId == playerList[i].id) {
+          //if new region added is different
+          let noUpdate = true;
+          if (playerList[i].region !== region) {
+            playerList[i].region = region;
+            let dataString = JSON.stringify(jsonData, null, 2);
+            writeToFile(dataString, 'data.json');
+            interaction.channel.send("Region updated to -> " + region);
+            console.log("LOG: \t Region updated to -> " + region);
+            noUpdate = false;
+          }
+          if (noUpdate) {
+            interaction.channel.send("Nothing to update");
+            console.log("LOG: \t Nothing to update");
+          }
           noDuplicate = false;
           break;
         }
+
         if (noDuplicate) {
-          let update = true;
-          list.push(player);
-          jsonData.playerList = list;
+          playerList.push(player);
           let data = JSON.stringify(jsonData, null, 2);
           writeToFile(data, 'data.json');
           console.log(`playerId: ${playerId}  property value: ${list[i].id} i: ${i}`);
         }
       }
     }
-
-
 
     //else then ignore
     await interaction.reply(`${playerTag} \t region: ${region} \t rank: ${rank}`);
