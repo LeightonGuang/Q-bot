@@ -122,8 +122,16 @@ module.exports = {
           }
 
           if (noUpdate) {
-            interaction.channel.send("Nothing to update");
+            await interaction.reply("Nothing to update");
             console.log("LOG: \t Nothing to update");
+            interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+            console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+
+          } else {
+            await interaction.reply("player info updated");
+            console.log("LOG: \t" + "player info updated");
+            interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+            console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
           }
           noDuplicate = false;
           break;
@@ -137,9 +145,5 @@ module.exports = {
         }
       }
     }
-
-    //else then ignore
-    await interaction.reply(`${playerTag} \t region: ${region} \t rank: ${rank}`);
-    console.log("LOG: \t" + `${playerTag} \t region: ${region} \t rank: ${rank}`);
   },
 };
