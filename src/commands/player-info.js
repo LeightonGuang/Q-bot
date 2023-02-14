@@ -69,6 +69,8 @@ module.exports = {
     let region = interaction.options.get("region").value;
     let rank = interaction.options.get("rank").value;
     let riotId = interaction.options.get("riot-id").value;
+    let player_is_in_list, propertyChange = false;
+    let playerObj;
 
     let player = {
       id: playerId,
@@ -79,71 +81,72 @@ module.exports = {
     }
 
     //if list is empty just add player info to data.json
-    if (playerList.length === 0) {
+    for (let i = 0; i < playerList.length; i++) {
+      player_is_in_list = (playerId == playerList[i].id);
+
+      //if player already exist in playerList
+      if (player_is_in_list) {
+        playerObj = playerList[i];
+        break;
+      }
+    }
+
+    if (player_is_in_list) {
+      //if new region is different
+      if (playerObj.region !== region) {
+        playerObj.region = region;
+        let dataString = JSON.stringify(jsonData, null, 2);
+        writeToFile(dataString, 'data.json');
+        interaction.channel.send("Region updated to -> " + region);
+        console.log("LOG: \tRegion updated to -> " + region);
+        propertyChange = true;
+      }
+
+      //if new rank is different
+      if (playerObj.rank !== rank) {
+        playerObj.rank = rank;
+        let dataString = JSON.stringify(jsonData, null, 2);
+        writeToFile(dataString, 'data.json');
+        interaction.channel.send("Rank updated to -> " + rank);
+        console.log("LOG: \tRank updated to -> " + rank);
+        propertyChange = true;
+      }
+
+      //if riot id is different
+      if (playerObj.riotId !== riotId) {
+        playerObj.riotId = riotId;
+        let dataString = JSON.stringify(jsonData, null, 2);
+        writeToFile(dataString, 'data.json');
+        interaction.channel.send("Riot ID updated to -> " + riotId);
+        console.log("LOG: \tRiot ID updated to -> " + riotId);
+        propertyChange = true;
+      }
+
+      //if player is in playerList but property is changed
+      if (propertyChange) {
+        await interaction.reply("player info updated");
+        console.log("LOG: \t" + "player info updated");
+        interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+        console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+
+        //if player is in playerList and no property is changed
+      } else {
+        await interaction.reply("No changes have been made");
+        console.log("LOG: \t" + "No changes have been made");
+        interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+        console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+
+      }
+
+      //if player does not exist in playerList
+    } else if (!player_is_in_list) {
+      await interaction.reply("new player info added");
+      console.log("LOG: \t" + "new player info added");
+      interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+      console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       playerList.push(player);
       let data = JSON.stringify(jsonData, null, 2);
       writeToFile(data, 'data.json');
-
-    } else {
-      for (let i = 0; i < playerList.length; i++) {
-        let noDuplicate = true;
-        //if player already exist
-        if (playerId == playerList[i].id) {
-          let noUpdate = true;
-
-          //if new region is different
-          if (playerList[i].region !== region) {
-            playerList[i].region = region;
-            let dataString = JSON.stringify(jsonData, null, 2);
-            writeToFile(dataString, 'data.json');
-            interaction.channel.send("Region updated to -> " + region);
-            console.log("LOG: \tRegion updated to -> " + region);
-            noUpdate = false;
-          }
-
-          //if new rank is different
-          if (playerList[i].rank !== rank) {
-            playerList[i].rank = rank;
-            let dataString = JSON.stringify(jsonData, null, 2);
-            writeToFile(dataString, 'data.json');
-            interaction.channel.send("Rank updated to -> " + rank);
-            console.log("LOG: \tRank updated to -> " + rank);
-            noUpdate = false;
-          }
-
-          //if riot id is different
-          if (playerList[i].riotId !== riotId) {
-            playerList[i].riotId = riotId;
-            let dataString = JSON.stringify(jsonData, null, 2);
-            writeToFile(dataString, 'data.json');
-            interaction.channel.send("Riot ID updated to -> " + riotId);
-            console.log("LOG: \tRiot ID updated to -> " + riotId);
-            noUpdate = false;
-          }
-
-          if (noUpdate) {
-            await interaction.reply("Nothing to update");
-            console.log("LOG: \t Nothing to update");
-            interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
-            console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
-
-          } else {
-            await interaction.reply("player info updated");
-            console.log("LOG: \t" + "player info updated");
-            interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
-            console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
-          }
-          noDuplicate = false;
-          break;
-        }
-
-        if (noDuplicate) {
-          playerList.push(player);
-          let data = JSON.stringify(jsonData, null, 2);
-          writeToFile(data, 'data.json');
-          console.log(`playerId: ${playerId}  property value: ${playerId[i].id} i: ${i}`);
-        }
-      }
     }
   },
 };
