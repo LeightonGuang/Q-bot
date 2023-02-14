@@ -89,16 +89,38 @@ module.exports = {
         let noDuplicate = true;
         //if player already exist
         if (playerId == playerList[i].id) {
-          //if new region added is different
           let noUpdate = true;
+
+          //if new region is different
           if (playerList[i].region !== region) {
             playerList[i].region = region;
             let dataString = JSON.stringify(jsonData, null, 2);
             writeToFile(dataString, 'data.json');
             interaction.channel.send("Region updated to -> " + region);
-            console.log("LOG: \t Region updated to -> " + region);
+            console.log("LOG: \tRegion updated to -> " + region);
             noUpdate = false;
           }
+
+          //if new rank is different
+          if (playerList[i].rank !== rank) {
+            playerList[i].rank = rank;
+            let dataString = JSON.stringify(jsonData, null, 2);
+            writeToFile(dataString, 'data.json');
+            interaction.channel.send("Rank updated to -> " + rank);
+            console.log("LOG: \tRank updated to -> " + rank);
+            noUpdate = false;
+          }
+
+          //if riot id is different
+          if (playerList[i].riotId !== riotId) {
+            playerList[i].riotId = riotId;
+            let dataString = JSON.stringify(jsonData, null, 2);
+            writeToFile(dataString, 'data.json');
+            interaction.channel.send("Riot ID updated to -> " + riotId);
+            console.log("LOG: \tRiot ID updated to -> " + riotId);
+            noUpdate = false;
+          }
+
           if (noUpdate) {
             interaction.channel.send("Nothing to update");
             console.log("LOG: \t Nothing to update");
@@ -111,7 +133,7 @@ module.exports = {
           playerList.push(player);
           let data = JSON.stringify(jsonData, null, 2);
           writeToFile(data, 'data.json');
-          console.log(`playerId: ${playerId}  property value: ${list[i].id} i: ${i}`);
+          console.log(`playerId: ${playerId}  property value: ${playerId[i].id} i: ${i}`);
         }
       }
     }
