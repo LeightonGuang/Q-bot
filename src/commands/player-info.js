@@ -61,9 +61,9 @@ module.exports = {
     }
 
     let dataFile = fs.readFileSync('data.json');
-    let jsonData = JSON.parse(dataFile);
+    let dataObj = JSON.parse(dataFile);
 
-    let playerList = jsonData.playerList;
+    let playerList = dataObj.playerList;
     let playerId = interaction.member.id;
     let playerTag = interaction.member.user.tag;
     let region = interaction.options.get("region").value;
@@ -95,7 +95,7 @@ module.exports = {
       //if new region is different
       if (playerObj.region !== region) {
         playerObj.region = region;
-        let dataString = JSON.stringify(jsonData, null, 2);
+        let dataString = JSON.stringify(dataObj, null, 2);
         writeToFile(dataString, 'data.json');
         interaction.channel.send("Region updated to -> " + region);
         console.log("LOG: \tRegion updated to -> " + region);
@@ -105,7 +105,7 @@ module.exports = {
       //if new rank is different
       if (playerObj.rank !== rank) {
         playerObj.rank = rank;
-        let dataString = JSON.stringify(jsonData, null, 2);
+        let dataString = JSON.stringify(dataObj, null, 2);
         writeToFile(dataString, 'data.json');
         interaction.channel.send("Rank updated to -> " + rank);
         console.log("LOG: \tRank updated to -> " + rank);
@@ -115,7 +115,7 @@ module.exports = {
       //if riot id is different
       if (playerObj.riotId !== riotId) {
         playerObj.riotId = riotId;
-        let dataString = JSON.stringify(jsonData, null, 2);
+        let dataString = JSON.stringify(dataObj, null, 2);
         writeToFile(dataString, 'data.json');
         interaction.channel.send("Riot ID updated to -> " + riotId);
         console.log("LOG: \tRiot ID updated to -> " + riotId);
@@ -145,7 +145,7 @@ module.exports = {
       interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       playerList.push(player);
-      let data = JSON.stringify(jsonData, null, 2);
+      let data = JSON.stringify(dataObj, null, 2);
       writeToFile(data, 'data.json');
     }
   },
