@@ -62,11 +62,7 @@ client.on("ready", () => {
 
 client.login(TOKEN);
 
-//=====================================================================
-//start
-/*function writeToFile(data, file) {
-  fs.writeFileSync(file, data);
-}*/
+//==============start=================================================
 
 client.on("messageCreate", (message) => {
   if (!message.author.bot) {
@@ -85,6 +81,19 @@ client.on("messageCreate", (message) => {
 
 //what happen when button is pressed
 client.on('interactionCreate', async interaction => {
+
+  //=============functions===============================
+
+  function removeAllRoles() {
+    let rolesToRemove = ["duo queue", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
+    rolesToRemove.forEach(roleName => {
+      let role = interaction.guild.roles.cache.find(role => role.name === roleName);
+      interaction.member.roles.remove(role);
+    });
+    console.log("LOG: \t" + "remove all queue roles from player");
+  }
+
+  //=====================================================
 
   let dataFile = fs.readFileSync('data.json');
   let dataObj = JSON.parse(dataFile);
@@ -113,7 +122,6 @@ client.on('interactionCreate', async interaction => {
  */
   let duoList = dataObj.duoList;
   //an object
-  console.log("duoList" + duoList);
   let trioList = dataObj.trioList;
   let fiveStackList = dataObj.fiveStackList;
   let oneVoneList = dataObj.oneVoneList;
@@ -123,8 +131,6 @@ client.on('interactionCreate', async interaction => {
   let player_is_in_queue;
 
   for (let i = 0; i < playerList.length; i++) {
-    console.log(playerList[i].tag);
-
     //if user interacted alrady set up player info
     if (userInteracted === playerList[i].id) {
       playerQueueingInfo = playerList[i];
@@ -140,16 +146,12 @@ client.on('interactionCreate', async interaction => {
     if (interaction.isButton()) {
       buttonPressed = interaction.customId;
       memberWhoPressed = interaction.user;
-      console.log("button pressed: " + buttonPressed + " member who pressed: " + memberWhoPressed.tag);
+      console.log("LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`);
 
       let isInQueue = interaction.member.roles.cache.some(role => role.name === "duo queue" || role.name === "trio queue" || role.name === "5 stack" || role.name === "1v1" || role.name === "10 mans" || role.name == "unrated");
       //if member is in queue remove any member with queuerole
       if (isInQueue) {
-        let rolesToRemove = ["duo queue", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
-        rolesToRemove.forEach(roleName => {
-          let role = interaction.guild.roles.cache.find(role => role.name === roleName);
-          interaction.member.roles.remove(role);
-        });
+        removeAllRoles();
       }
       //update the embed
 
@@ -166,6 +168,7 @@ client.on('interactionCreate', async interaction => {
       if (buttonPressed === "duoQueue") {
         for (let i = 0; i < duoList.length; i++) {
           player_is_in_queue = (playerId == duoList[i]);
+          //and if player have queue roles
         }
 
         if (!player_is_in_queue) {
@@ -174,10 +177,9 @@ client.on('interactionCreate', async interaction => {
           let duoQueueRole = interaction.guild.roles.cache.find(role => role.name === "duo queue");
           interaction.member.roles.add(duoQueueRole);
 
-          //add playerQueueingInfo to duoList
+          //add playerQueueingInfo(player's discord id) to duoList
           duoList.push(playerQueueingInfo.id);
-          let data = JSON.stringify(dataObj, null, 2);
-          globalFunctions.writeToFile(data, 'data.json');
+          globalFunctions.writeToFile(dataObj, 'data.json');
           interaction.channel.send("duo queue list: " + duoList);
           await interaction.reply(
             `
@@ -263,20 +265,36 @@ ${duoQueueRole} is queueing for duo
 
       } else if (buttonPressed === "dequeue") {
         let rolesToRemove = ["duo queue", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
-
-        memberIsInQueue = interaction.channel.member.roles.cache.some(role => rolesToRemove.includes(role.name));
+        let memberIsInQueue = false;
+        interaction.member.roles.cache.forEach(role => {
+          //if player have queue roles
+          if (rolesToRemove.includes(role.name)) {
+            memberIsInQueue = true;
+          }
+        });
         console.log("memberIsInQueue: " + memberIsInQueue);
 
+
         if (memberIsInQueue) {
-          rolesToRemove.forEach(roleName => {
-            let role = interaction.guild.roles.cache.find(role => role.name === roleName);
-            interaction.member.roles.remove(role);
-          });
+          let role = interaction.guild.roles.cache.find(role => role.name === 'duo queue');
+          //if member have duo queue roles and if player id is in duoList
+          if (interaction.member.roles.cache.has(role.id)) {
+            //remove player id from duoList
+            dataObj.duoList = duoList.filter(item => item !== playerId);
+            globalFunctions.writeToFile(dataObj, 'data.json');
+          }
+
+
+
+          removeAllRoles();
+
+
+
           await interaction.reply("You have been removed from queue");
           console.log("LOG: \t You have been removed from queue");
 
         } else {
-          await interaction.channel.send("you're not in queue");
+          await interaction.reply({ content: "you're not in queue", ephemeral: true });
 
         }
       }
