@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
+const globalFunctions = require('../globalFunctions.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -56,10 +57,6 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
-    function writeToFile(data, file) {
-      fs.writeFileSync(file, data);
-    }
-
     let dataFile = fs.readFileSync('data.json');
     let dataObj = JSON.parse(dataFile);
 
@@ -95,8 +92,7 @@ module.exports = {
       //if new region is different
       if (playerObj.region !== region) {
         playerObj.region = region;
-        let dataString = JSON.stringify(dataObj, null, 2);
-        writeToFile(dataString, 'data.json');
+        globalFunctions.writeToFile(dataObj, 'data.json');
         interaction.channel.send("Region updated to -> " + region);
         console.log("LOG: \tRegion updated to -> " + region);
         propertyChange = true;
@@ -105,8 +101,7 @@ module.exports = {
       //if new rank is different
       if (playerObj.rank !== rank) {
         playerObj.rank = rank;
-        let dataString = JSON.stringify(dataObj, null, 2);
-        writeToFile(dataString, 'data.json');
+        globalFunctions.writeToFile(dataObj, 'data.json');
         interaction.channel.send("Rank updated to -> " + rank);
         console.log("LOG: \tRank updated to -> " + rank);
         propertyChange = true;
@@ -115,8 +110,7 @@ module.exports = {
       //if riot id is different
       if (playerObj.riotId !== riotId) {
         playerObj.riotId = riotId;
-        let dataString = JSON.stringify(dataObj, null, 2);
-        writeToFile(dataString, 'data.json');
+        globalFunctions.writeToFile(dataObj, 'data.json');
         interaction.channel.send("Riot ID updated to -> " + riotId);
         console.log("LOG: \tRiot ID updated to -> " + riotId);
         propertyChange = true;
@@ -145,8 +139,7 @@ module.exports = {
       interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       playerList.push(player);
-      let data = JSON.stringify(dataObj, null, 2);
-      writeToFile(data, 'data.json');
+      globalFunctions.writeToFile(dataObj, 'data.json');
     }
   },
 };

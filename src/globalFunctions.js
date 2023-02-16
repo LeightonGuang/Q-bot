@@ -1,7 +1,9 @@
 const fs = require('node:fs');
 
 function writeToFile(data, file) {
-  fs.writeFileSync(file, data);
+  //data = an object
+  let dataString = JSON.stringify(data, null, 2);
+  fs.writeFileSync(file, dataString);
 }
 
 module.exports = {
