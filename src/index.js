@@ -153,17 +153,8 @@ client.on('interactionCreate', async interaction => {
       if (isInQueue) {
         removeAllRoles();
       }
+
       //update the embed
-
-
-
-
-
-
-
-
-
-
 
       if (buttonPressed === "duoQueue") {
         for (let i = 0; i < duoList.length; i++) {
@@ -186,7 +177,9 @@ client.on('interactionCreate', async interaction => {
 ${duoQueueRole} is queueing for duo
 (${memberWhoPressed})
 `);
-        } else {
+            //if player 
+        }
+         else {
           await interaction.reply({ content: "You are already in queue", ephemeral: true });
           console.log()
         }
@@ -272,8 +265,6 @@ ${duoQueueRole} is queueing for duo
             memberIsInQueue = true;
           }
         });
-        console.log("memberIsInQueue: " + memberIsInQueue);
-
 
         if (memberIsInQueue) {
           let role = interaction.guild.roles.cache.find(role => role.name === 'duo queue');
@@ -284,18 +275,13 @@ ${duoQueueRole} is queueing for duo
             globalFunctions.writeToFile(dataObj, 'data.json');
           }
 
-
-
           removeAllRoles();
-
-
-
-          await interaction.reply("You have been removed from queue");
-          console.log("LOG: \t You have been removed from queue");
+          await interaction.reply({ content: "You have been removed from queue", ephemeral: true });
+          console.log("LOG: \t" + "You have been removed from queue");
 
         } else {
           await interaction.reply({ content: "you're not in queue", ephemeral: true });
-
+          console.log("LOG: \t" + "You have been removed from queue");
         }
       }
     }
@@ -305,8 +291,6 @@ ${duoQueueRole} is queueing for duo
     interaction.channel.send("Please use /player-info to setup your info before queueing");
     console.log("Please use /player-info to setup your info before queueing");
   }
-
-
 });
 
 client.on(Events.InteractionCreate, async interaction => {
