@@ -18,15 +18,27 @@ module.exports = {
 
     trioList = jsonData.trioList;
     trioList = JSON.stringify(trioList);
+    if (trioList === "[]") {
+      trioList = " ";
+    }
 
     fiveStackList = jsonData.fiveStackList;
     fiveStackList = JSON.stringify(fiveStackList);
+    if (fiveStackList === "[]") {
+      fiveStackList = " ";
+    }
 
     oneVoneList = jsonData.oneVoneList;
     oneVoneList = JSON.stringify(oneVoneList);
+    if (oneVoneList === "[]") {
+      oneVoneList = " ";
+    }
 
     tenMansList = jsonData.tenMansList;
     tenMansList = JSON.stringify(tenMansList);
+    if (tenMansList === "[]") {
+      tenMansList = " ";
+    }
 
     const statusEmbed = new EmbedBuilder()
       .setAuthor({ name: "Q bot" })
@@ -75,7 +87,8 @@ module.exports = {
         .setStyle(ButtonStyle.Danger),
     )
 
-    await interaction.reply({ embeds: [statusEmbed], components: [rankRow, unratedRow] });
+    await interaction.reply('command queue');
+    interaction.channel.send({ embeds: [statusEmbed], components: [rankRow, unratedRow] });
     //if all the queues are empty then use emptyQueueEmbed
     console.log("LOG: \t" + "embed queue");
   },
