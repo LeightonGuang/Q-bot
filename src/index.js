@@ -12,6 +12,7 @@ const path = require('node:path');
 const { Client, Events, Collection, GatewayIntentBits, EmbedBuilder, isJSONEncodable } = require('discord.js');
 const { config } = require('dotenv');
 const globalFunctions = require('./globalFunctions.js');
+const { channel } = require('node:diagnostics_channel');
 
 const client = new Client({
   intents: [
@@ -85,7 +86,7 @@ client.on('interactionCreate', async interaction => {
   //=============functions===============================
 
   function removeAllRoles() {
-    let rolesToRemove = ["duo queue", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
+    let rolesToRemove = ["duo rank", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
     rolesToRemove.forEach(roleName => {
       let role = interaction.guild.roles.cache.find(role => role.name === roleName);
       interaction.member.roles.remove(role);
@@ -148,7 +149,7 @@ client.on('interactionCreate', async interaction => {
       memberWhoPressed = interaction.user;
       console.log("LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`);
 
-      let isInQueue = interaction.member.roles.cache.some(role => role.name === "duo queue" || role.name === "trio queue" || role.name === "5 stack" || role.name === "1v1" || role.name === "10 mans" || role.name == "unrated");
+      let isInQueue = interaction.member.roles.cache.some(role => role.name === "duo rank" || role.name === "trio queue" || role.name === "5 stack" || role.name === "1v1" || role.name === "10 mans" || role.name == "unrated");
       //if member is in queue remove any member with queuerole
       if (isInQueue) {
         removeAllRoles();
@@ -156,7 +157,7 @@ client.on('interactionCreate', async interaction => {
 
       //update the embed
 
-      if (buttonPressed === "duoQueue") {
+      if (buttonPressed === "duoRankQueue") {
         for (let i = 0; i < duoList.length; i++) {
           player_is_in_queue = (playerId == duoList[i]);
           //and if player have queue roles
@@ -165,48 +166,23 @@ client.on('interactionCreate', async interaction => {
         if (!player_is_in_queue) {
           //add role to member
           interaction.channel.send({ content: "you are in queue", ephemeral: true });
-          let duoQueueRole = interaction.guild.roles.cache.find(role => role.name === "duo queue");
+          let duoQueueRole = interaction.guild.roles.cache.find(role => role.name === "duo rank");
           interaction.member.roles.add(duoQueueRole);
 
           //add playerQueueingInfo(player's discord id) to duoList
           duoList.push(playerQueueingInfo.id);
+          await interaction.reply({ content: "You are in duo rank queue", ephemeral: true });
           globalFunctions.writeToFile(dataObj, 'data.json');
-          interaction.channel.send("duo queue list: " + duoList);
-          await interaction.reply(
-            `
-${duoQueueRole} is queueing for duo
-(${memberWhoPressed})
-`);
-            //if player 
+          //interaction.channel.send("duo rank list: " + duoList);
+          interaction.channel.send(`${memberWhoPressed} is queueing for ${duoQueueRole}`);
+          //if player 
         }
-         else {
+        else {
           await interaction.reply({ content: "You are already in queue", ephemeral: true });
           console.log()
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      } else if (buttonPressed === "trioQueue") {
+      } else if (buttonPressed === "trioRankQueue") {
         //add role to member
         let trioQueueRole = interaction.guild.roles.cache.find(role => role.name === "trio queue");
         interaction.member.roles.add(trioQueueRole);
@@ -216,7 +192,7 @@ ${duoQueueRole} is queueing for duo
   (${trioQueueRole})
   `);
 
-      } else if (buttonPressed === "fiveStackQueue") {
+      } else if (buttonPressed === "fiveStackRankQueue") {
         //add role to member
         let fiveStackRole = interaction.guild.roles.cache.find(role => role.name === "5 stack");
         interaction.member.roles.add(fiveStackRole);
@@ -257,7 +233,7 @@ ${duoQueueRole} is queueing for duo
       `);
 
       } else if (buttonPressed === "dequeue") {
-        let rolesToRemove = ["duo queue", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
+        let rolesToRemove = ["duo rank", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
         let memberIsInQueue = false;
         interaction.member.roles.cache.forEach(role => {
           //if player have queue roles
@@ -267,8 +243,8 @@ ${duoQueueRole} is queueing for duo
         });
 
         if (memberIsInQueue) {
-          let role = interaction.guild.roles.cache.find(role => role.name === 'duo queue');
-          //if member have duo queue roles and if player id is in duoList
+          let role = interaction.guild.roles.cache.find(role => role.name === 'duo rank');
+          //if member have duo rank roles and if player id is in duoList
           if (interaction.member.roles.cache.has(role.id)) {
             //remove player id from duoList
             dataObj.duoList = duoList.filter(item => item !== playerId);
