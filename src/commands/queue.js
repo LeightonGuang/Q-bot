@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, } = require('discord.js');
+const fs = require('fs');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -6,30 +7,53 @@ module.exports = {
     .setDescription("list of all commands"),
 
   async execute(interaction) {
-    const emptyQueueEmbed = new EmbedBuilder()
-      .setAuthor({ name: "Q bot" })
-      .setTitle("Queue")
-      .setDescription("No one is queueing")
-      .setTimestamp()
+    let dataFile = fs.readFileSync('data.json');
+    let jsonData = JSON.parse(dataFile);
 
-    const inQueueEmbed = new EmbedBuilder()
-      .setAuthor({ name: "Q bot" })
-      .setTitle("Queue")
-      .setDescription("Status")
-      .setTimestamp()
+    duoList = jsonData.duoList;
+    duoList = JSON.stringify(duoList);
+    if (duoList === "[]") {
+      duoList = " ";
+    }
 
-    const buttonRow1 = new ActionRowBuilder().setComponents(
+    trioList = jsonData.trioList;
+    trioList = JSON.stringify(trioList);
+
+    fiveStackList = jsonData.fiveStackList;
+    fiveStackList = JSON.stringify(fiveStackList);
+
+    oneVoneList = jsonData.oneVoneList;
+    oneVoneList = JSON.stringify(oneVoneList);
+
+    tenMansList = jsonData.tenMansList;
+    tenMansList = JSON.stringify(tenMansList);
+
+    const statusEmbed = new EmbedBuilder()
+      .setAuthor({ name: "Q bot" })
+      .setTitle("Status")
+      .setDescription("Queue status")
+      .addFields(
+        { name: "Duo Queue", value: duoList },
+        { name: "Trio Queue", value: trioList },
+        { name: "Five Stack Queue", value: fiveStackList },
+        { name: "1v1 Queue", value: oneVoneList },
+        { name: "10 Mans Queue", value: tenMansList },
+      )
+      .setTimestamp()
+      .setColor(0xFF0000);
+
+    const rankRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
-        .setCustomId("duoQueue")
-        .setLabel("duo queue")
+        .setCustomId("duoRankQueue")
+        .setLabel("duo rank")
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
-        .setCustomId("trioQueue")
-        .setLabel("trio queue")
+        .setCustomId("trioRankQueue")
+        .setLabel("trio rank")
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
-        .setCustomId("fiveStackQueue")
-        .setLabel("5 stack queue")
+        .setCustomId("fiveStackRankQueue")
+        .setLabel("5 stack rank")
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
         .setCustomId("oneVoneQueue")
@@ -40,7 +64,7 @@ module.exports = {
         .setLabel("10 mans queue")
         .setStyle(ButtonStyle.Success),
     )
-    const buttonRow2 = new ActionRowBuilder().setComponents(
+    const unratedRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
         .setCustomId("unrated")
         .setLabel("unrated")
@@ -51,8 +75,8 @@ module.exports = {
         .setStyle(ButtonStyle.Danger),
     )
 
-    await interaction.reply({ embeds: [emptyQueueEmbed], components: [buttonRow1, buttonRow2] });
+    await interaction.reply({ embeds: [statusEmbed], components: [rankRow, unratedRow] });
     //if all the queues are empty then use emptyQueueEmbed
-    console.log("LOG: \t embed queue");
+    console.log("LOG: \t" + "embed queue");
   },
 };
