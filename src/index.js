@@ -22,12 +22,12 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates
   ],
 });
-console.log("LOG: \t new client created");
+console.log("LOG: \t" + "new client created");
 
 config();
 
 const TOKEN = process.env.TOKEN;
-console.log("LOG: \t .env loaded");
+console.log("LOG: \t" + ".env loaded");
 
 //===========================================================
 //dynamically import all commands from commands folder
