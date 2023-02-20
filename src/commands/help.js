@@ -12,7 +12,9 @@ module.exports = {
       .addFields(
         { name: "/online", value: "Bot online status" },
         { name: "/setup", value: "Create roles for queue" },
-        { name: "/creator", value: "Creator of R0ADX B0T" }
+        { name: "/creator", value: "Creator of R0ADX B0T" },
+        { name: "/player-info", value: "Setup player information" },
+        { name: "/duo", value: "Creates a private vc for u and the person you want" }
       )
       .setTimestamp()
       .setFooter({ text: "Q bot" })
