@@ -118,18 +118,29 @@ module.exports = {
 
       //if player is in playerList but property is changed
       if (propertyChange) {
-        await interaction.reply("player info updated");
-        console.log("LOG: \t" + "player info updated");
-        interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
-        console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+        await interaction.reply({
+          content:
+            "player info updated\n" +
+            `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`,
+          ephemeral: true
+        });
+        console.log("LOG: \t" +
+          "player info updated\n" +
+          `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`
+        );
 
         //if player is in playerList and no property is changed
       } else {
-        await interaction.reply("No changes have been made");
-        console.log("LOG: \t" + "No changes have been made");
-        interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
-        console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
-
+        await interaction.reply({
+          content:
+            `No changes have been made\n` +
+            `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`,
+          ephemeral: true
+        });
+        console.log("LOG: \t" +
+          "No changes have been made\n" +
+          `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`
+        );
       }
 
       //if player does not exist in playerList
