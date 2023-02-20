@@ -245,7 +245,6 @@ client.on('interactionCreate', async interaction => {
     }
   }
 
-  console.log("output: " + interaction.commandName);
   if (!canQueue && interaction.commandName !== "player-info") {
     //if member can't queue
     await interaction.reply({ content: "Please use /player-info to setup your info before queueing", ephemeral: true });
