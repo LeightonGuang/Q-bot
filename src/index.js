@@ -18,7 +18,8 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildVoiceStates
   ],
 });
 console.log("LOG: \t new client created");
@@ -58,7 +59,6 @@ client.on("ready", () => {
     type: "STREAMING",
     url: "https://twitch.tv/tarik"
   });
-
 });
 
 client.login(TOKEN);
@@ -135,7 +135,7 @@ client.on('interactionCreate', async interaction => {
     //if user interacted alrady set up player info
     if (userInteracted === playerList[i].id) {
       playerQueueingInfo = playerList[i];
-      console.log("LOG: \t" + "member can queue");
+      //console.log("LOG: \t" + "member can queue");
       canQueue = true;
       break;
     }
@@ -281,7 +281,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
   try {
     await command.execute(interaction);
-    console.log("interaction: " + interaction.commandName);
+    console.log("interaction: /" + interaction.commandName);
   } catch (error) {
     console.log(error);
     await interaction.reply({ content: "Error executing command", ephemeral: true });
