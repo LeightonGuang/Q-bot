@@ -1,12 +1,14 @@
 const { SlashCommandBuilder } = require('discord.js');
 const Discord = require('discord.js');
 const VoiceState = require("discord.js");
+const fs = require('node:fs');
+const globalFunctions = require('../globalFunctions.js');
 
 let categoryId = 1074976911312289862;
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("duo")
+    .setName("test")
     .setDescription("Select someone to duo with")
     .addUserOption((option) =>
       option
@@ -14,8 +16,10 @@ module.exports = {
         .setDescription('duo partner')
         .setRequired(true)),
 
-  async execute(interaction) {
+  async execute(interaction, oldState, newState) {
     const { member, guild } = interaction;
+    const oldChannel = interaction.channel;
+    console.log("oldChannel: " + oldChannel.name);
     //voiceChannel is id of queue waiting room
     let member1 = member;
     let member2 = interaction.options.getMember('duo');
@@ -56,6 +60,14 @@ module.exports = {
       member2.voice.setChannel(newDuoObj);
       interaction.reply({ content: `${member1.user.username} and ${member2.user.username} moved to ${member1.user.username + "'s duo vc"}`, ephemeral: true });
       console.log("LOG: " + `${member1.user.username + "'s duo vc"} created`)
+
+      let dataFile = fs.readFileSync('data.json');
+      let dataObj = JSON.parse(dataFile);
+      let customVoiceChannel = dataObj.customVoiceChannel;
+
+      customVoiceChannel.push(member1.user.username + "'s duo vc");
+      globalFunctions.writeToFile(dataObj, 'data.json');
+
 
     } else {
       await interaction.reply({ content: "Some members are not in queue waiting room", ephemeral: true });

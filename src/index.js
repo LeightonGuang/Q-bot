@@ -12,7 +12,6 @@ const path = require('node:path');
 const { Client, Events, Collection, GatewayIntentBits, EmbedBuilder, isJSONEncodable } = require('discord.js');
 const { config } = require('dotenv');
 const globalFunctions = require('./globalFunctions.js');
-const { channel } = require('node:diagnostics_channel');
 
 const client = new Client({
   intents: [
@@ -32,6 +31,7 @@ console.log("LOG: \t" + ".env loaded");
 //===========================================================
 //dynamically import all commands from commands folder
 client.commands = new Collection();
+client.voiceGenerator = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -268,5 +268,30 @@ client.on(Events.InteractionCreate, async interaction => {
   } catch (error) {
     console.log(error);
     await interaction.reply({ content: "Error executing command", ephemeral: true });
+  }
+});
+
+client.on('voiceStateUpdate', async (oldState, newState) => {
+  const { guild } = newState;
+  console.log(`oldState: ${oldState.channel.name} \t newState: ${newState.channel.name}`);
+  let dataFile = fs.readFileSync('data.json');
+  let dataObj = JSON.parse(dataFile);
+  let customVoiceChannel = dataObj.customVoiceChannel;
+
+  //if there are no custom voice channel
+  if (customVoiceChannel.length !== 0) {
+    for (let name of customVoiceChannel) {
+      const channel = guild.channels.cache.find(c => c.name === name);
+      console.log("channel: " + channel);
+
+      if (channel && channel.members.size === 0) {
+        dataObj.customVoiceChannel = customVoiceChannel.filter(item => item !== oldState.channel.name);
+        console.log("customVoiceChannel: " + customVoiceChannel);
+        globalFunctions.writeToFile(dataObj, 'data.json');
+        oldState.channel.delete();
+        console.log(`${oldState.channel.name} deleted`);
+        break;
+      }
+    }
   }
 });
