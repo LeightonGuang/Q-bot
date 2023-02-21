@@ -8,7 +8,7 @@ let categoryId = 1074976911312289862;
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("test")
+    .setName("duo")
     .setDescription("Select someone to duo with")
     .addUserOption((option) =>
       option
