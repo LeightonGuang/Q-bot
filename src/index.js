@@ -273,7 +273,6 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.on('voiceStateUpdate', async (oldState, newState) => {
   const { guild } = newState;
-  console.log(`oldState: ${oldState.channel.name} \t newState: ${newState.channel.name}`);
   let dataFile = fs.readFileSync('data.json');
   let dataObj = JSON.parse(dataFile);
   let customVoiceChannel = dataObj.customVoiceChannel;
@@ -282,12 +281,13 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
   if (customVoiceChannel.length !== 0) {
     for (let name of customVoiceChannel) {
       const channel = guild.channels.cache.find(c => c.name === name);
-      console.log("channel: " + channel);
 
+      //if all member left vc that is in custom vc
       if (channel && channel.members.size === 0) {
+        //delete vc name in customVoiceChannel
         dataObj.customVoiceChannel = customVoiceChannel.filter(item => item !== oldState.channel.name);
-        console.log("customVoiceChannel: " + customVoiceChannel);
         globalFunctions.writeToFile(dataObj, 'data.json');
+        //delete vc
         oldState.channel.delete();
         console.log(`${oldState.channel.name} deleted`);
         break;

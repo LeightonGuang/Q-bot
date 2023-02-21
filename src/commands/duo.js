@@ -18,20 +18,14 @@ module.exports = {
 
   async execute(interaction, oldState, newState) {
     const { member, guild } = interaction;
-    const oldChannel = interaction.channel;
-    console.log("oldChannel: " + oldChannel.name);
     //voiceChannel is id of queue waiting room
     let member1 = member;
     let member2 = interaction.options.getMember('duo');
-    console.log("member1: " + member1);
 
     let queueWaitingRoomId = guild.channels.cache.find(channel => channel.name === "queue waiting room");
-    console.log("queueWaitingRoom: " + queueWaitingRoomId);
 
     let hasMember1 = queueWaitingRoomId.members.has(member1.id);
-    console.log("hasMember1: " + hasMember1);
     let hasMember2 = queueWaitingRoomId.members.has(member2.id);
-    console.log("hasMember2: " + hasMember2);
 
     /*if the person who used the command and the targeted member is in queue waiting room*/
     if (hasMember1 && hasMember2) {
