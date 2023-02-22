@@ -81,7 +81,7 @@ module.exports = {
       member2.voice.setChannel(newSquadObj);
       member3.voice.setChannel(newSquadObj);
       member4.voice.setChannel(newSquadObj);
-      interaction.reply({ content: `${member1.user.username}, ${member2.user.username} and ${member3.user.username} moved to ${member1.user.username + "'s squad vc"}`, ephemeral: true });
+      interaction.reply({ content: `${member1.user.username}, ${member2.user.username}, ${member3.user.username} and ${member4.user.username} moved to ${member1.user.username + "'s squad vc"}`, ephemeral: true });
       console.log("LOG: " + `${member1.user.username + "'s squad vc"} created`)
 
       let dataFile = fs.readFileSync('data.json');
