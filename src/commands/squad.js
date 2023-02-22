@@ -7,27 +7,27 @@ let categoryId = 1074976911312289862;
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("quad")
-    .setDescription("Select someone two people to quad with")
+    .setName("squad")
+    .setDescription("Select someone three people to squad with")
 
     .addUserOption((option) =>
       option
         .setName('member2')
-        .setDescription('quad partner 1')
+        .setDescription('squad partner 1')
         .setRequired(true)
     )
 
     .addUserOption((option) =>
       option
         .setName('member3')
-        .setDescription('quad partner 2')
+        .setDescription('squad partner 2')
         .setRequired(true)
     )
 
     .addUserOption((option) =>
       option
         .setName('member4')
-        .setDescription('quad partner 3')
+        .setDescription('squad partner 3')
         .setRequired(true)
     ),
 
@@ -48,8 +48,8 @@ module.exports = {
 
     /*if the person who used the command and the targeted member is in queue waiting room*/
     if (hasMember1 && hasMember2 && hasMember3 && hasMember4) {
-      let newQuadVoiceChannel = await guild.channels.create({
-        name: member1.user.username + "'s quad vc",
+      let newSquadVoiceChannel = await guild.channels.create({
+        name: member1.user.username + "'s squad vc",
         type: 2,
         userLimit: 3,
         parentID: categoryId,
@@ -76,19 +76,19 @@ module.exports = {
           }
         ]
       })
-      let newQuadObj = guild.channels.cache.find(channel => channel.name === member1.user.username + "'s quad vc");
-      member1.voice.setChannel(newQuadObj);
-      member2.voice.setChannel(newQuadObj);
-      member3.voice.setChannel(newQuadObj);
-      member4.voice.setChannel(newQuadObj);
-      interaction.reply({ content: `${member1.user.username}, ${member2.user.username} and ${member3.user.username} moved to ${member1.user.username + "'s quad vc"}`, ephemeral: true });
-      console.log("LOG: " + `${member1.user.username + "'s quad vc"} created`)
+      let newSquadObj = guild.channels.cache.find(channel => channel.name === member1.user.username + "'s squad vc");
+      member1.voice.setChannel(newSquadObj);
+      member2.voice.setChannel(newSquadObj);
+      member3.voice.setChannel(newSquadObj);
+      member4.voice.setChannel(newSquadObj);
+      interaction.reply({ content: `${member1.user.username}, ${member2.user.username} and ${member3.user.username} moved to ${member1.user.username + "'s squad vc"}`, ephemeral: true });
+      console.log("LOG: " + `${member1.user.username + "'s squad vc"} created`)
 
       let dataFile = fs.readFileSync('data.json');
       let dataObj = JSON.parse(dataFile);
       let customVoiceChannel = dataObj.customVoiceChannel;
 
-      customVoiceChannel.push(member1.user.username + "'s quad vc");
+      customVoiceChannel.push(member1.user.username + "'s squad vc");
       globalFunctions.writeToFile(dataObj, 'data.json');
 
 
