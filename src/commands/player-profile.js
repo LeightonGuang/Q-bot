@@ -4,7 +4,7 @@ const globalFunctions = require('../globalFunctions.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("player-info")
+    .setName("player-profile")
     .setDescription("setup player profile")
     .addStringOption((option) =>
       option
@@ -77,7 +77,7 @@ module.exports = {
       riotId: riotId
     }
 
-    //if list is empty just add player info to data.json
+    //if list is empty just add player profile to data.json
     for (let i = 0; i < playerList.length; i++) {
       player_is_in_list = (playerId == playerList[i].id);
 
@@ -120,12 +120,12 @@ module.exports = {
       if (propertyChange) {
         await interaction.reply({
           content:
-            "player info updated\n" +
+            "player profile updated\n" +
             `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`,
           ephemeral: true
         });
         console.log("LOG: \t" +
-          "player info updated\n" +
+          "player profile updated\n" +
           `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`
         );
 
@@ -145,8 +145,8 @@ module.exports = {
 
       //if player does not exist in playerList
     } else if (!player_is_in_list) {
-      await interaction.reply("new player info added");
-      console.log("LOG: \t" + "new player info added");
+      await interaction.reply("new player profile added");
+      console.log("LOG: \t" + "new player profile added");
       interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       playerList.push(player);

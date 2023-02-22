@@ -113,7 +113,7 @@ client.on('interactionCreate', async interaction => {
   let player_is_in_queue;
 
   for (let i = 0; i < playerList.length; i++) {
-    //if user interacted alrady set up player info
+    //if user interacted alrady set up player profile
     if (userInteracted === playerList[i].id) {
       playerQueueingInfo = playerList[i];
       //console.log("LOG: \t" + "member can queue");
