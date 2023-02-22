@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 const Discord = require('discord.js');
-const VoiceState = require("discord.js");
 const fs = require('node:fs');
 const globalFunctions = require('../globalFunctions.js');
 
