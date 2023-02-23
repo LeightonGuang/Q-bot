@@ -83,6 +83,13 @@ client.on("messageCreate", (message) => {
 //what happen when button is pressed
 client.on('interactionCreate', async interaction => {
 
+  /*interaction.guild.channels.create({
+    name: "test",
+    parent
+  }).then(channel =>{
+    channel.setParent()
+  })*/
+
   //=============functions===============================
 
   function removeAllRoles() {
@@ -262,12 +269,18 @@ client.on(Events.InteractionCreate, async interaction => {
     return;
   }
 
-  try {
-    await command.execute(interaction);
-    console.log("interaction: /" + interaction.commandName);
-  } catch (error) {
-    console.log(error);
-    await interaction.reply({ content: "Error executing command", ephemeral: true });
+  if (interaction.channel.name === "queue") {
+    try {
+      await command.execute(interaction);
+      console.log("interaction: /" + interaction.commandName);
+    } catch (error) {
+      console.log(error);
+      await interaction.reply({ content: "Error executing command", ephemeral: true });
+    }
+  } else {
+    let channelTag = interaction.guild.channels.cache.find(channel => channel.name === "queue");
+    interaction.reply({ content: `Please use / commands in ${channelTag}`, ephemeral: true });
+    console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
   }
 });
 
