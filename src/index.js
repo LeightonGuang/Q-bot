@@ -64,6 +64,7 @@ client.on("ready", () => {
 client.login(TOKEN);
 
 //==============start=================================================
+let profileDone = false;
 
 client.on("messageCreate", (message) => {
   if (!message.author.bot) {
@@ -107,7 +108,7 @@ client.on('interactionCreate', async interaction => {
   let dataObj = JSON.parse(dataFile);
 
   let userInteracted = interaction.user.id;
-  let canQueue = false;
+
 
   let playerList = dataObj.playerList;
   let duoList = dataObj.duoList;
@@ -119,21 +120,21 @@ client.on('interactionCreate', async interaction => {
   let playerId = interaction.member.id;
   let player_is_in_queue;
 
+  //loop through the playerList to check if player profile is done
   for (let i = 0; i < playerList.length; i++) {
     //if user interacted alrady set up player profile
     if (userInteracted === playerList[i].id) {
       playerQueueingInfo = playerList[i];
-      //console.log("LOG: \t" + "member can queue");
-      if (interaction.commandName !== "player-info") {
-        canQueue = true;
+
+      //player profile must be done before queuing anyting
+      if (interaction.commandName !== "player-profile") {
+        profileDone = true;
       }
       break;
     }
   }
 
   //if member can queue
-
-
   if (interaction.isButton()) {
     buttonPressed = interaction.customId;
     memberWhoPressed = interaction.user;
@@ -251,12 +252,6 @@ client.on('interactionCreate', async interaction => {
       }
     }
   }
-
-  if (!canQueue && interaction.commandName !== "player-info") {
-    //if member can't queue
-    await interaction.reply({ content: "Please use /player-info to setup your info before queueing", ephemeral: true });
-    console.log("Please use /player-info to setup your info before queueing");
-  }
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -269,18 +264,41 @@ client.on(Events.InteractionCreate, async interaction => {
     return;
   }
 
+  //if command is in queue channel
   if (interaction.channel.name === "queue") {
-    try {
-      await command.execute(interaction);
-      console.log("interaction: /" + interaction.commandName);
-    } catch (error) {
-      console.log(error);
-      await interaction.reply({ content: "Error executing command", ephemeral: true });
+    //if commands are in queue channel then run the command
+    if (profileDone) {
+      try {
+        await command.execute(interaction);
+        console.log("interaction: /" + interaction.commandName);
+      } catch (error) {
+        console.log(error);
+        await interaction.reply({ content: "Error executing command", ephemeral: true });
+      }
+      //if player profile is not done (use /player-profile)
+    } else {
+      await interaction.reply({ content: "Please use /player-profile to setup your info before queueing", ephemeral: true });
+      console.log("Please use /player-profile to setup your info before queueing");
     }
+
+    //if command is not in queue channel
   } else {
-    let channelTag = interaction.guild.channels.cache.find(channel => channel.name === "queue");
-    interaction.reply({ content: `Please use / commands in ${channelTag}`, ephemeral: true });
-    console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
+    //but use help and player profile command run it
+    if (interaction.commandName === "help" || interaction.commandName === "player-profile") {
+      try {
+        await command.execute(interaction);
+        console.log("interaction: /" + interaction.commandName);
+      } catch (error) {
+        console.log(error);
+        await interaction.reply({ content: "Error executing command", ephemeral: true });
+      }
+
+      //if not in queue and using commands that are not permitted
+    } else {
+      let channelTag = interaction.guild.channels.cache.find(channel => channel.name === "queue");
+      await interaction.reply({ content: `Please use / commands in ${channelTag}`, ephemeral: true });
+      console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
+    }
   }
 });
 
