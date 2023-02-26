@@ -13,31 +13,31 @@ module.exports = {
     duoList = jsonData.duoList;
     duoList = JSON.stringify(duoList);
     if (duoList === "[]") {
-      duoList = " ";
+      duoList = "--empty--";
     }
-
+    //" "
     trioList = jsonData.trioList;
     trioList = JSON.stringify(trioList);
     if (trioList === "[]") {
-      trioList = " ";
+      trioList = "--empty--";
     }
 
     fiveStackList = jsonData.fiveStackList;
     fiveStackList = JSON.stringify(fiveStackList);
     if (fiveStackList === "[]") {
-      fiveStackList = " ";
+      fiveStackList = "--empty--";
     }
 
     oneVoneList = jsonData.oneVoneList;
     oneVoneList = JSON.stringify(oneVoneList);
     if (oneVoneList === "[]") {
-      oneVoneList = " ";
+      oneVoneList = "--empty--";
     }
 
     tenMansList = jsonData.tenMansList;
     tenMansList = JSON.stringify(tenMansList);
     if (tenMansList === "[]") {
-      tenMansList = " ";
+      tenMansList = "--empty--";
     }
 
     const statusEmbed = new EmbedBuilder()
