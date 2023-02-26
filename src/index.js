@@ -245,6 +245,7 @@ client.on('interactionCreate', async interaction => {
         removeAllRoles();
         await interaction.reply({ content: "You have been removed from queue", ephemeral: true });
         console.log("LOG: \t" + "You have been removed from queue");
+        queueNotificationChannel.send(`${interaction.user} has dequeued`);
 
       } else {
         await interaction.reply({ content: "you're not in queue", ephemeral: true });
