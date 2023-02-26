@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const fs = require('node:fs');
 const globalFunctions = require('../globalFunctions.js');
 
-let categoryId = 1074976911312289862;
+let categoryId = "1074976911312289862";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -61,7 +61,7 @@ module.exports = {
         name: member1.user.username + "'s 5 stack vc",
         type: 2,
         userLimit: 5,
-        parentID: categoryId,
+        parent: categoryId,
         permissionOverwrites: [
           {
             id: guild.id,
