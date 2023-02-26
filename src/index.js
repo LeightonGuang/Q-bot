@@ -84,25 +84,20 @@ client.on("messageCreate", (message) => {
 //what happen when button is pressed
 client.on('interactionCreate', async interaction => {
 
-  /*interaction.guild.channels.create({
-    name: "test",
-    parent
-  }).then(channel =>{
-    channel.setParent()
-  })*/
-
   //=============functions===============================
 
   function removeAllRoles() {
     let rolesToRemove = ["duo rank", "trio queue", "5 stack", "1v1", "10 mans", "unrated"];
     rolesToRemove.forEach(roleName => {
-      let role = interaction.guild.roles.cache.find(role => role.name === roleName);
+      let role = guild.roles.cache.find(role => role.name === roleName);
       interaction.member.roles.remove(role);
     });
     console.log("LOG: \t" + "remove all queue roles from player");
   }
 
   //=====================================================
+
+  const { guild, member } = interaction;
 
   let dataFile = fs.readFileSync('data.json');
   let dataObj = JSON.parse(dataFile);
@@ -134,7 +129,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
 
-  //if member can queue
+  //=========================interaction is button======================
   if (interaction.isButton()) {
     buttonPressed = interaction.customId;
     memberWhoPressed = interaction.user;
@@ -148,24 +143,29 @@ client.on('interactionCreate', async interaction => {
 
     //update the embed
 
+    let queueNotificationChannel = guild.channels.cache.find(c => c.name === "queue-notification");
+
     if (buttonPressed === "duoRankQueue") {
       for (let i = 0; i < duoList.length; i++) {
-        player_is_in_queue = (playerId == duoList[i]);
-        //and if player have queue roles
+        //check if player is in duoList
+        player_is_in_queue = (playerId === duoList[i]);
       }
 
       if (!player_is_in_queue) {
         //add role to member
-        interaction.channel.send({ content: "you are in queue", ephemeral: true });
-        let duoQueueRole = interaction.guild.roles.cache.find(role => role.name === "duo rank");
+        let duoQueueRole = guild.roles.cache.find(role => role.name === "duo rank");
         interaction.member.roles.add(duoQueueRole);
 
         //add playerQueueingInfo(player's discord id) to duoList
         duoList.push(playerQueueingInfo.id);
+
         await interaction.reply({ content: "You are in duo rank queue", ephemeral: true });
+        console.log("LOG: \t" + "You are in duo rank queue");
+
         globalFunctions.writeToFile(dataObj, 'data.json');
-        //interaction.channel.send("duo rank list: " + duoList);
-        interaction.channel.send(`${memberWhoPressed} is queueing for ${duoQueueRole}`);
+
+        queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${duoQueueRole}`);
+        console.log("LOG: \t" + `${memberWhoPressed} is queueing for ${duoQueueRole}`);
         //if player 
       }
       else {
@@ -175,7 +175,7 @@ client.on('interactionCreate', async interaction => {
 
     } else if (buttonPressed === "trioRankQueue") {
       //add role to member
-      let trioQueueRole = interaction.guild.roles.cache.find(role => role.name === "trio queue");
+      let trioQueueRole = guild.roles.cache.find(role => role.name === "trio queue");
       interaction.member.roles.add(trioQueueRole);
       await interaction.reply(
         `
@@ -185,7 +185,7 @@ client.on('interactionCreate', async interaction => {
 
     } else if (buttonPressed === "fiveStackRankQueue") {
       //add role to member
-      let fiveStackRole = interaction.guild.roles.cache.find(role => role.name === "5 stack");
+      let fiveStackRole = guild.roles.cache.find(role => role.name === "5 stack");
       interaction.member.roles.add(fiveStackRole);
       await interaction.reply(
         `
@@ -195,7 +195,7 @@ client.on('interactionCreate', async interaction => {
 
     } else if (buttonPressed === "oneVoneQueue") {
       //add role to member
-      let oneVoneRole = interaction.guild.roles.cache.find(role => role.name === "1v1");
+      let oneVoneRole = guild.roles.cache.find(role => role.name === "1v1");
       interaction.member.roles.add(oneVoneRole);
       await interaction.reply(
         `
@@ -205,7 +205,7 @@ client.on('interactionCreate', async interaction => {
 
     } else if (buttonPressed === "tenMansQueue") {
       //add role to member
-      let tenMansRole = interaction.guild.roles.cache.find(role => role.name === "10 mans");
+      let tenMansRole = guild.roles.cache.find(role => role.name === "10 mans");
       interaction.member.roles.add(tenMansRole);
       await interaction.reply(
         `
@@ -215,7 +215,7 @@ client.on('interactionCreate', async interaction => {
 
     } else if (buttonPressed === "unrated") {
       //add role to member
-      let unratedRole = interaction.guild.roles.cache.find(role => role.name === "unrated");
+      let unratedRole = guild.roles.cache.find(role => role.name === "unrated");
       interaction.member.roles.add(unratedRole);
       await interaction.reply(
         `
@@ -234,7 +234,7 @@ client.on('interactionCreate', async interaction => {
       });
 
       if (memberIsInQueue) {
-        let role = interaction.guild.roles.cache.find(role => role.name === 'duo rank');
+        let role = guild.roles.cache.find(role => role.name === 'duo rank');
         //if member have duo rank roles and if player id is in duoList
         if (interaction.member.roles.cache.has(role.id)) {
           //remove player id from duoList
@@ -252,10 +252,8 @@ client.on('interactionCreate', async interaction => {
       }
     }
   }
-});
 
-client.on(Events.InteractionCreate, async interaction => {
-  //if interaction is a command
+  //=========================interaction is a command===========================
   if (!interaction.isChatInputCommand()) return;
   const command = interaction.client.commands.get(interaction.commandName);
 
@@ -295,7 +293,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       //if not in queue and using commands that are not permitted
     } else {
-      let channelTag = interaction.guild.channels.cache.find(channel => channel.name === "queue");
+      let channelTag = guild.channels.cache.find(channel => channel.name === "queue");
       await interaction.reply({ content: `Please use / commands in ${channelTag}`, ephemeral: true });
       console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
     }
