@@ -93,7 +93,7 @@ module.exports = {
       if (playerObj.region !== region) {
         playerObj.region = region;
         globalFunctions.writeToFile(dataObj, 'data.json');
-        interaction.channel.send("Region updated to -> " + region);
+        interaction.user.send("Region updated to -> " + region);
         console.log("LOG: \tRegion updated to -> " + region);
         propertyChange = true;
       }
@@ -102,7 +102,7 @@ module.exports = {
       if (playerObj.rank !== rank) {
         playerObj.rank = rank;
         globalFunctions.writeToFile(dataObj, 'data.json');
-        interaction.channel.send("Rank updated to -> " + rank);
+        interaction.user.send("Rank updated to -> " + rank);
         console.log("LOG: \tRank updated to -> " + rank);
         propertyChange = true;
       }
@@ -111,7 +111,7 @@ module.exports = {
       if (playerObj.riotId !== riotId) {
         playerObj.riotId = riotId;
         globalFunctions.writeToFile(dataObj, 'data.json');
-        interaction.channel.send("Riot ID updated to -> " + riotId);
+        interaction.user.send("Riot ID updated to -> " + riotId);
         console.log("LOG: \tRiot ID updated to -> " + riotId);
         propertyChange = true;
       }
