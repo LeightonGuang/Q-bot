@@ -122,9 +122,7 @@ client.on('interactionCreate', async interaction => {
       playerQueueingInfo = playerList[i];
 
       //player profile must be done before queuing anyting
-      if (interaction.commandName !== "player-profile") {
-        profileDone = true;
-      }
+      profileDone = true;
       break;
     }
   }
@@ -245,6 +243,8 @@ client.on('interactionCreate', async interaction => {
         removeAllRoles();
         await interaction.reply({ content: "You have been removed from queue", ephemeral: true });
         console.log("LOG: \t" + "You have been removed from queue");
+        queueNotificationChannel.send(`${memberWhoPressed} has dequeued`);
+        console.log("LOG: \t" + `${memberWhoPressed} has dequeued`);
 
       } else {
         await interaction.reply({ content: "you're not in queue", ephemeral: true });
