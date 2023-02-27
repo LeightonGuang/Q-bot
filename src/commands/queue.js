@@ -15,7 +15,7 @@ module.exports = {
     if (duoList === "[]") {
       duoList = "--empty--";
     }
-    //" "
+    //" "
     trioList = jsonData.trioList;
     trioList = JSON.stringify(trioList);
     if (trioList === "[]") {
