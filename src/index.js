@@ -16,6 +16,7 @@ const {
   GatewayIntentBits,
   EmbedBuilder,
   isJSONEncodable,
+  ActivityType,
 } = require("discord.js");
 const { config } = require("dotenv");
 const globalFunctions = require("./globalFunctions.js");
@@ -64,9 +65,10 @@ client.on("ready", () => {
 =================================
   `);
 
-  client.user.setActivity("Playing Valorant", {
-    type: "STREAMING",
-    url: "https://twitch.tv/tarik",
+  client.user.setActivity({
+    name: "Valorant",
+    type: ActivityType.Streaming,
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   });
 });
 
