@@ -2,8 +2,8 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("online")
-        .setDescription("bot online status"),
+        .setName("ping")
+        .setDescription("ping the bot to check online status"),
     async execute(interaction) {
         await interaction.reply("I'm online!");
         console.log("LOG: \t I'm online!");
