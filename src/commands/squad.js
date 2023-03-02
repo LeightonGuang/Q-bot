@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const Discord = require('discord.js');
 const fs = require('node:fs');
-const globalFunctions = require('../globalFunctions.js');
+const writeToFile = require('../utils/writeToFile');
 
 let categoryId = "1074976911312289862";
 
@@ -89,7 +89,7 @@ module.exports = {
       let customVoiceChannel = dataObj.customVoiceChannel;
 
       customVoiceChannel.push(member1.user.username + "'s squad vc");
-      globalFunctions.writeToFile(dataObj, 'data.json');
+      writeToFile(dataObj, 'data.json');
 
 
     } else {

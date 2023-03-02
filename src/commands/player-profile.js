@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
-const globalFunctions = require('../globalFunctions.js');
+const writeToFile = require('../utils/writeToFile');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -92,7 +92,7 @@ module.exports = {
       //if new region is different
       if (playerObj.region !== region) {
         playerObj.region = region;
-        globalFunctions.writeToFile(dataObj, 'data.json');
+        writeToFile(dataObj, 'data.json');
         interaction.user.send("Region updated to -> " + region);
         console.log("LOG: \tRegion updated to -> " + region);
         propertyChange = true;
@@ -101,7 +101,7 @@ module.exports = {
       //if new rank is different
       if (playerObj.rank !== rank) {
         playerObj.rank = rank;
-        globalFunctions.writeToFile(dataObj, 'data.json');
+        writeToFile(dataObj, 'data.json');
         interaction.user.send("Rank updated to -> " + rank);
         console.log("LOG: \tRank updated to -> " + rank);
         propertyChange = true;
@@ -110,7 +110,7 @@ module.exports = {
       //if riot id is different
       if (playerObj.riotId !== riotId) {
         playerObj.riotId = riotId;
-        globalFunctions.writeToFile(dataObj, 'data.json');
+        writeToFile(dataObj, 'data.json');
         interaction.user.send("Riot ID updated to -> " + riotId);
         console.log("LOG: \tRiot ID updated to -> " + riotId);
         propertyChange = true;
@@ -150,7 +150,7 @@ module.exports = {
       interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       playerList.push(player);
-      globalFunctions.writeToFile(dataObj, 'data.json');
+      writeToFile(dataObj, 'data.json');
     }
   },
 };

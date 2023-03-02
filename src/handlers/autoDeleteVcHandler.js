@@ -1,5 +1,5 @@
 const fs = require("node:fs");
-const globalFunctions = require("../globalFunctions");
+const writeToFile = require("../utils/writeToFile");
 
 module.exports = (client) => {
   client.on("voiceStateUpdate", async (oldState, newState) => {
@@ -19,7 +19,7 @@ module.exports = (client) => {
           dataObj.customVoiceChannel = customVoiceChannel.filter(
             (item) => item !== oldState.channel.name
           );
-          globalFunctions.writeToFile(dataObj, "data.json");
+          writeToFile(dataObj, "data.json");
           //delete vc
           oldState.channel.delete();
           console.log(`${oldState.channel.name} deleted`);

@@ -1,5 +1,5 @@
 const fs = require("node:fs");
-const globalFunctions = require("../globalFunctions");
+const writeToFile = require("../utils/writeToFile");
 
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
@@ -84,7 +84,7 @@ module.exports = (client) => {
           });
           console.log("LOG: \t" + "You are in duo rank queue");
 
-          globalFunctions.writeToFile(dataObj, "data.json");
+          writeToFile(dataObj, "data.json");
 
           queueNotificationChannel.send(
             `${memberWhoPressed} is queueing for ${duoQueueRole}`
@@ -181,7 +181,7 @@ module.exports = (client) => {
           if (member.roles.cache.has(role.id)) {
             //remove player id from duoList
             dataObj.duoList = duoList.filter((item) => item !== playerId);
-            globalFunctions.writeToFile(dataObj, "data.json");
+            writeToFile(dataObj, "data.json");
           }
 
           removeAllRoles();
