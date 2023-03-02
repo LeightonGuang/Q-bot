@@ -2,8 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRow
 const fs = require("node:fs");
 const writeToFile = require('../utils/writeToFile');
 
-let categoryId = "1074976911312289862";
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("duo")
