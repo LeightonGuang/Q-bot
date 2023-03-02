@@ -47,22 +47,16 @@ module.exports = (client) => {
         //if player profile is not done (use /player-profile)
       } else {
         await interaction.reply({
-          content:
-            "Please use /player-profile to setup your info before queueing",
+          content: "Please use /player-profile to setup your info before queueing",
           ephemeral: true,
         });
-        console.log(
-          "Please use /player-profile to setup your info before queueing"
-        );
+        console.log("Please use /player-profile to setup your info before queueing");
       }
 
       //if command is not in queue channel
     } else {
       //but use help and player profile command run it
-      if (
-        interaction.commandName === "help" ||
-        interaction.commandName === "player-profile"
-      ) {
+      if (interaction.commandName === "help" || interaction.commandName === "player-profile") {
         try {
           await command.execute(interaction);
           console.log("interaction: /" + interaction.commandName);
@@ -76,16 +70,12 @@ module.exports = (client) => {
 
         //if not in queue and using commands that are not permitted
       } else {
-        let channelTag = guild.channels.cache.find(
-          (channel) => channel.name === "queue"
-        );
+        let channelTag = guild.channels.cache.find((channel) => channel.name === "queue");
         await interaction.reply({
           content: `Please use / commands in ${channelTag}`,
           ephemeral: true,
         });
-        console.log(
-          "LOG: \t" + `Please use / commands in ${channelTag.name} channel`
-        );
+        console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
       }
     }
   });
