@@ -47,7 +47,11 @@ module.exports = {
       let dataObj = JSON.parse(dataFile);
       let vcInvite = dataObj.vcInvite;
 
-      let duoVcList = ["duo", member1.id, member2.id, false];
+      let duoVcObj = {
+        type: "duo",
+        inviteList: [member1.id, member2.id],
+        interactionId: interaction.id
+      };
 
       vcInvite.push(duoVcList);
       writeToFile(dataObj, 'data.json');
