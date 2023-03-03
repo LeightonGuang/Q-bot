@@ -9,25 +9,11 @@ console.log(`
 
 const fs = require("node:fs");
 const path = require("node:path");
-const {
-  Client,
-  Events,
-  Collection,
-  GatewayIntentBits,
-  EmbedBuilder,
-  isJSONEncodable,
-  ActivityType,
-} = require("discord.js");
+const { Client, Collection, GatewayIntentBits } = require("discord.js");
 const { config } = require("dotenv");
-const globalFunctions = require("./globalFunctions.js");
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildVoiceStates,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates],
 });
 console.log("LOG: \t" + "new client created");
 
@@ -41,9 +27,7 @@ console.log("LOG: \t" + ".env loaded");
 client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".js"));
+const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
@@ -52,38 +36,25 @@ for (const file of commandFiles) {
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command);
   } else {
-    console.log(
-      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-    );
+    console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
   }
 }
-//===========================================================
-client.on("ready", () => {
-  console.log(`
-=================================
-  Q bot is ONLINE as ${client.user.tag}
-=================================
-  `);
 
-  client.user.setActivity({
-    name: "Valorant",
-    type: ActivityType.Streaming,
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  });
-});
-
+let evenHandler = require("./handlers/eventHandler");
+evenHandler(client);
 client.login(TOKEN);
-
-//==============start=================================================
 
 let messageHandler = require("./handlers/messageHandler");
 messageHandler(client);
 
-let buttonHandler = require("./handlers/buttonHandler");
-buttonHandler(client);
+let queueButtonHandler = require("./handlers/queueButtonHandler");
+queueButtonHandler(client);
 
 let interactionHandler = require("./handlers/interactionHandler");
 interactionHandler(client);
 
-let privateVcHandler = require("./handlers/privateVcHandler");
-privateVcHandler(client);
+let autoDeleteVcHandler = require("./handlers/autoDeleteVcHandler");
+autoDeleteVcHandler(client);
+
+let vcInviteHandler = require("./handlers/vcInviteHandler");
+vcInviteHandler(client);
