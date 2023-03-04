@@ -10,7 +10,7 @@ module.exports = (client) => {
     `);
 
     client.user.setActivity({
-      name: "Valorant | /help",
+      name: "VALORANT | /help",
       type: ActivityType.Streaming,
       url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     });
