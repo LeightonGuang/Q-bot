@@ -53,7 +53,7 @@ module.exports = {
         interactionId: interaction.id
       };
 
-      vcInvite.push(duoVcList);
+      vcInvite.push(duoVcObj);
       writeToFile(dataObj, 'data.json');
 
       await interaction.reply({ content: "invite sent to " + member2.user.username, ephemeral: true });
