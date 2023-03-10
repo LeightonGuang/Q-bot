@@ -26,18 +26,23 @@ module.exports = {
       .setTimestamp()
       .setColor("0x00FF00");
 
-    const inviteRow = new ActionRowBuilder().setComponents(
-      new ButtonBuilder()
-        .setCustomId("accept")
-        .setLabel("Accept")
-        .setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId("decline")
-        .setLabel("Decline")
-        .setStyle(ButtonStyle.Danger),
-    );
+    const inviteRow = new ActionRowBuilder()
+      .setComponents(
+        new ButtonBuilder()
+          .setCustomId("accept")
+          .setLabel("Accept")
+          .setStyle(ButtonStyle.Success),
+
+        new ButtonBuilder()
+          .setCustomId("decline")
+          .setLabel("Decline")
+          .setStyle(ButtonStyle.Danger),
+      );
 
     let hasMember1 = queueWaitingRoomId.members.has(member1.id);
     let hasMember2 = queueWaitingRoomId.members.has(member2.id);
+
+    //check if member have already sent an invite
 
     /*if the person who used the command and the targeted member is in queue waiting room*/
     if (hasMember1 && hasMember2) {
@@ -47,17 +52,20 @@ module.exports = {
       let dataObj = JSON.parse(dataFile);
       let vcInvite = dataObj.vcInvite;
 
-      let duoVcObj = {
-        type: "duo",
-        inviteList: [member1.id, member2.id],
-        interactionId: interaction.id
-      };
-
-      vcInvite.push(duoVcObj);
-      writeToFile(dataObj, 'data.json');
-
       await interaction.reply({ content: "invite sent to " + member2.user.username, ephemeral: true });
-      queueNotificationChannel.send({ content: `${member2}, you got an invite from ${member1} to private duo vc`, components: [inviteRow] });
+      queueNotificationChannel.send({ content: `${member2}, you got an invite from ${member1} to private duo vc`, components: [inviteRow] })
+        .then(interaction => {
+          console.log("interaction.id: " + interaction.id);
+          let duoVcObj = {
+            vcType: "duo",
+            inviteList: [member1.id, member2.id],
+            interactionId: interaction.id,
+            decision: 1
+          };
+
+          vcInvite.push(duoVcObj);
+          writeToFile(dataObj, 'data.json');
+        })
 
     } else {
       await interaction.reply({ content: "Some members are not in queue waiting room", ephemeral: true });
