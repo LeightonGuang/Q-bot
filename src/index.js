@@ -40,8 +40,8 @@ for (const file of commandFiles) {
   }
 }
 
-let evenHandler = require("./handlers/eventHandler");
-evenHandler(client);
+let eventHandler = require("./handlers/eventHandler");
+eventHandler(client);
 client.login(TOKEN);
 
 let messageHandler = require("./handlers/messageHandler");
