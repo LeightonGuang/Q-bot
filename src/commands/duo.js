@@ -6,7 +6,11 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("duo")
     .setDescription("Select someone to duo with")
-    .addUserOption((option) => option.setName("duo").setDescription("duo partner").setRequired(true)),
+    .addUserOption((option) =>
+      option
+        .setName("duo")
+        .setDescription("duo partner")
+        .setRequired(true)),
 
   async execute(interaction) {
     const { member, guild } = interaction;
