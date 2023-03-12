@@ -64,7 +64,7 @@ module.exports = {
             vcType: "duo",
             inviteList: [member1.id, member2.id],
             interactionId: interaction.id,
-            decision: 1
+            decision: false
           };
 
           vcInvite.push(duoVcObj);

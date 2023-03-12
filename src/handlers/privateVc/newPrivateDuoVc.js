@@ -15,6 +15,7 @@ module.exports = (client) => {
 
       let invited = false;
       let categoryId = "1074976911312289862";
+      let vcType;
 
       //check if the member interacted is invited
       for (let invite of vcInvite) {
@@ -27,13 +28,15 @@ module.exports = (client) => {
         for (let i = 1; i < invite.inviteList.length; i++) {
           let member = invite.inviteList[i];
           if (interaction.user.id === member) {
+            vcType = invite.vcType;
             invited = true;
             break;
           }
         }
       }
-      //if member is in the inviteList
-      if (invited) {
+      //if member is in the inviteList and its a duo private vc
+      if (invited && vcType === "duo") {
+        console.log("running duo code");
         for (let i = 0; i < vcInvite.length; i++) {
           let invite = vcInvite[i];
           //if interactionId is the same as interaction.message.id
@@ -45,20 +48,19 @@ module.exports = (client) => {
               if (buttonClicked === "accept") {
                 await interaction.reply({ content: "You have accepted the invite", ephemeral: true });
 
-                //delete message and button in queue-notification
-                let interactionId = dataObj.interactionId;
-                interaction.message.delete(interactionId);
-
                 //add 1 to decision
-                dataObj.vcInvite[i].decision = invite.decision + 1;
+                dataObj.vcInvite[i].decision = true;
                 writeToFile(dataObj, "data.json");
 
                 //if all the member accepted their invite
-                if (invite.decision === invite.inviteList.length) {
+                if (invite.decision) {
+                  //delete message and button in queue-notification
+                  let interactionId = dataObj.interactionId;
+                  interaction.message.delete(interactionId);
 
                   //create new private vc
-                  member1 = invite.inviteList[0];
-                  member2 = invite.inviteList[1];
+                  let member1 = invite.inviteList[0];
+                  let member2 = invite.inviteList[1];
                   member1 = guild.members.cache.get(member1);
                   member2 = guild.members.cache.get(member2);
 
@@ -114,15 +116,7 @@ module.exports = (client) => {
             //else do nothing
           }
         }
-
-      } else {
-        await interaction.reply({ content: "You are not invited", ephemeral: true });
-        console.log("LOG: \t" + "member interacted is not invited");
       }
-      /*
-        loop through all the object in vcInvite and check if the interactionId
-        matches interaction.id
-      */
     }
   });
 };
