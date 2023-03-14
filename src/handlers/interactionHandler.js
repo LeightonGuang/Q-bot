@@ -9,12 +9,15 @@ module.exports = (client) => {
     let playerList = dataObj.playerList;
 
     let profileDone = false;
-
     let userInteracted = interaction.user.id;
 
-    //loop through the playerList to check if player profile is done
+    let playerCommands = ["help", "player-profile"];
+    let modCommands = ["mod-help", "mod"];
+
+    //check if member's player profile is setup done
     for (let i = 0; i < playerList.length; i++) {
-      //if user interacted alrady set up player profile
+
+      //if member alrady setup player profile
       if (userInteracted === playerList[i].id) {
         profileDone = true;
         break;
@@ -30,52 +33,53 @@ module.exports = (client) => {
       return;
     }
 
-    //if command is in queue channel
-    if (interaction.channel.name === "queue") {
-      //if commands are in queue channel then run the command
+    //if interaction is a command that doesn't have to be in queue channel
+    if (playerCommands.some(item => item === interaction.commandName)) {
+      await command.execute(interaction);
+      console.log("interaction: /" + interaction.commandName);
+
+      //if interaction is a command that is a mod command
+    } else if (modCommands.some(item => item === interaction.commandName)) {
+
+      //mod command can only be used in command channel
+      if (interaction.channel.name === "⌨｜command") {
+        await command.execute(interaction);
+        console.log("interaction: /" + interaction.commandName);
+
+        //can't run mod command that is not used in command channel
+      } else {
+        await interaction.reply({ content: "command only for mods", ephemeral: true });
+        console.log(`normie trying to use the command: ${interaction.commandName}`);
+      }
+
+      //for the rest of the command that is not exclude and not mod command
+    } else if (!playerCommands.some(item => item === interaction.commandName)) {
+
+      //if player profile is done
       if (profileDone) {
-        try {
+
+        //if command is used in the queue channel
+        if (interaction.channel.name === "queue") {
           await command.execute(interaction);
           console.log("interaction: /" + interaction.commandName);
-        } catch (error) {
-          console.log(error);
+
+          //command is not used in queue channel
+        } else {
+          let channelTag = guild.channels.cache.find((channel) => channel.name === "queue");
           await interaction.reply({
-            content: "Error executing command",
+            content: `Please use / commands in ${channelTag}`,
             ephemeral: true,
           });
+          console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
         }
-        //if player profile is not done (use /player-profile)
+
+        //if player profile is not done
       } else {
         await interaction.reply({
           content: "Please use /player-profile to setup your info before queueing",
-          ephemeral: true,
+          ephemeral: true
         });
-        console.log("Please use /player-profile to setup your info before queueing");
-      }
-
-      //if command is not in queue channel
-    } else {
-      //but use help and player profile command run it
-      if (interaction.commandName === "help" || interaction.commandName === "player-profile") {
-        try {
-          await command.execute(interaction);
-          console.log("interaction: /" + interaction.commandName);
-        } catch (error) {
-          console.log(error);
-          await interaction.reply({
-            content: "Error executing command",
-            ephemeral: true,
-          });
-        }
-
-        //if not in queue and using commands that are not permitted
-      } else {
-        let channelTag = guild.channels.cache.find((channel) => channel.name === "queue");
-        await interaction.reply({
-          content: `Please use / commands in ${channelTag}`,
-          ephemeral: true,
-        });
-        console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
+        console.log("LOG: \t" + "Please use /player-profile to setup your info before queueing");
       }
     }
   });
