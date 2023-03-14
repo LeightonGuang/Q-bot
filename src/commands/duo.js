@@ -59,7 +59,6 @@ module.exports = {
       await interaction.reply({ content: "invite sent to " + member2.user.username, ephemeral: true });
       queueNotificationChannel.send({ content: `${member2}, you got an invite from ${member1} to private duo vc`, components: [inviteRow] })
         .then(interaction => {
-          console.log("interaction.id: " + interaction.id);
           let duoVcObj = {
             vcType: "duo",
             inviteList: [member1.id, member2.id],

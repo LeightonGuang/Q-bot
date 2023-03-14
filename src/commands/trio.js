@@ -68,7 +68,6 @@ module.exports = {
       await interaction.reply({ content: `invite sent to ${member2.user.username} and ${member3.user.username}`, ephemeral: true });
       queueNotificationChannel.send({ content: `${member2} and ${member3}, you got an invited from ${member1} to a private trio vc.`, components: [inviteRow] })
         .then(interaction => {
-          console.log("interaction.id: " + interaction.id);
           let trioVcObj = {
             vcType: "trio",
             inviteList: [member1.id, member2.id, member3.id],
