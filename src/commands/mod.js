@@ -1,4 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
+const fs = require("node:fs");
+const writeToFile = require("../utils/writeToFile");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -6,8 +8,8 @@ module.exports = {
     .setDescription("commands for mods")
     .addSubcommand(subcommand =>
       subcommand
-        .setName("clear-queue")
-        .setDescription("clear all the queue in data.json")
+        .setName("delete-all-queue")
+        .setDescription("delete all the queues in data.json")
     )
     .addSubcommand(subcommand =>
       subcommand
@@ -17,8 +19,8 @@ module.exports = {
           option
             .setName("clear-channel")
             .setDescription("the channel to clear all messages")
-        )
-    )
+        ))
+
     .addSubcommand(subcommand =>
       subcommand
         .setName("announcement")
@@ -31,16 +33,29 @@ module.exports = {
           option
             .setName("message")
             .setDescription("message to announce")
-        )
-
-    ),
+        )),
 
   async execute(interaction) {
     let subCommand = interaction.options.getSubcommand();
 
-    if (subCommand === "clear-queue") {
-      await interaction.reply({ content: "queue cleared", ephemeral: true });
-      console.log("LOG: \t" + "queue cleared");
+    if (subCommand === "delete-all-queue") {
+      await interaction.reply({ content: "all queues deleted in data.json", ephemeral: true });
+      console.log("LOG: \t" + "all queues deleted in data.json");
+
+      let dataFile = fs.readFileSync("data.json");
+      let dataObj = JSON.parse(dataFile);
+
+      dataObj.duoList = [];
+      dataObj.trioList = [];
+      dataObj.fiveStackList = [];
+      dataObj.oneVoneList = [];
+      dataObj.tenMansList = [];
+      dataObj.customVoiceChannel = [];
+      dataObj.vcInvite = [];
+
+      writeToFile(dataObj, "data.json");
+
+      //clear queue-notification channel
 
     } else if (subCommand === "clear-channel") {
       let clearChannel = interaction.options.getChannel("clear-channel");
