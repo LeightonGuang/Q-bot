@@ -33,25 +33,34 @@ module.exports = (client) => {
       return;
     }
 
+    //console.log("command: /" + interaction.commandName);
+    let mod = interaction.guild.roles.cache.find(role => role.name === "mod");
+    let isMod = interaction.member.roles.cache.has(mod.id);
+
     //if interaction is a command that doesn't have to be in queue channel
     if (playerCommands.some(item => item === interaction.commandName)) {
       await command.execute(interaction);
       console.log("interaction: /" + interaction.commandName);
 
-      //if interaction is a command that is a mod command
-    } else if (modCommands.some(item => item === interaction.commandName)) {
+      //if member interacted is mod
+    } else if (isMod) {
+      if (interaction.commandName === "mod-help") {
+        //mod-help can only be used in the command channel
+        if (interaction.channel.name === "⌨｜command") {
+          await command.execute(interaction);
+          console.log("interaction: /" + interaction.commandName);
 
-      //mod command can only be used in command channel
-      if (interaction.channel.name === "⌨｜command") {
+          //can't run mod command that is not used in command channel
+        } else {
+          await interaction.reply({ content: `Only use this command in`, ephemeral: true });
+          console.log(`normie trying to use the command: ${interaction.commandName}`);
+        }
+
+        //if member is a mod and uses mod command
+      } else if (interaction.commandName === "mod") {
         await command.execute(interaction);
         console.log("interaction: /" + interaction.commandName);
-
-        //can't run mod command that is not used in command channel
-      } else {
-        await interaction.reply({ content: "command only for mods", ephemeral: true });
-        console.log(`normie trying to use the command: ${interaction.commandName}`);
       }
-
       //for the rest of the command that is not exclude and not mod command
     } else if (!playerCommands.some(item => item === interaction.commandName)) {
 
