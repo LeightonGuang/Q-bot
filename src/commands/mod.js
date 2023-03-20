@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const { clear } = require('node:console');
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
 
@@ -59,6 +60,11 @@ module.exports = {
 
     } else if (subCommand === "clear-channel") {
       let clearChannel = interaction.options.getChannel("clear-channel");
+
+      //if no specific channel is selected, set default to the channel it was used
+      if (clearChannel === null) {
+        clearChannel = interaction.channel;
+      }
 
       await interaction.reply({ content: `${clearChannel} channel is cleared`, ephemeral: true });
       console.log("LOG: \t" + "channel cleared");
