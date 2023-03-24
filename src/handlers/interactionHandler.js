@@ -37,50 +37,53 @@ module.exports = (client) => {
     let mod = interaction.guild.roles.cache.find(role => role.name === "mod");
     let isMod = interaction.member.roles.cache.has(mod.id);
 
-    //if interaction is a command that doesn't have to be in queue channel
+    //if interaction commands are help and player-profile
     if (playerCommands.some(item => item === interaction.commandName)) {
       await command.execute(interaction);
-      console.log("interaction: /" + interaction.commandName);
+      console.log("running /" + interaction.commandName);
 
-      //if member interacted is mod
-    } else if (isMod) {
-      if (interaction.commandName === "mod-help") {
-        //mod-help can only be used in the command channel
-        if (interaction.channel.name === "⌨｜command") {
+      //if commands are mod commands 
+    } else if (modCommands.some(item => item === interaction.commandName)) {
+      //if member is a mod
+      if (isMod) {
+        //if its /mod run
+        if (interaction.commandName === "mod") {
           await command.execute(interaction);
-          console.log("interaction: /" + interaction.commandName);
+          console.log("running /" + interaction.commandName);
 
-          //can't run mod command that is not used in command channel
-        } else {
-          await interaction.reply({ content: `Only use this command in`, ephemeral: true });
-          console.log(`normie trying to use the command: ${interaction.commandName}`);
+          //if its /mod-help then it had to be in 
+        } else if (interaction.commandName === "mod-help") {
+          //check if the command is used in command channel
+          if (interaction.channel.name === "⌨｜command") {
+            await command.execute(interaction);
+            console.log("running /" + interaction.commandName);
+
+            //if its not in command channel
+          } else {
+            let modCommandChannel = guild.channels.cache.find((channel) => channel.name === "⌨｜command");
+            interaction.reply({
+              content: `Please use ${interaction} in ${modCommandChannel}`,
+              ephemeral: true
+            });
+            console.log("/" + interaction.commandName + " is not in ⌨｜command");
+          }
         }
 
-        //if member is a mod and uses mod command
-      } else if (interaction.commandName === "mod") {
-        await command.execute(interaction);
-        console.log("interaction: /" + interaction.commandName);
+        //if member interacted is not a mod
+      } else {
+        await interaction.reply({
+          content: "you are not a mod",
+          ephemeral: true
+        });
+        console.log("LOG: \t" + "member who is not a mod is trying to use mod command");
       }
-      //for the rest of the command that is not exclude and not mod command
-    } else if (!playerCommands.some(item => item === interaction.commandName)) {
 
-      //if player profile is done
+//if command is in queue channel
+    } else if (interaction.channel.name === "queue") {
+      //
       if (profileDone) {
-
-        //if command is used in the queue channel
-        if (interaction.channel.name === "queue") {
-          await command.execute(interaction);
-          console.log("interaction: /" + interaction.commandName);
-
-          //command is not used in queue channel
-        } else {
-          let channelTag = guild.channels.cache.find((channel) => channel.name === "queue");
-          await interaction.reply({
-            content: `Please use / commands in ${channelTag}`,
-            ephemeral: true,
-          });
-          console.log("LOG: \t" + `Please use / commands in ${channelTag.name} channel`);
-        }
+        await command.execute(interaction);
+        console.log("runnning " + interaction);
 
         //if player profile is not done
       } else {
