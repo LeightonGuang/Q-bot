@@ -1,5 +1,15 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, } = require('discord.js');
 const fs = require('fs');
+const writeToFile = require('../utils/writeToFile');
+
+/**
+*whenever the queue command is used
+*if queueEmbedId is not empty
+*delete the old embed
+*delete the old queueEmbedId
+*send a new embed
+*save the new queueEmbedId to data.json
+*/
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,33 +18,47 @@ module.exports = {
 
   async execute(interaction) {
     let dataFile = fs.readFileSync('data.json');
-    let jsonData = JSON.parse(dataFile);
+    let dataObj = JSON.parse(dataFile);
+    let queueEmbedId = dataObj.queueEmbedId;
 
-    duoList = jsonData.duoList;
+    //if there is an embed
+    if (queueEmbedId !== "") {
+      //delete the old embed
+      const channel = await interaction.channel.fetch(interaction.channelId);
+      channel.messages.delete(queueEmbedId);
+      console.log("LOG: \t" + "delete queue embed");
+
+      //delete the old queueEmbedId
+      dataObj.queueEmbedId = "";
+      writeToFile(dataObj, 'data.json');
+    }
+
+    //change all empty list to string "--empty--"
+    let duoList = dataObj.duoList;
     duoList = JSON.stringify(duoList);
     if (duoList === "[]") {
       duoList = "--empty--";
     }
     //" "
-    trioList = jsonData.trioList;
+    let trioList = dataObj.trioList;
     trioList = JSON.stringify(trioList);
     if (trioList === "[]") {
       trioList = "--empty--";
     }
 
-    fiveStackList = jsonData.fiveStackList;
+    let fiveStackList = dataObj.fiveStackList;
     fiveStackList = JSON.stringify(fiveStackList);
     if (fiveStackList === "[]") {
       fiveStackList = "--empty--";
     }
 
-    oneVoneList = jsonData.oneVoneList;
+    let oneVoneList = dataObj.oneVoneList;
     oneVoneList = JSON.stringify(oneVoneList);
     if (oneVoneList === "[]") {
       oneVoneList = "--empty--";
     }
 
-    tenMansList = jsonData.tenMansList;
+    let tenMansList = dataObj.tenMansList;
     tenMansList = JSON.stringify(tenMansList);
     if (tenMansList === "[]") {
       tenMansList = "--empty--";
@@ -54,6 +78,7 @@ module.exports = {
       .setTimestamp()
       .setColor(0xFF0000);
 
+    //all the buttons for rank queue
     const rankRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
         .setCustomId("duoRankQueue")
@@ -76,6 +101,8 @@ module.exports = {
         .setLabel("10 mans queue")
         .setStyle(ButtonStyle.Success),
     )
+
+    //all the buttons for unrated queue
     const unratedRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
         .setCustomId("unrated")
@@ -87,9 +114,13 @@ module.exports = {
         .setStyle(ButtonStyle.Danger),
     )
 
-    await interaction.reply('command queue');
-    interaction.channel.send({ embeds: [statusEmbed], components: [rankRow, unratedRow] });
-    //if all the queues are empty then use emptyQueueEmbed
+    //send a new embed
+    const queueEmbed = await interaction.reply({ embeds: [statusEmbed], components: [rankRow, unratedRow], fetchReply: true });
+
+    //save the new queueEmbedId to data.json
+    dataObj.queueEmbedId = queueEmbed.id;
+    writeToFile(dataObj, 'data.json');
     console.log("LOG: \t" + "embed queue");
+
   },
 };
