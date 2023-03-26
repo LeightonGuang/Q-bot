@@ -40,7 +40,7 @@ module.exports = (client) => {
     //if interaction commands are help and player-profile
     if (playerCommands.some(item => item === interaction.commandName)) {
       await command.execute(interaction);
-      console.log("running /" + interaction.commandName);
+      console.log("LOG: \t" + "running /" + interaction.commandName);
 
       //if commands are mod commands 
     } else if (modCommands.some(item => item === interaction.commandName)) {
@@ -49,14 +49,14 @@ module.exports = (client) => {
         //if its /mod run
         if (interaction.commandName === "mod") {
           await command.execute(interaction);
-          console.log("running /" + interaction.commandName);
+          console.log("LOG: \t" + "running /" + interaction.commandName);
 
           //if its /mod-help then it had to be in 
         } else if (interaction.commandName === "mod-help") {
           //check if the command is used in command channel
           if (interaction.channel.name === "⌨｜command") {
             await command.execute(interaction);
-            console.log("running /" + interaction.commandName);
+            console.log("LOG: \t" + "running /" + interaction.commandName);
 
             //if its not in command channel
           } else {
@@ -78,12 +78,12 @@ module.exports = (client) => {
         console.log("LOG: \t" + "member who is not a mod is trying to use mod command");
       }
 
-//if command is in queue channel
+      //if command is in queue channel
     } else if (interaction.channel.name === "queue") {
       //
       if (profileDone) {
         await command.execute(interaction);
-        console.log("runnning " + interaction);
+        console.log("LOG: \t" + "running /" + interaction.commandName);
 
         //if player profile is not done
       } else {
