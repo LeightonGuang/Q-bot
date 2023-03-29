@@ -26,7 +26,7 @@ module.exports = {
       //delete the old embed
       const channel = await interaction.channel.fetch(interaction.channelId);
       channel.messages.delete(queueEmbedId);
-      console.log("LOG: \t" + "delete queue embed");
+      console.log("LOG: \t" + "delete old queue embed");
 
       //delete the old queueEmbedId
       dataObj.queueEmbedId = "";
@@ -69,9 +69,9 @@ module.exports = {
       .setTitle("Status")
       .setDescription("Queue status")
       .addFields(
-        { name: "Duo Queue", value: duoList },
-        { name: "Trio Queue", value: trioList },
-        { name: "Five Stack Queue", value: fiveStackList },
+        { name: "Duo Rank Queue", value: duoList },
+        { name: "Trio Rank Queue", value: trioList },
+        { name: "Five Stack Rank Queue", value: fiveStackList },
         { name: "1v1 Queue", value: oneVoneList },
         { name: "10 Mans Queue", value: tenMansList },
       )
@@ -116,11 +116,11 @@ module.exports = {
 
     //send a new embed
     const queueEmbed = await interaction.reply({ embeds: [statusEmbed], components: [rankRow, unratedRow], fetchReply: true });
+    console.log("LOG: \t" + "send new queue embed");
 
     //save the new queueEmbedId to data.json
     dataObj.queueEmbedId = queueEmbed.id;
     writeToFile(dataObj, 'data.json');
-    console.log("LOG: \t" + "embed queue");
-
+    console.log("LOG: \t" + "save new queueEmbedId to data.json");
   },
 };
