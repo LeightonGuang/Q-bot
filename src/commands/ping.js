@@ -5,7 +5,10 @@ module.exports = {
         .setName("ping")
         .setDescription("ping the bot to check online status"),
     async execute(interaction) {
-        await interaction.reply("I'm online!");
+        await interaction.reply({
+            content: "I'm online!",
+            ephemeral: true,
+        });
         console.log("LOG: \t I'm online!");
     },
 };
