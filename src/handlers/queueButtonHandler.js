@@ -1,4 +1,4 @@
-const { EmbedBuilder, Embed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
 
@@ -24,22 +24,86 @@ module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
     const { guild, member } = interaction;
 
+    //===========================functions============================
+
     //function to remove all queue roles from 
     function removeAllRoles() {
-      let rolesToRemove = [
-        "duo rank",
-        "trio queue",
-        "5 stack",
-        "1v1",
-        "10 mans",
-        "unrated",
-      ];
-      rolesToRemove.forEach((roleName) => {
+      allQueueRoles.forEach((roleName) => {
         let role = guild.roles.cache.find((role) => role.name === roleName);
         interaction.member.roles.remove(role);
       });
       console.log("LOG: \t" + "remove all queue roles from player");
     }
+
+    async function updateEmbed() {
+      let message = await interaction.channel.messages.fetch(dataObj.queueEmbedId);
+
+      //embed message object id
+      //console.log("message: " + message);
+      //console.log("message.embeds[0]: " + message.embeds[0]);
+
+      let queueEmbed = message.embeds[0];
+      //console.log("queueEmbed: " + queueEmbed.fields);
+
+      //loop through the list of all the queue list
+      for (let i = 0; i < allQueueList.length; i++) {
+        let list = allQueueList[i];
+        let nameList = [];
+
+        //console.log("list: " + list);
+
+        //if queue list is empty
+        if (list.length === 0) {
+          //console.log("LOG: \t" + "list is empty");
+          nameList = "--empty--";
+
+          //if queue list is not empty
+        } else {
+
+          //loops through all the id in all the queue list
+          for (let queuePlayerId of list) {
+            //console.log("list: " + JSON.stringify(list));
+            console.log("list: " + list);
+            let memberObj = await guild.members.fetch(queuePlayerId);
+            //add the nickname of member to nameList
+
+            if (memberObj.nickname === null) {
+              nameList.push(memberObj.user.username);
+
+            } else {
+              nameList.push(memberObj.nickname);
+            }
+
+            console.log("member's name: " + memberObj.nickname);
+            console.log("nameList: " + nameList);
+          }
+        }
+
+        //change the value of the fields
+        if (nameList === "--empty--") {
+          queueEmbed.fields[i].value = nameList;
+
+          //if nameList have a list of people's name
+        } else {
+          queueEmbed.fields[i].value = nameList.join(", ");
+        }
+      }
+
+      //console.log("new queueEmbed fields: " + JSON.stringify(queueEmbed.fields));
+
+      let newEmbed = new EmbedBuilder()
+        .setAuthor(message.embeds[0].author)
+        .setTitle(message.embeds[0].title)
+        .setDescription(message.embeds[0].description)
+        .addFields(queueEmbed.fields)
+        .setTimestamp()
+        .setColor(0xFF0000);
+
+      console.log("LOG: \t" + "update the field of embed");
+      message.edit({ embeds: [newEmbed] });
+    }
+
+    //===========================variables=========================
 
     let dataFile = fs.readFileSync("data.json");
     let dataObj = JSON.parse(dataFile);
@@ -52,6 +116,25 @@ module.exports = (client) => {
     let playerQueueingInfo;
     let playerId = member.id;
     let playerInQueue;
+
+    let allQueueList = [
+      duoList,
+      trioList,
+      fiveStackList,
+      oneVoneList,
+      tenMansList
+    ];
+
+    let allQueueRoles = [
+      "duo rank",
+      "trio queue",
+      "5 stack",
+      "1v1",
+      "10 mans",
+      "unrated",
+    ];
+
+
 
     //=========================interaction is button======================
     if (interaction.isButton()) {
@@ -115,37 +198,11 @@ module.exports = (client) => {
           });
           console.log("LOG: \t" + "You are in duo rank queue");
 
-          queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${duoQueueRole}`);
-          console.log("LOG: \t" + `${memberWhoPressed} is queueing for ${duoQueueRole}`);
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for duo ${duoQueueRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoQueueRole.name}`);
 
           //embed message object id
-          let message = await interaction.channel.messages.fetch(dataObj.queueEmbedId);
-          console.log("message: " + message);
-
-          let newField = message.embeds[0].fields[0];
-          console.log("newField: " + newField.value);
-
-          //if duoList is empty
-          if (duoList === []) {
-            console.log("LOG: \t" + "duoList is empty");
-
-            //if duoList is not empty add member nickname to a list 
-          } else {
-            let nameList = [];
-
-            for (let playerId of duoList) {
-              let name = await guild.members.fetch(playerId);
-              nameList.push(name.nickname);
-            }
-
-            //change the field value of the embed
-            newField.value = nameList.join(", ");
-            console.log("LOG: \t" + "update the field of embed");
-          }
-
-          let newEmbed = EmbedBuilder.from(message.embeds[0]).addFields(newField);
-
-          message.edit({ embeds: [newEmbed] });
+          updateEmbed();
 
           //if player is already in queue
         } else {
@@ -210,36 +267,25 @@ module.exports = (client) => {
          */
 
       } else if (buttonPressed === "dequeue") {
+
         //check if member has a queue role
         let memberHasRoles, memberInList;
 
-        let rolesToRemove = [
-          "duo rank",
-          "trio queue",
-          "5 stack",
-          "1v1",
-          "10 mans",
-          "unrated",
-        ];
-
-        let queueList = [
-          duoList,
-          trioList,
-          fiveStackList,
-          oneVoneList,
-          tenMansList
-        ]
-
         //if player have queue roles
         member.roles.cache.forEach((role) => {
-          if (rolesToRemove.includes(role.name)) {
+          if (allQueueRoles.includes(role.name)) {
             memberHasRoles = true;
           }
         });
 
         //if player is in lists
-        for (let list of queueList) {
+        let allQueueListIndex;
+
+        for (let list of allQueueList) {
           if (list.includes(playerId)) {
+            allQueueListIndex = allQueueList.indexOf(list);
+            //console.log("allQueueListIndex: " + allQueueListIndex);
+
             memberInList = true;
             console.log("LOG: \t" + "member is in list");
             break;
@@ -250,26 +296,37 @@ module.exports = (client) => {
           let role = guild.roles.cache.find((role) => role.name === "duo rank");
 
           //remove player id from duoList
-          dataObj.duoList = duoList.filter((item) => item !== playerId);
+          //console.log("duoList before filtering: " + typeof duoList);
+
+          //remove member id from list
+          //console.log("index of playerid: " + dataObj.duoList.indexOf(playerId));
+          let index = duoList.indexOf(playerId);
+          dataObj.duoList.splice(index, 1);
+          //console.log(duoList);
+
           console.log("LOG: \t" + "remove memberid from duoList");
           writeToFile(dataObj, "data.json");
 
+          //console.log("dequeued duoList: " + duoList);
 
           removeAllRoles();
+
+          updateEmbed();
+
           await interaction.reply({
             content: "You have been removed from queue",
             ephemeral: true,
           });
           console.log("LOG: \t" + "You have been removed from queue");
           queueNotificationChannel.send(`${memberWhoPressed} has dequeued`);
-          console.log("LOG: \t" + `${memberWhoPressed} has dequeued`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} has dequeued`);
 
         } else {
           await interaction.reply({
             content: "you are not in queue",
             ephemeral: true,
           });
-          console.log("LOG: \t" + "You have been removed from queue");
+          console.log("LOG: \t" + "You are not in queue");
         }
       }
     }
