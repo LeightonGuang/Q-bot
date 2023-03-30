@@ -35,12 +35,13 @@ module.exports = (client) => {
       console.log("LOG: \t" + "remove all queue roles from player");
     }
 
-    async function updateEmbed() {
+    async function updateQueueEmbed() {
       let message = await interaction.channel.messages.fetch(dataObj.queueEmbedId);
 
       //embed message object id
       //console.log("message: " + message);
       //console.log("message.embeds[0]: " + message.embeds[0]);
+
 
       let queueEmbed = message.embeds[0];
       //console.log("queueEmbed: " + queueEmbed.fields);
@@ -54,7 +55,6 @@ module.exports = (client) => {
 
         //if queue list is empty
         if (list.length === 0) {
-          //console.log("LOG: \t" + "list is empty");
           nameList = "--empty--";
 
           //if queue list is not empty
@@ -65,11 +65,13 @@ module.exports = (client) => {
             //console.log("list: " + JSON.stringify(list));
             console.log("list: " + list);
             let memberObj = await guild.members.fetch(queuePlayerId);
-            //add the nickname of member to nameList
 
+
+            //if member don't have nicname then add their username
             if (memberObj.nickname === null) {
               nameList.push(memberObj.user.username);
 
+              //add the nickname of member to nameList
             } else {
               nameList.push(memberObj.nickname);
             }
@@ -117,6 +119,7 @@ module.exports = (client) => {
     let playerId = member.id;
     let playerInQueue;
 
+    //allQueueList and allQueueRoles should have the same order of the list and roles
     let allQueueList = [
       duoList,
       trioList,
@@ -202,7 +205,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoQueueRole.name}`);
 
           //embed message object id
-          updateEmbed();
+          updateQueueEmbed();
 
           //if player is already in queue
         } else {
@@ -311,7 +314,7 @@ module.exports = (client) => {
 
           removeAllRoles();
 
-          updateEmbed();
+          updateQueueEmbed();
 
           await interaction.reply({
             content: "You have been removed from queue",
