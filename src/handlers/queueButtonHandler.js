@@ -76,8 +76,8 @@ module.exports = (client) => {
               nameList.push(memberObj.nickname);
             }
 
-            console.log("member's name: " + memberObj.nickname);
-            console.log("nameList: " + nameList);
+            //console.log("member's name: " + memberObj.nickname);
+            //console.log("nameList: " + nameList);
           }
         }
 
@@ -105,6 +105,35 @@ module.exports = (client) => {
       message.edit({ embeds: [newEmbed] });
     }
 
+    function removeRoleAndId() {
+      let hasRole = member.roles.cache.some(
+        (role) =>
+          role.name === "duo rank" ||
+          role.name === "trio rank" ||
+          role.name === "5 stack rank" ||
+          role.name === "1v1" ||
+          role.name === "10 mans" ||
+          role.name == "unrated"
+      );
+
+      //if member is in queue remove any member with queuerole
+      if (hasRole) {
+        removeAllRoles();
+      }
+
+      //remove member from list
+      for (let list of allQueueList) {
+        //if player is in lists
+        if (list.includes(playerId)) {
+          let index = list.indexOf(playerId);
+          list.splice(index, 1);
+
+          console.log("LOG: \t" + "remove memberid from list");
+          writeToFile(dataObj, "data.json");
+        }
+      }
+    }
+
     //===========================variables=========================
 
     let dataFile = fs.readFileSync("data.json");
@@ -115,7 +144,6 @@ module.exports = (client) => {
     let fiveStackRankList = dataObj.fiveStackRankList;
     let oneVoneList = dataObj.oneVoneList;
     let tenMansList = dataObj.tenMansList;
-    let playerQueueingInfo;
     let playerId = member.id;
     let playerInQueue;
 
@@ -145,27 +173,11 @@ module.exports = (client) => {
         "LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`
       );
 
-      //
-      let hasRole = member.roles.cache.some(
-        (role) =>
-          role.name === "duo rank" ||
-          role.name === "trio rank" ||
-          role.name === "5 stack rank" ||
-          role.name === "1v1" ||
-          role.name === "10 mans" ||
-          role.name == "unrated"
-      );
-
       let queueNotificationChannel = guild.channels.cache.find(
         (c) => c.name === "queue-notification"
       );
 
       //================start===================
-
-      //if member is in queue remove any member with queuerole
-      if (hasRole) {
-        removeAllRoles();
-      }
 
       /**
        * when duo ranked button is clicked
@@ -184,11 +196,13 @@ module.exports = (client) => {
 
         //if player is not in queue
         if (!playerInQueue) {
+          removeRoleAndId();
+
           //give player a duo rank role
-          let duoQueueRole = guild.roles.cache.find(
+          let duoRankRole = guild.roles.cache.find(
             (role) => role.name === "duo rank"
           );
-          member.roles.add(duoQueueRole);
+          member.roles.add(duoRankRole);
 
           //add playerQueueingInfo(player's discord id) to duoRankList
           duoRankList.push(interaction.user.id);
@@ -200,8 +214,8 @@ module.exports = (client) => {
           });
           console.log("LOG: \t" + "You are in duo rank queue");
 
-          queueNotificationChannel.send(`${memberWhoPressed} is queueing for duo ${duoQueueRole}`);
-          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoQueueRole.name}`);
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for duo ${duoRankRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoRankRole.name}`);
 
           //embed message object id
           updateQueueEmbed();
@@ -216,32 +230,33 @@ module.exports = (client) => {
         }
 
       } else if (buttonPressed === "trioRankQueue") {
-        //loop through trioRankList to see if member is in duo
+        //loop through trioRankList to see if member is in trio
         for (let i = 0; i < trioRankList.length; i++) {
           //check if player is in trioRankList
           playerInQueue = (playerId === trioRankList[i]);
         }
 
+        removeRoleAndId();
         //if player is not in queue
         if (!playerInQueue) {
-          //give player a duo rank role
-          let duoQueueRole = guild.roles.cache.find(
-            (role) => role.name === "duo rank"
+          //give player a trio rank role
+          let trioRankRole = guild.roles.cache.find(
+            (role) => role.name === "trio rank"
           );
-          member.roles.add(duoQueueRole);
+          member.roles.add(trioRankRole);
 
           //add playerQueueingInfo(player's discord id) to trioRankList
           trioRankList.push(interaction.user.id);
           writeToFile(dataObj, "data.json");
 
           await interaction.reply({
-            content: "You are in duo rank queue",
+            content: "You are in trio rank queue",
             ephemeral: true,
           });
-          console.log("LOG: \t" + "You are in duo rank queue");
+          console.log("LOG: \t" + "You are in trio rank queue");
 
-          queueNotificationChannel.send(`${memberWhoPressed} is queueing for duo ${duoQueueRole}`);
-          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoQueueRole.name}`);
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for trio ${trioRankRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${trioRankRole.name}`);
 
           //embed message object id
           updateQueueEmbed();
@@ -256,12 +271,45 @@ module.exports = (client) => {
         }
 
       } else if (buttonPressed === "fiveStackRankQueue") {
-        //add role to member
-        let fiveStackRole = guild.roles.cache.find(
-          (role) => role.name === "5 stack rank"
-        );
-        member.roles.add(fiveStackRole);
-        await interaction.reply(`${memberWhoPressed} is queueing for 5 stack rank (${fiveStackRole})`);
+        //loop through fiveStackRankList to see if member is in 5 stack
+        for (let i = 0; i < fiveStackRankList.length; i++) {
+          //check if player is in fiveStackRankList
+          playerInQueue = (playerId === fiveStackRankList[i]);
+        }
+
+        removeRoleAndId();
+        //if player is not in queue
+        if (!playerInQueue) {
+          //give player a 5 stack rank role
+          let fiveStackRankRole = guild.roles.cache.find(
+            (role) => role.name === "5 stack rank"
+          );
+          member.roles.add(fiveStackRankRole);
+
+          //add playerQueueingInfo(player's discord id) to fiveStackRankList
+          fiveStackRankList.push(interaction.user.id);
+          writeToFile(dataObj, "data.json");
+
+          await interaction.reply({
+            content: "You are in 5 stack rank queue",
+            ephemeral: true,
+          });
+          console.log("LOG: \t" + "You are in 5 stack rank queue");
+
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for trio ${fiveStackRankRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${fiveStackRankRole.name}`);
+
+          //embed message object id
+          updateQueueEmbed();
+
+          //if player is already in queue
+        } else {
+          await interaction.reply({
+            content: "You are already in queue",
+            ephemeral: true,
+          });
+          console.log("LOG: \t" + "member is already in queue");
+        }
       } else if (buttonPressed === "oneVoneQueue") {
         //add role to member
         let oneVoneRole = guild.roles.cache.find((role) => role.name === "1v1");
@@ -308,10 +356,9 @@ module.exports = (client) => {
         });
 
         for (let list of allQueueList) {
-          //if player is in lists
+          //if player is in one of the queue list
           if (list.includes(playerId)) {
-            let allQueueListIndex;
-            listToDequeue = allQueueList[allQueueList.indexOf(list)];
+            listToDequeue = list;
 
             memberInList = true;
             console.log("LOG: \t" + "member is in list");
@@ -326,7 +373,7 @@ module.exports = (client) => {
           //console.log("listToDequeue before filtering: " + typeof listToDequeue);
 
           //remove member id from list
-          console.log("index of playerid: " + listToDequeue.indexOf(playerId));
+          //console.log("index of playerid: " + listToDequeue);
           let index = listToDequeue.indexOf(playerId);
           listToDequeue.splice(index, 1);
           //console.log(listToDequeue);
@@ -337,7 +384,6 @@ module.exports = (client) => {
           //console.log("dequeued listToDequeue: " + listToDequeue);
 
           removeAllRoles();
-
           updateQueueEmbed();
 
           await interaction.reply({
