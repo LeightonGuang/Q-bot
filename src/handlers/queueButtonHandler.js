@@ -63,7 +63,7 @@ module.exports = (client) => {
           //loops through all the id in all the queue list
           for (let queuePlayerId of list) {
             //console.log("list: " + JSON.stringify(list));
-            console.log("list: " + list);
+            //console.log("list: " + list);
             let memberObj = await guild.members.fetch(queuePlayerId);
 
 
@@ -208,10 +208,13 @@ module.exports = (client) => {
           duoRankList.push(interaction.user.id);
           writeToFile(dataObj, "data.json");
 
-          await interaction.reply({
-            content: "You are in duo rank queue",
-            ephemeral: true,
-          });
+          await interaction.deferUpdate();
+
+          // await interaction.reply({
+          //   content: "You are in duo rank queue",
+          //   ephemeral: true,
+          // });
+
           console.log("LOG: \t" + "You are in duo rank queue");
 
           queueNotificationChannel.send(`${memberWhoPressed} is queueing for duo ${duoRankRole}`);
@@ -249,10 +252,11 @@ module.exports = (client) => {
           trioRankList.push(interaction.user.id);
           writeToFile(dataObj, "data.json");
 
-          await interaction.reply({
-            content: "You are in trio rank queue",
-            ephemeral: true,
-          });
+          await interaction.deferUpdate();
+          // await interaction.reply({
+          //   content: "You are in trio rank queue",
+          //   ephemeral: true,
+          // });
           console.log("LOG: \t" + "You are in trio rank queue");
 
           queueNotificationChannel.send(`${memberWhoPressed} is queueing for trio ${trioRankRole}`);
@@ -290,10 +294,11 @@ module.exports = (client) => {
           fiveStackRankList.push(interaction.user.id);
           writeToFile(dataObj, "data.json");
 
-          await interaction.reply({
-            content: "You are in 5 stack rank queue",
-            ephemeral: true,
-          });
+          await interaction.deferUpdate();
+          // await interaction.reply({
+          //   content: "You are in 5 stack rank queue",
+          //   ephemeral: true,
+          // });
           console.log("LOG: \t" + "You are in 5 stack rank queue");
 
           queueNotificationChannel.send(`${memberWhoPressed} is queueing for trio ${fiveStackRankRole}`);
@@ -386,10 +391,11 @@ module.exports = (client) => {
           removeAllRoles();
           updateQueueEmbed();
 
-          await interaction.reply({
-            content: "You have been removed from queue",
-            ephemeral: true,
-          });
+          await interaction.deferUpdate();
+          // await interaction.reply({
+          //   content: "You have been removed from queue",
+          //   ephemeral: true,
+          // });
           console.log("LOG: \t" + "You have been removed from queue");
           queueNotificationChannel.send(`${memberWhoPressed} has dequeued`);
           console.log("LOG: \t" + `${memberWhoPressed.tag} has dequeued`);
