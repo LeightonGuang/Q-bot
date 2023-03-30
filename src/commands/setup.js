@@ -6,12 +6,12 @@ module.exports = {
     .setName("setup")
     .setDescription("setup roles for queue"),
   async execute(interaction) {
-    let QueueRoleExist = interaction.guild.roles.cache.some(role => ["duo queue", "trio queue", "5 stack", "1v1", "10 mans", "unrated"].includes(role.name));
+    let QueueRoleExist = interaction.guild.roles.cache.some(role => ["duo rank", "trio rank", "5 stack rank", "1v1", "10 mans", "unrated"].includes(role.name));
     if (!QueueRoleExist) {
       await interaction.reply("Roles created");
-      interaction.guild.roles.create({ name: "duo queue" });
-      interaction.guild.roles.create({ name: "trio queue" });
-      interaction.guild.roles.create({ name: "5 stack" });
+      interaction.guild.roles.create({ name: "duo rank" });
+      interaction.guild.roles.create({ name: "trio rank" });
+      interaction.guild.roles.create({ name: "5 stack rank" });
       interaction.guild.roles.create({ name: "1v1" });
       interaction.guild.roles.create({ name: "10 mans" });
       interaction.guild.roles.create({ name: "unrated" });

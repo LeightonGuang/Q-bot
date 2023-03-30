@@ -34,22 +34,22 @@ module.exports = {
     }
 
     //change all empty list to string "--empty--"
-    let duoList = dataObj.duoList;
-    duoList = JSON.stringify(duoList);
-    if (duoList === "[]") {
-      duoList = "--empty--";
+    let duoRankList = dataObj.duoRankList;
+    duoRankList = JSON.stringify(duoRankList);
+    if (duoRankList === "[]") {
+      duoRankList = "--empty--";
     }
     //" "
-    let trioList = dataObj.trioList;
-    trioList = JSON.stringify(trioList);
-    if (trioList === "[]") {
-      trioList = "--empty--";
+    let trioRankList = dataObj.trioRankList;
+    trioRankList = JSON.stringify(trioRankList);
+    if (trioRankList === "[]") {
+      trioRankList = "--empty--";
     }
 
-    let fiveStackList = dataObj.fiveStackList;
-    fiveStackList = JSON.stringify(fiveStackList);
-    if (fiveStackList === "[]") {
-      fiveStackList = "--empty--";
+    let fiveStackRankList = dataObj.fiveStackRankList;
+    fiveStackRankList = JSON.stringify(fiveStackRankList);
+    if (fiveStackRankList === "[]") {
+      fiveStackRankList = "--empty--";
     }
 
     let oneVoneList = dataObj.oneVoneList;
@@ -69,9 +69,9 @@ module.exports = {
       .setTitle("Status")
       .setDescription("Queue status")
       .addFields(
-        { name: "Duo Rank Queue", value: duoList },
-        { name: "Trio Rank Queue", value: trioList },
-        { name: "Five Stack Rank Queue", value: fiveStackList },
+        { name: "Duo Rank Queue", value: duoRankList },
+        { name: "Trio Rank Queue", value: trioRankList },
+        { name: "Five Stack Rank Queue", value: fiveStackRankList },
         { name: "1v1 Queue", value: oneVoneList },
         { name: "10 Mans Queue", value: tenMansList },
       )

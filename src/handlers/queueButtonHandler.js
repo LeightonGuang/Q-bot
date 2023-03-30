@@ -110,9 +110,9 @@ module.exports = (client) => {
     let dataFile = fs.readFileSync("data.json");
     let dataObj = JSON.parse(dataFile);
 
-    let duoList = dataObj.duoList;
-    let trioList = dataObj.trioList;
-    let fiveStackList = dataObj.fiveStackList;
+    let duoRankList = dataObj.duoRankList;
+    let trioRankList = dataObj.trioRankList;
+    let fiveStackRankList = dataObj.fiveStackRankList;
     let oneVoneList = dataObj.oneVoneList;
     let tenMansList = dataObj.tenMansList;
     let playerQueueingInfo;
@@ -121,17 +121,17 @@ module.exports = (client) => {
 
     //allQueueList and allQueueRoles should have the same order of the list and roles
     let allQueueList = [
-      duoList,
-      trioList,
-      fiveStackList,
+      duoRankList,
+      trioRankList,
+      fiveStackRankList,
       oneVoneList,
       tenMansList
     ];
 
     let allQueueRoles = [
       "duo rank",
-      "trio queue",
-      "5 stack",
+      "trio rank",
+      "5 stack rank",
       "1v1",
       "10 mans",
       "unrated",
@@ -149,8 +149,8 @@ module.exports = (client) => {
       let hasRole = member.roles.cache.some(
         (role) =>
           role.name === "duo rank" ||
-          role.name === "trio queue" ||
-          role.name === "5 stack" ||
+          role.name === "trio rank" ||
+          role.name === "5 stack rank" ||
           role.name === "1v1" ||
           role.name === "10 mans" ||
           role.name == "unrated"
@@ -170,16 +170,16 @@ module.exports = (client) => {
       /**
        * when duo ranked button is clicked
        * add duo rank role to member
-       * add member discord id to duoList
+       * add member discord id to duoRankList
        * edit the embed for duo rank queue
        * add member's discord name to duo rank queue
        */
 
       if (buttonPressed === "duoRankQueue") {
-        //loop through duoList to see if member is in duo
-        for (let i = 0; i < duoList.length; i++) {
-          //check if player is in duoList
-          playerInQueue = (playerId === duoList[i]);
+        //loop through duoRankList to see if member is in duo
+        for (let i = 0; i < duoRankList.length; i++) {
+          //check if player is in duoRankList
+          playerInQueue = (playerId === duoRankList[i]);
         }
 
         //if player is not in queue
@@ -190,8 +190,8 @@ module.exports = (client) => {
           );
           member.roles.add(duoQueueRole);
 
-          //add playerQueueingInfo(player's discord id) to duoList
-          duoList.push(interaction.user.id);
+          //add playerQueueingInfo(player's discord id) to duoRankList
+          duoRankList.push(interaction.user.id);
           writeToFile(dataObj, "data.json");
 
           await interaction.reply({
@@ -216,10 +216,10 @@ module.exports = (client) => {
         }
 
       } else if (buttonPressed === "trioRankQueue") {
-        //loop through trioList to see if member is in duo
-        for (let i = 0; i < trioList.length; i++) {
-          //check if player is in trioList
-          playerInQueue = (playerId === trioList[i]);
+        //loop through trioRankList to see if member is in duo
+        for (let i = 0; i < trioRankList.length; i++) {
+          //check if player is in trioRankList
+          playerInQueue = (playerId === trioRankList[i]);
         }
 
         //if player is not in queue
@@ -230,8 +230,8 @@ module.exports = (client) => {
           );
           member.roles.add(duoQueueRole);
 
-          //add playerQueueingInfo(player's discord id) to trioList
-          trioList.push(interaction.user.id);
+          //add playerQueueingInfo(player's discord id) to trioRankList
+          trioRankList.push(interaction.user.id);
           writeToFile(dataObj, "data.json");
 
           await interaction.reply({
@@ -258,15 +258,10 @@ module.exports = (client) => {
       } else if (buttonPressed === "fiveStackRankQueue") {
         //add role to member
         let fiveStackRole = guild.roles.cache.find(
-          (role) => role.name === "5 stack"
+          (role) => role.name === "5 stack rank"
         );
         member.roles.add(fiveStackRole);
-        await interaction.reply(
-          `
-    ${memberWhoPressed} is queueing for 5 stack
-    (${fiveStackRole})
-    `
-        );
+        await interaction.reply(`${memberWhoPressed} is queueing for 5 stack rank (${fiveStackRole})`);
       } else if (buttonPressed === "oneVoneQueue") {
         //add role to member
         let oneVoneRole = guild.roles.cache.find((role) => role.name === "1v1");

@@ -46,9 +46,9 @@ module.exports = {
       let dataFile = fs.readFileSync("data.json");
       let dataObj = JSON.parse(dataFile);
 
-      dataObj.duoList = [];
-      dataObj.trioList = [];
-      dataObj.fiveStackList = [];
+      dataObj.duoRankList = [];
+      dataObj.trioRankList = [];
+      dataObj.fiveStackRankList = [];
       dataObj.oneVoneList = [];
       dataObj.tenMansList = [];
       dataObj.customVoiceChannel = [];
