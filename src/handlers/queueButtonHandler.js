@@ -137,8 +137,6 @@ module.exports = (client) => {
       "unrated",
     ];
 
-
-
     //=========================interaction is button======================
     if (interaction.isButton()) {
       buttonPressed = interaction.customId;
@@ -184,8 +182,9 @@ module.exports = (client) => {
           playerInQueue = (playerId === duoList[i]);
         }
 
+        //if player is not in queue
         if (!playerInQueue) {
-          //add role to member
+          //give player a duo rank role
           let duoQueueRole = guild.roles.cache.find(
             (role) => role.name === "duo rank"
           );
@@ -217,12 +216,44 @@ module.exports = (client) => {
         }
 
       } else if (buttonPressed === "trioRankQueue") {
-        //add role to member
-        let trioQueueRole = guild.roles.cache.find(
-          (role) => role.name === "trio queue"
-        );
-        member.roles.add(trioQueueRole);
-        await interaction.reply(`${memberWhoPressed} is queueing for trio (${trioQueueRole})`);
+        //loop through trioList to see if member is in duo
+        for (let i = 0; i < trioList.length; i++) {
+          //check if player is in trioList
+          playerInQueue = (playerId === trioList[i]);
+        }
+
+        //if player is not in queue
+        if (!playerInQueue) {
+          //give player a duo rank role
+          let duoQueueRole = guild.roles.cache.find(
+            (role) => role.name === "duo rank"
+          );
+          member.roles.add(duoQueueRole);
+
+          //add playerQueueingInfo(player's discord id) to trioList
+          trioList.push(interaction.user.id);
+          writeToFile(dataObj, "data.json");
+
+          await interaction.reply({
+            content: "You are in duo rank queue",
+            ephemeral: true,
+          });
+          console.log("LOG: \t" + "You are in duo rank queue");
+
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for duo ${duoQueueRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoQueueRole.name}`);
+
+          //embed message object id
+          updateQueueEmbed();
+
+          //if player is already in queue
+        } else {
+          await interaction.reply({
+            content: "You are already in queue",
+            ephemeral: true,
+          });
+          console.log("LOG: \t" + "member is already in queue");
+        }
 
       } else if (buttonPressed === "fiveStackRankQueue") {
         //add role to member
@@ -272,7 +303,7 @@ module.exports = (client) => {
       } else if (buttonPressed === "dequeue") {
 
         //check if member has a queue role
-        let memberHasRoles, memberInList;
+        let memberHasRoles, memberInList, listToDequeue;
 
         //if player have queue roles
         member.roles.cache.forEach((role) => {
@@ -281,13 +312,11 @@ module.exports = (client) => {
           }
         });
 
-        //if player is in lists
-        let allQueueListIndex;
-
         for (let list of allQueueList) {
+          //if player is in lists
           if (list.includes(playerId)) {
-            allQueueListIndex = allQueueList.indexOf(list);
-            //console.log("allQueueListIndex: " + allQueueListIndex);
+            let allQueueListIndex;
+            listToDequeue = allQueueList[allQueueList.indexOf(list)];
 
             memberInList = true;
             console.log("LOG: \t" + "member is in list");
@@ -298,19 +327,19 @@ module.exports = (client) => {
         if (memberHasRoles || memberInList) {
           let role = guild.roles.cache.find((role) => role.name === "duo rank");
 
-          //remove player id from duoList
-          //console.log("duoList before filtering: " + typeof duoList);
+          //remove player id from listToDequeue
+          //console.log("listToDequeue before filtering: " + typeof listToDequeue);
 
           //remove member id from list
-          //console.log("index of playerid: " + dataObj.duoList.indexOf(playerId));
-          let index = duoList.indexOf(playerId);
-          dataObj.duoList.splice(index, 1);
-          //console.log(duoList);
+          console.log("index of playerid: " + listToDequeue.indexOf(playerId));
+          let index = listToDequeue.indexOf(playerId);
+          listToDequeue.splice(index, 1);
+          //console.log(listToDequeue);
 
-          console.log("LOG: \t" + "remove memberid from duoList");
+          console.log("LOG: \t" + "remove memberid from listToDequeue");
           writeToFile(dataObj, "data.json");
 
-          //console.log("dequeued duoList: " + duoList);
+          //console.log("dequeued listToDequeue: " + listToDequeue);
 
           removeAllRoles();
 
