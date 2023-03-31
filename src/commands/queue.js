@@ -64,6 +64,12 @@ module.exports = {
       tenMansList = "--empty--";
     }
 
+    let unratedList = dataObj.unratedList;
+    unratedList = JSON.stringify(unratedList);
+    if (unratedList === "[]") {
+      unratedList = "--empty--";
+    }
+
     const statusEmbed = new EmbedBuilder()
       .setAuthor({ name: "Q bot" })
       .setTitle("Status")
@@ -74,6 +80,7 @@ module.exports = {
         { name: "Five Stack Rank Queue", value: fiveStackRankList },
         { name: "1v1 Queue", value: oneVoneList },
         { name: "10 Mans Queue", value: tenMansList },
+        { name: "Unrated Queue", value: unratedList },
       )
       .setTimestamp()
       .setColor(0xFF0000);
