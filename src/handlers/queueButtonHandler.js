@@ -144,6 +144,7 @@ module.exports = (client) => {
     let fiveStackRankList = dataObj.fiveStackRankList;
     let oneVoneList = dataObj.oneVoneList;
     let tenMansList = dataObj.tenMansList;
+    let unratedList = dataObj.unratedList;
     let playerId = member.id;
     let playerInQueue;
 
@@ -153,7 +154,8 @@ module.exports = (client) => {
       trioRankList,
       fiveStackRankList,
       oneVoneList,
-      tenMansList
+      tenMansList,
+      unratedList
     ];
 
     let allQueueRoles = [
@@ -217,7 +219,7 @@ module.exports = (client) => {
 
           console.log("LOG: \t" + "You are in duo rank queue");
 
-          queueNotificationChannel.send(`${memberWhoPressed} is queueing for duo ${duoRankRole}`);
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${duoRankRole}`);
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoRankRole.name}`);
 
           //embed message object id
@@ -259,7 +261,7 @@ module.exports = (client) => {
           // });
           console.log("LOG: \t" + "You are in trio rank queue");
 
-          queueNotificationChannel.send(`${memberWhoPressed} is queueing for trio ${trioRankRole}`);
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${trioRankRole}`);
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${trioRankRole.name}`);
 
           //embed message object id
@@ -301,7 +303,7 @@ module.exports = (client) => {
           // });
           console.log("LOG: \t" + "You are in 5 stack rank queue");
 
-          queueNotificationChannel.send(`${memberWhoPressed} is queueing for trio ${fiveStackRankRole}`);
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${fiveStackRankRole}`);
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${fiveStackRankRole.name}`);
 
           //embed message object id
@@ -316,37 +318,130 @@ module.exports = (client) => {
           console.log("LOG: \t" + "member is already in queue");
         }
       } else if (buttonPressed === "oneVoneQueue") {
-        //add role to member
-        let oneVoneRole = guild.roles.cache.find((role) => role.name === "1v1");
-        member.roles.add(oneVoneRole);
-        await interaction.reply(`${memberWhoPressed} is queueing for 1v1 (${oneVoneRole})`);
-      } else if (buttonPressed === "tenMansQueue") {
-        //add role to member
-        let tenMansRole = guild.roles.cache.find(
-          (role) => role.name === "10 mans"
-        );
+        //loop through oneVoneList to see if member is in 1v1
+        for (let i = 0; i < oneVoneList.length; i++) {
+          //check if player is in oneVoneList
+          playerInQueue = (playerId === oneVoneList[i]);
+        }
+        removeRoleAndId();
 
-        member.roles.add(tenMansRole);
-        await interaction.reply(`${memberWhoPressed} is queueing for 10 mans (${tenMansRole})`);
+        //if player is not in queue
+        if (!playerInQueue) {
+          //give player a 1v1 role
+          let oneVoneRole = guild.roles.cache.find(
+            (role) => role.name === "1v1"
+          );
+          member.roles.add(oneVoneRole);
+
+          //add playerQueueingInfo(player's discord id) to oneVoneList
+          oneVoneList.push(interaction.user.id);
+          writeToFile(dataObj, "data.json");
+
+          await interaction.deferUpdate();
+          // await interaction.reply({
+          //   content: "You are in 1v1 queue",
+          //   ephemeral: true,
+          // });
+          console.log("LOG: \t" + "You are in 1v1 rank queue");
+
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${oneVoneRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${oneVoneRole.name}`);
+
+          //embed message object id
+          updateQueueEmbed();
+
+          //if player is already in queue
+        } else {
+          await interaction.reply({
+            content: "You are already in queue",
+            ephemeral: true,
+          });
+          console.log("LOG: \t" + "member is already in queue");
+        }
+
+      } else if (buttonPressed === "tenMansQueue") {
+        //loop through tenMansList to see if member is in 1v1
+        for (let i = 0; i < tenMansList.length; i++) {
+          //check if player is in tenMansList
+          playerInQueue = (playerId === tenMansList[i]);
+        }
+        removeRoleAndId();
+
+        //if player is not in queue
+        if (!playerInQueue) {
+          //give player a 5 stack rank role
+          let tenMansRole = guild.roles.cache.find(
+            (role) => role.name === "10 mans"
+          );
+          member.roles.add(tenMansRole);
+
+          //add playerQueueingInfo(player's discord id) to tenMansList
+          tenMansList.push(interaction.user.id);
+          writeToFile(dataObj, "data.json");
+
+          await interaction.deferUpdate();
+          // await interaction.reply({
+          //   content: "You are in 5 stack rank queue",
+          //   ephemeral: true,
+          // });
+          console.log("LOG: \t" + "You are in 10 mans queue");
+
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${tenMansRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${tenMansRole.name}`);
+
+          //embed message object id
+          updateQueueEmbed();
+
+          //if player is already in queue
+        } else {
+          await interaction.reply({
+            content: "You are already in queue",
+            ephemeral: true,
+          });
+          console.log("LOG: \t" + "member is already in queue");
+        }
 
       } else if (buttonPressed === "unrated") {
-        //add role to member
-        let unratedRole = guild.roles.cache.find(
-          (role) => role.name === "unrated"
-        );
-        member.roles.add(unratedRole);
-        await interaction.reply(`${memberWhoPressed} is queueing for unrated (${unratedRole})`);
+        //loop through unratedList to see if member is in 1v1
+        for (let i = 0; i < unratedList.length; i++) {
+          //check if player is in unratedList
+          playerInQueue = (playerId === unratedList[i]);
+        }
+        removeRoleAndId();
 
-        /**
-         * when dequeue button is clicked
-         * 
-         * if member is has a queue role and in queue list
-         *    remove any queue roles from member
-         *    remove member's discord id from any list that they're in
-         * 
-         * if member don't have queue role and is not in queue list
-         *    tell them they're not in queue
-         */
+        //if player is not in queue
+        if (!playerInQueue) {
+          //give player a 5 stack rank role
+          let unratedRole = guild.roles.cache.find(
+            (role) => role.name === "unrated"
+          );
+          member.roles.add(unratedRole);
+
+          //add playerQueueingInfo(player's discord id) to unratedList
+          unratedList.push(interaction.user.id);
+          writeToFile(dataObj, "data.json");
+
+          await interaction.deferUpdate();
+          // await interaction.reply({
+          //   content: "You are in unrated rank queue",
+          //   ephemeral: true,
+          // });
+          console.log("LOG: \t" + "You are in unrated queue");
+
+          queueNotificationChannel.send(`${memberWhoPressed} is queueing for ${unratedRole}`);
+          console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${unratedRole.name}`);
+
+          //embed message object id
+          updateQueueEmbed();
+
+          //if player is already in queue
+        } else {
+          await interaction.reply({
+            content: "You are already in queue",
+            ephemeral: true,
+          });
+          console.log("LOG: \t" + "member is already in queue");
+        }
 
       } else if (buttonPressed === "dequeue") {
 
