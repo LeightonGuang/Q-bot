@@ -1,5 +1,9 @@
 
 # Q-bot
+
+## Join the server!
+[INVITE LINK](https://discord.com/invite/cQBxJNeD3F)
+
 ## About
 This is a discord bot used for queuing duo, trio, 5 stack, 1v1 and 10 mans.
 
