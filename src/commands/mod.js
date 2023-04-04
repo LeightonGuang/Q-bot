@@ -12,6 +12,7 @@ module.exports = {
         .setName("delete-all-queue")
         .setDescription("delete all the queues in data.json")
     )
+
     .addSubcommand(subcommand =>
       subcommand
         .setName("clear-channel")
@@ -26,14 +27,15 @@ module.exports = {
       subcommand
         .setName("announcement")
         .setDescription("send announcement to a sepcific channel")
-        .addChannelOption(option =>
-          option
-            .setName("announcement-channel")
-            .setDescription("the channel to send annoucment"))
         .addStringOption(option =>
           option
             .setName("message")
             .setDescription("message to announce")
+            .setRequired(true))
+        .addChannelOption(option =>
+          option
+            .setName("announcement-channel")
+            .setDescription("the channel to send annoucment")
         )),
 
   async execute(interaction) {
@@ -75,6 +77,10 @@ module.exports = {
     } else if (subCommand === "announcement") {
       let message = interaction.options.getString("message");
       let annoucmentChannel = interaction.options.getChannel("announcement-channel");
+
+      if (annoucmentChannel === null) {
+        annoucmentChannel = interaction.channel;
+      }
 
       await interaction.reply({ content: `announcement sent to ${annoucmentChannel} `, ephemeral: true });
       console.log("LOG: \t" + `announcement sent to ${annoucmentChannel}`);
