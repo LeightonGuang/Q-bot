@@ -99,14 +99,6 @@ module.exports = {
         .setCustomId("fiveStackRankQueue")
         .setLabel("5 stack rank")
         .setStyle(ButtonStyle.Success),
-      new ButtonBuilder()
-        .setCustomId("oneVoneQueue")
-        .setLabel("1v1 queue")
-        .setStyle(ButtonStyle.Success),
-      new ButtonBuilder()
-        .setCustomId("tenMansQueue")
-        .setLabel("10 mans queue")
-        .setStyle(ButtonStyle.Success),
     )
 
     //all the buttons for unrated queue
@@ -115,6 +107,18 @@ module.exports = {
         .setCustomId("unrated")
         .setLabel("unrated")
         .setStyle(ButtonStyle.Primary),
+      new ButtonBuilder()
+        .setCustomId("oneVoneQueue")
+        .setLabel("1v1 queue")
+        .setStyle(ButtonStyle.Primary),
+      new ButtonBuilder()
+        .setCustomId("tenMansQueue")
+        .setLabel("10 mans queue")
+        .setStyle(ButtonStyle.Primary),
+    )
+
+    //buttons for controls
+    const controlRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
         .setCustomId("dequeue")
         .setLabel("dequeue")
@@ -126,7 +130,7 @@ module.exports = {
     )
 
     //send a new embed
-    const queueEmbed = await interaction.reply({ embeds: [statusEmbed], components: [rankRow, unratedRow], fetchReply: true });
+    const queueEmbed = await interaction.reply({ embeds: [statusEmbed], components: [rankRow, unratedRow, controlRow], fetchReply: true });
     console.log("LOG: \t" + "send new queue embed");
 
     //save the new queueEmbedId to data.json
