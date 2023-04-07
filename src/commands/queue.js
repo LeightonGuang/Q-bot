@@ -119,6 +119,10 @@ module.exports = {
         .setCustomId("dequeue")
         .setLabel("dequeue")
         .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
+        .setCustomId("refresh")
+        .setLabel("refresh")
+        .setStyle(ButtonStyle.Secondary),
     )
 
     //send a new embed

@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
+const queueVcHandler = require("../handlers/queueVcHandler");
 
 /**
  * when any queue button is used
@@ -145,6 +146,7 @@ module.exports = (client) => {
     let oneVoneList = dataObj.oneVoneList;
     let tenMansList = dataObj.tenMansList;
     let unratedList = dataObj.unratedList;
+    let playerList = dataObj.playerList;
     let playerId = member.id;
     let playerInQueue;
 
@@ -169,8 +171,8 @@ module.exports = (client) => {
 
     //=========================interaction is button======================
     if (interaction.isButton()) {
-      buttonPressed = interaction.customId;
-      memberWhoPressed = interaction.user;
+      let buttonPressed = interaction.customId;
+      let memberWhoPressed = interaction.user;
       console.log(
         "LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`
       );
@@ -501,6 +503,71 @@ module.exports = (client) => {
             ephemeral: true,
           });
           console.log("LOG: \t" + "You are not in queue");
+        }
+      } else if (buttonPressed === "refresh") {
+        updateQueueEmbed();
+        await interaction.deferUpdate();
+        console.log("LOG: \t" + "refreshed the embed");
+      }
+
+      /** check for match
+       * 
+       * duo rank
+       * if there are more than 2 people
+       * check their region and rank
+       * 
+       * 
+       */
+
+      if (buttonPressed === "duoRankQueue") {
+        if (duoRankList.length >= 2) {
+
+          for (let player1Id of duoRankList) {
+            for (let player2Id of duoRankList) {
+
+              //if its not comparing to itself
+              if (player1Id !== player2Id) {
+
+                //get the object of both player
+                const player1Obj = playerList.find(obj => obj.id === player1Id);
+                const player2Obj = playerList.find(obj => obj.id === player2Id);
+
+                console.log("player1 region: " + player1Obj.region);
+                console.log("player2 region: " + player2Obj.region);
+                //check if both player are from the same region
+                if (player1Obj.region === player2Obj.region) {
+                  let rankValue = {
+                    "I": 0, "B": 1,
+                    "S": 3, "G": 4,
+                    "P": 5, "D": 6,
+                    "A": 7, "Im": 8,
+                    "R": 9
+                  }
+
+                  let player1Rank = player1Obj.rank;
+                  let player2Rank = player2Obj.rank;
+
+                  console.log("player1Rank: " + player1Rank);
+                  let player1RankGroup = player1Rank.slice(0, -1);
+                  let player1RankValue = rankValue[player1RankGroup];
+
+                  let player2RankGroup = player2Rank.slice(0, -1);
+                  let player2RankValue = rankValue[player2RankGroup];
+
+                  let rankDiff = Math.abs(player1RankValue - player2RankValue);
+                  if (rankDiff <= 1) {
+                    //start game
+                    console.log("Theres a match");
+                    queueVcHandler(interaction, /*list of player*/[]);
+
+                  } else {
+                    //rank diff too high
+                    //do nothing
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
