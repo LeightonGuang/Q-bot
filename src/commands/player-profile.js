@@ -145,9 +145,13 @@ module.exports = {
 
       //if player does not exist in playerList
     } else if (!player_is_in_list) {
-      await interaction.reply("new player profile added");
+      await interaction.reply({
+        content:
+          `new player profile added\n` +
+          `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`,
+        ephemeral: true
+      });
       console.log("LOG: \t" + "new player profile added");
-      interaction.channel.send(`${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
       playerList.push(player);
       writeToFile(dataObj, 'data.json');
