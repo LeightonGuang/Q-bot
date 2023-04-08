@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
-const queueVcHandler = require("../handlers/queueVcHandler");
+const duoQueueVcHandler = require("./queueVcHandler/duoQueueVcHandler");
 
 /**
  * when any queue button is used
@@ -505,6 +505,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + "You are not in queue");
         }
       } else if (buttonPressed === "refresh") {
+        //refresh the queue embed
         updateQueueEmbed();
         await interaction.deferUpdate();
         console.log("LOG: \t" + "refreshed the embed");
@@ -522,6 +523,7 @@ module.exports = (client) => {
       if (buttonPressed === "duoRankQueue") {
         if (duoRankList.length >= 2) {
 
+          outerLoop:
           for (let player1Id of duoRankList) {
             for (let player2Id of duoRankList) {
 
@@ -558,7 +560,8 @@ module.exports = (client) => {
                   if (rankDiff <= 1) {
                     //start game
                     console.log("Theres a match");
-                    queueVcHandler(interaction, /*list of player*/[]);
+                    duoQueueVcHandler(interaction, [player1Obj, player2Obj]);
+                    break outerLoop;
 
                   } else {
                     //rank diff too high
