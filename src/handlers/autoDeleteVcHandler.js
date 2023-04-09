@@ -8,7 +8,7 @@ module.exports = (client) => {
     let dataObj = JSON.parse(dataFile);
     let customVoiceChannel = dataObj.customVoiceChannel;
 
-    //if there are no custom voice channel
+    //if there are custom voice channel
     if (customVoiceChannel.length !== 0) {
       for (let name of customVoiceChannel) {
         const channel = guild.channels.cache.find((c) => c.name === name);
