@@ -24,8 +24,8 @@ module.exports = (client) => {
           try {
             await interaction.reply({ content: "You can't accept or decline your own invite", ephemeral: true });
             console.log("LOG: \t" + "member interacted with their own invite");
-          } finally {
-            return 1;
+          } catch (error) {
+            return;
           }
 
         }
@@ -130,18 +130,7 @@ module.exports = (client) => {
           }
         }
 
-      } else {
-        try {
-          await interaction.reply({ content: "You are not invited", ephemeral: true });
-          console.log("LOG: \t" + "member interacted is not invited");
-        } catch (error) {
-          return 1;
-        }
       }
-      /*
-        loop through all the object in vcInvite and check if the interactionId
-        matches interaction.id
-      */
     }
   });
 };
