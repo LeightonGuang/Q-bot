@@ -227,6 +227,8 @@ module.exports = (client) => {
           //embed message object id
           updateQueueEmbed();
 
+          duoQueueVcHandler(interaction);
+
           //if player is already in queue
         } else {
           await interaction.reply({
@@ -509,69 +511,6 @@ module.exports = (client) => {
         updateQueueEmbed();
         await interaction.deferUpdate();
         console.log("LOG: \t" + "refreshed the embed");
-      }
-
-      /** check for match
-       * 
-       * duo rank
-       * if there are more than 2 people
-       * check their region and rank
-       * 
-       * 
-       */
-
-      if (buttonPressed === "duoRankQueue") {
-        if (duoRankList.length >= 2) {
-
-          outerLoop:
-          for (let player1Id of duoRankList) {
-            for (let player2Id of duoRankList) {
-
-              //if its not comparing to itself
-              if (player1Id !== player2Id) {
-
-                //get the object of both player
-                const player1Obj = playerList.find(obj => obj.id === player1Id);
-                const player2Obj = playerList.find(obj => obj.id === player2Id);
-
-                console.log("player1 region: " + player1Obj.region);
-                console.log("player2 region: " + player2Obj.region);
-                //check if both player are from the same region
-                if (player1Obj.region === player2Obj.region) {
-                  let rankValue = {
-                    "I": 0, "B": 1,
-                    "S": 3, "G": 4,
-                    "P": 5, "D": 6,
-                    "A": 7, "Im": 8,
-                    "R": 9
-                  }
-
-                  let player1Rank = player1Obj.rank;
-                  let player2Rank = player2Obj.rank;
-
-                  console.log("player1Rank: " + player1Rank);
-                  let player1RankGroup = player1Rank.slice(0, -1);
-                  let player1RankValue = rankValue[player1RankGroup];
-
-                  let player2RankGroup = player2Rank.slice(0, -1);
-                  let player2RankValue = rankValue[player2RankGroup];
-
-                  let rankDiff = Math.abs(player1RankValue - player2RankValue);
-                  if (rankDiff <= 1) {
-                    //start game
-                    console.log("Theres a match");
-                    duoQueueVcHandler(interaction, [player1Obj, player2Obj]);
-                    break outerLoop;
-
-                  } else {
-                    //rank diff too high
-                    //do nothing
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
   });
