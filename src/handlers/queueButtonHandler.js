@@ -1,7 +1,7 @@
-const { EmbedBuilder } = require('discord.js');
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
-const duoQueueVcHandler = require("./queueVcHandler/duoQueueVcHandler");
+const updateQueueEmbed = require("../utils/updateQueueEmbed");
+const duoQueueVcHandler = require("./queueMatchHandler/duoRankQueueMatchHandler");
 
 /**
  * when any queue button is used
@@ -34,76 +34,6 @@ module.exports = (client) => {
         interaction.member.roles.remove(role);
       });
       console.log("LOG: \t" + "remove all queue roles from player");
-    }
-
-    async function updateQueueEmbed() {
-      let message = await interaction.channel.messages.fetch(dataObj.queueEmbedId);
-
-      //embed message object id
-      //console.log("message: " + message);
-      //console.log("message.embeds[0]: " + message.embeds[0]);
-
-
-      let queueEmbed = message.embeds[0];
-      //console.log("queueEmbed: " + queueEmbed.fields);
-
-      //loop through the list of all the queue list
-      for (let i = 0; i < allQueueList.length; i++) {
-        let list = allQueueList[i];
-        let nameList = [];
-
-        //console.log("list: " + list);
-
-        //if queue list is empty
-        if (list.length === 0) {
-          nameList = "--empty--";
-
-          //if queue list is not empty
-        } else {
-
-          //loops through all the id in all the queue list
-          for (let queuePlayerId of list) {
-            //console.log("list: " + JSON.stringify(list));
-            //console.log("list: " + list);
-            let memberObj = await guild.members.fetch(queuePlayerId);
-
-
-            //if member don't have nicname then add their username
-            if (memberObj.nickname === null) {
-              nameList.push(memberObj.user.username);
-
-              //add the nickname of member to nameList
-            } else {
-              nameList.push(memberObj.nickname);
-            }
-
-            //console.log("member's name: " + memberObj.nickname);
-            //console.log("nameList: " + nameList);
-          }
-        }
-
-        //change the value of the fields
-        if (nameList === "--empty--") {
-          queueEmbed.fields[i].value = nameList;
-
-          //if nameList have a list of people's name
-        } else {
-          queueEmbed.fields[i].value = nameList.join(", ");
-        }
-      }
-
-      //console.log("new queueEmbed fields: " + JSON.stringify(queueEmbed.fields));
-
-      let newEmbed = new EmbedBuilder()
-        .setAuthor(message.embeds[0].author)
-        .setTitle(message.embeds[0].title)
-        .setDescription(message.embeds[0].description)
-        .addFields(queueEmbed.fields)
-        .setTimestamp()
-        .setColor(0xFF0000);
-
-      console.log("LOG: \t" + "update the field of embed");
-      message.edit({ embeds: [newEmbed] });
     }
 
     function removeRoleAndId() {
@@ -146,7 +76,6 @@ module.exports = (client) => {
     let oneVoneList = dataObj.oneVoneList;
     let tenMansList = dataObj.tenMansList;
     let unratedList = dataObj.unratedList;
-    let playerList = dataObj.playerList;
     let playerId = member.id;
     let playerInQueue;
 
@@ -225,8 +154,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${duoRankRole.name}`);
 
           //embed message object id
-          updateQueueEmbed();
-
+          updateQueueEmbed(interaction);
           duoQueueVcHandler(interaction);
 
           //if player is already in queue
@@ -269,7 +197,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${trioRankRole.name}`);
 
           //embed message object id
-          updateQueueEmbed();
+          updateQueueEmbed(interaction);
 
           //if player is already in queue
         } else {
@@ -311,7 +239,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${fiveStackRankRole.name}`);
 
           //embed message object id
-          updateQueueEmbed();
+          updateQueueEmbed(interaction);
 
           //if player is already in queue
         } else {
@@ -352,7 +280,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${oneVoneRole.name}`);
 
           //embed message object id
-          updateQueueEmbed();
+          updateQueueEmbed(interaction);
 
           //if player is already in queue
         } else {
@@ -394,7 +322,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${tenMansRole.name}`);
 
           //embed message object id
-          updateQueueEmbed();
+          updateQueueEmbed(interaction);
 
           //if player is already in queue
         } else {
@@ -436,7 +364,7 @@ module.exports = (client) => {
           console.log("LOG: \t" + `${memberWhoPressed.tag} is queueing for ${unratedRole.name}`);
 
           //embed message object id
-          updateQueueEmbed();
+          updateQueueEmbed(interaction);
 
           //if player is already in queue
         } else {
@@ -488,7 +416,7 @@ module.exports = (client) => {
           //console.log("dequeued listToDequeue: " + listToDequeue);
 
           removeAllRoles();
-          updateQueueEmbed();
+          updateQueueEmbed(interaction);
 
           await interaction.deferUpdate();
           // await interaction.reply({
@@ -508,7 +436,7 @@ module.exports = (client) => {
         }
       } else if (buttonPressed === "refresh") {
         //refresh the queue embed
-        updateQueueEmbed();
+        updateQueueEmbed(interaction);
         await interaction.deferUpdate();
         console.log("LOG: \t" + "refreshed the embed");
       }
