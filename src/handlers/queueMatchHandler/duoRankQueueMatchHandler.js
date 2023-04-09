@@ -55,15 +55,25 @@ module.exports = async (interaction) => {
             let player2RankValue = rankValue[player2RankGroup];
 
             let rankDiff = Math.abs(player1RankValue - player2RankValue);
-            
+
             if (rankDiff <= 1) {
               //start game
+              let member1 = guild.members.cache.get(player1Id);
+              let member2 = guild.members.cache.get(player2Id);
+
+              let queueNotificationChannel = guild.channels.cache.find(
+                (c) => c.name === "queue-notification"
+              );
+
+              let duoRankRole = guild.roles.cache.find(
+                (role) => role.name === "duo rank"
+              );
+
+              queueNotificationChannel.send(`${member1} and ${member2}, you got a match ${duoRankRole}`);
               console.log("Theres a match for duo rank");
 
               let categoryId = "1074976911312289862";
               let vcName = player1Obj.tag + "'s queue";
-              let member1 = guild.members.cache.get(player1Id);
-              let member2 = guild.members.cache.get(player2Id);
 
               let createPrivateVc = await guild.channels.create({
                 name: vcName,
