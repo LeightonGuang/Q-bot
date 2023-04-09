@@ -10,7 +10,7 @@ const writeToFile = require('../../utils/writeToFile');
    * 
 */
 
-module.exports = async (interaction, duoMatchList) => {
+module.exports = async (interaction) => {
   const { guild } = interaction;
 
   let dataFile = fs.readFileSync("data.json");
@@ -55,22 +55,15 @@ module.exports = async (interaction, duoMatchList) => {
             let player2RankValue = rankValue[player2RankGroup];
 
             let rankDiff = Math.abs(player1RankValue - player2RankValue);
+            
             if (rankDiff <= 1) {
               //start game
               console.log("Theres a match for duo rank");
 
-
-
-
-
-
-
-
-
-
               let categoryId = "1074976911312289862";
-
               let vcName = player1Obj.tag + "'s queue";
+              let member1 = guild.members.cache.get(player1Id);
+              let member2 = guild.members.cache.get(player2Id);
 
               let createPrivateVc = await guild.channels.create({
                 name: vcName,
@@ -81,7 +74,15 @@ module.exports = async (interaction, duoMatchList) => {
                   {
                     id: guild.id,
                     deny: [Discord.PermissionsBitField.Flags.Connect],
-                  }
+                  },
+                  {
+                    id: member1,
+                    allow: [Discord.PermissionsBitField.Flags.Connect],
+                  },
+                  {
+                    id: member2,
+                    allow: [Discord.PermissionsBitField.Flags.Connect],
+                  },
                 ]
               });
 
@@ -89,35 +90,13 @@ module.exports = async (interaction, duoMatchList) => {
               customVoiceChannel.push(vcName);
               writeToFile(dataObj, "data.json");
 
-              //loop through player list and set the permission 
-              for (let player of playerList) {
-
-              }
-
-              //move the 2 players
-              let member1 = guild.members.cache.get(player1Id);
-              let member2 = guild.members.cache.get(player2Id);
-
+              //move the 2 players to their vc
               member1.voice.setChannel(createPrivateVc);
               member2.voice.setChannel(createPrivateVc);
 
-
-
-
-
-
-
-
-
-
-
-
               break outerLoop;
-
-            } else {
-              //rank diff too high
-              //do nothing
             }
+            //else rank diff too high
           }
         }
       }
