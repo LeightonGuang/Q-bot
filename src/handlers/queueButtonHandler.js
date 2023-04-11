@@ -105,9 +105,7 @@ module.exports = (client) => {
         "LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`
       );
 
-      let queueNotificationChannel = guild.channels.cache.find(
-        (c) => c.name === "queue-notification"
-      );
+      let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
       //================start===================
 

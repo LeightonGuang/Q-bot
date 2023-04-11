@@ -24,9 +24,7 @@ module.exports = async (interaction) => {
     let member1 = guild.members.cache.get(player1Id);
     let member2 = guild.members.cache.get(player2Id);
 
-    let queueNotificationChannel = guild.channels.cache.find(
-      (c) => c.name === "queue-notification"
-    );
+    let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
     let duoRankRole = guild.roles.cache.find(
       (role) => role.name === "duo rank"
@@ -138,7 +136,7 @@ module.exports = async (interaction) => {
             //if players are gold or below
             if (player1RankValue <= 3) {
               let rankValueDiff = Math.abs(player1RankValue - player2RankValue);
-              
+
               if (rankValueDiff <= 1) {
                 console.log("LOG: \t" + "Gold or below");
                 //start new private vc

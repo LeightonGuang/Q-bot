@@ -51,9 +51,7 @@ module.exports = async (interaction) => {
             let member1 = guild.members.cache.get(player1Id);
             let member2 = guild.members.cache.get(player2Id);
 
-            let queueNotificationChannel = guild.channels.cache.find(
-              (c) => c.name === "queue-notification"
-            );
+            let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
             let oneVoneRole = guild.roles.cache.find(
               (role) => role.name === "1v1"

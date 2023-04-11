@@ -42,9 +42,7 @@ module.exports = {
 
     let queueWaitingRoomId = guild.channels.cache.find((channel) => channel.name === "queue waiting room");
 
-    let queueNotificationChannel = guild.channels.cache.find(
-      (c) => c.name === "queue-notification"
-    );
+    let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
     const inviteEmbed = new EmbedBuilder()
       .setTitle("Private Stack VC invite")
