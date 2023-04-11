@@ -1,7 +1,6 @@
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
 const updateQueueEmbed = require("../utils/updateQueueEmbed");
-const duoQueueVcHandler = require("./queueMatchHandler/duoRankQueueMatchHandler");
 
 /**
  * when any queue button is used
@@ -155,6 +154,9 @@ module.exports = (client) => {
 
           //embed message object id
           updateQueueEmbed(interaction);
+
+
+          const duoQueueVcHandler = require("./queueMatchHandler/duoRankQueueMatchHandler");
           duoQueueVcHandler(interaction);
 
           //if player is already in queue
@@ -281,6 +283,9 @@ module.exports = (client) => {
 
           //embed message object id
           updateQueueEmbed(interaction);
+
+          const oneVoneQueueHandler = require("../handlers/queueMatchHandler/oneVoneQueueHandler");
+          oneVoneQueueHandler(interaction);
 
           //if player is already in queue
         } else {
