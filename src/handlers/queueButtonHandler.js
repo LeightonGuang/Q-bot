@@ -241,6 +241,9 @@ module.exports = (client) => {
           //embed message object id
           updateQueueEmbed(interaction);
 
+          const fiveStackRankQueueHandler = require("../handlers/queueMatchHandler/fiveStackRankQueueHandler");
+          fiveStackRankQueueHandler(interaction);
+
           //if player is already in queue
         } else {
           await interaction.reply({
