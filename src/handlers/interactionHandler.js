@@ -78,10 +78,25 @@ module.exports = (client) => {
         console.log("LOG: \t" + "member who is not a mod is trying to use mod command");
       }
 
-      //if command is in queue channel
-    } else if (interaction.channel.name === "queue") {
+      //if command is /queue
+    } else if (interaction.commandName === "queue") {
+      //if /queue is in queue channel
+      if (interaction.channel.name === "👥｜queue") {
+        console.log("LOG: \t" + "running /" + interaction.commandName);
+        await command.execute(interaction);
+
+      } else {
+        interaction.reply({
+          content: "You can't run this command here",
+          ephemeral: true
+        });
+        console.log("LOG: \t" + "can't run this command here");
+      }
+
+      //if command is in queue command
+    } else if (interaction.channel.name === "⌨｜queue-command") {
       //
-      if (profileDone) {
+      if (profileDone && interaction.commandName !== "queue") {
         console.log("LOG: \t" + "running /" + interaction.commandName);
         await command.execute(interaction);
 
