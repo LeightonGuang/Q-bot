@@ -20,15 +20,7 @@ module.exports = {
 
     let queueWaitingRoomId = guild.channels.cache.find((channel) => channel.name === "queue waiting room");
 
-    let queueNotificationChannel = guild.channels.cache.find(
-      (c) => c.name === "queue-notification"
-    );
-
-    const inviteEmbed = new EmbedBuilder()
-      .setTitle("Private Duo VC invite")
-      .setDescription(`${member2}, you got an invited from ${member1}`)
-      .setTimestamp()
-      .setColor("0x00FF00");
+    let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
     const inviteRow = new ActionRowBuilder()
       .setComponents(
