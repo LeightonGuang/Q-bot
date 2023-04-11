@@ -94,9 +94,9 @@ module.exports = (client) => {
       }
 
       //if command is in queue command
-    } else if (interaction.channel.name === "⌨｜queue-command") {
+    } else if (interaction.channel.name === "⌨｜command") {
       //
-      if (profileDone && interaction.commandName !== "queue") {
+      if (profileDone) {
         console.log("LOG: \t" + "running /" + interaction.commandName);
         await command.execute(interaction);
 
