@@ -135,10 +135,10 @@ module.exports = async (interaction) => {
              * 
              */
 
-            let rankValueDiff = Math.abs(player1RankValue - player2RankValue);
-
             //if players are gold or below
             if (player1RankValue <= 3) {
+              let rankValueDiff = Math.abs(player1RankValue - player2RankValue);
+              
               if (rankValueDiff <= 1) {
                 console.log("LOG: \t" + "Gold or below");
                 //start new private vc
