@@ -21,6 +21,7 @@ const updateQueueEmbed = require("../utils/updateQueueEmbed");
  */
 
 module.exports = async (interaction) => {
+  console.log("FILE: \t" + "queueButtonHandler.js");
   const { guild, member } = interaction;
 
   //===========================functions============================
@@ -97,26 +98,28 @@ module.exports = async (interaction) => {
   ];
 
   //=========================interaction is button======================
-  if (interaction.isButton()) {
-    let buttonPressed = interaction.customId;
-    let memberWhoPressed = interaction.user;
-    console.log(
-      "LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`
-    );
 
-    let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
+  let buttonPressed = interaction.customId;
+  let memberWhoPressed = interaction.user;
+  console.log(
+    "LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`
+  );
 
-    //================start===================
+  let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
-    /**
-     * when duo ranked button is clicked
-     * add duo rank role to member
-     * add member discord id to duoRankList
-     * edit the embed for duo rank queue
-     * add member's discord name to duo rank queue
-     */
+  //================start===================
 
-    if (buttonPressed === "duoRankQueue") {
+  /**
+   * when duo ranked button is clicked
+   * add duo rank role to member
+   * add member discord id to duoRankList
+   * edit the embed for duo rank queue
+   * add member's discord name to duo rank queue
+   */
+
+
+  switch (buttonPressed) {
+    case "duoRankQueue": {
       //loop through duoRankList to see if member is in duo
       for (let i = 0; i < duoRankList.length; i++) {
         //check if player is in duoRankList
@@ -164,8 +167,10 @@ module.exports = async (interaction) => {
         });
         console.log("LOG: \t" + "member is already in queue");
       }
+    }
+      break;
 
-    } else if (buttonPressed === "trioRankQueue") {
+    case "trioRankQueue": {
       //loop through trioRankList to see if member is in trio
       for (let i = 0; i < trioRankList.length; i++) {
         //check if player is in trioRankList
@@ -206,8 +211,10 @@ module.exports = async (interaction) => {
         });
         console.log("LOG: \t" + "member is already in queue");
       }
+    }
+      break;
 
-    } else if (buttonPressed === "fiveStackRankQueue") {
+    case "fiveStackRankQueue": {
       //loop through fiveStackRankList to see if member is in 5 stack
       for (let i = 0; i < fiveStackRankList.length; i++) {
         //check if player is in fiveStackRankList
@@ -251,7 +258,11 @@ module.exports = async (interaction) => {
         });
         console.log("LOG: \t" + "member is already in queue");
       }
-    } else if (buttonPressed === "oneVoneQueue") {
+    }
+
+      break;
+
+    case "oneVoneQueue": {
       //loop through oneVoneList to see if member is in 1v1
       for (let i = 0; i < oneVoneList.length; i++) {
         //check if player is in oneVoneList
@@ -295,8 +306,10 @@ module.exports = async (interaction) => {
         });
         console.log("LOG: \t" + "member is already in queue");
       }
+    }
+      break;
 
-    } else if (buttonPressed === "tenMansQueue") {
+    case "tenMansQueue": {
       //loop through tenMansList to see if member is in 1v1
       for (let i = 0; i < tenMansList.length; i++) {
         //check if player is in tenMansList
@@ -337,8 +350,10 @@ module.exports = async (interaction) => {
         });
         console.log("LOG: \t" + "member is already in queue");
       }
+    }
+      break;
 
-    } else if (buttonPressed === "unrated") {
+    case "unrated": {
       //loop through unratedList to see if member is in 1v1
       for (let i = 0; i < unratedList.length; i++) {
         //check if player is in unratedList
@@ -379,9 +394,10 @@ module.exports = async (interaction) => {
         });
         console.log("LOG: \t" + "member is already in queue");
       }
+    }
+      break;
 
-    } else if (buttonPressed === "dequeue") {
-
+    case "dequeue": {
       //check if member has a queue role
       let memberHasRoles, memberInList, listToDequeue;
 
@@ -439,11 +455,15 @@ module.exports = async (interaction) => {
         });
         console.log("LOG: \t" + "You are not in queue");
       }
-    } else if (buttonPressed === "refresh") {
+    }
+      break;
+
+    case "refresh": {
       //refresh the queue embed
       updateQueueEmbed(interaction);
       await interaction.deferUpdate();
       console.log("LOG: \t" + "refreshed the embed");
     }
+      break;
   }
 };
