@@ -342,6 +342,9 @@ module.exports = async (interaction) => {
         //embed message object id
         updateQueueEmbed(interaction);
 
+        const tenMansQueueHandler = require("../handlers/queueMatchHandler/tenMansQueueMatchHandler");
+        tenMansQueueHandler(interaction);
+
         //if player is already in queue
       } else {
         await interaction.reply({
