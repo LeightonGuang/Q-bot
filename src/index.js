@@ -35,7 +35,7 @@ for (const file of commandFiles) {
   // Set a new item in the Collection with the key as the command name and the value as the exported module
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command);
-    
+
   } else {
     console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
   }
@@ -54,8 +54,8 @@ interactionHandler(client);
 let vcInviteHandler = require("./handlers/vcInviteHandler");
 vcInviteHandler(client);
 
-let queueButtonHandler = require("./handlers/queueButtonHandler");
-queueButtonHandler(client);
+let buttonHandler = require("./handlers/buttonHandler");
+buttonHandler(client);
 
 let autoDeleteVcHandler = require("./handlers/autoDeleteVcHandler");
 autoDeleteVcHandler(client);
