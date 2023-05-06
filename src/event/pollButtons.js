@@ -1,4 +1,4 @@
-const { ButtonInteraction } = require("discord.js");
+const { ButtonInteraction, EmbedBuilder } = require("discord.js");
 const poll = require("../commands/poll");
 
 const votedMembers = new Set();
@@ -59,19 +59,22 @@ module.exports = async (interaction) => {
     }
       break;
 
+    //end button pressed
     case "end": {
       console.log("LOG: \t" + "end poll button pressed");
       console.log(pollEmbed);
-      //pollEmbed.setAuthor("Poll Result");
-
-      const actionRow = pollEmbed.components.find((c) => c.type === "ACTION_ROW");
 
       await interaction.reply({ content: "You ended the poll", ephemeral: true });
 
-      pollEmbed.spliceComponents(pollEmbed.components.indexOf(actionRow), 1);
+      let newPollEmbed = new EmbedBuilder()
+        .setAuthor({ name: "Poll Ended" })
+        .setTitle(pollEmbed.title)
+        .setFields(pollEmbed.fields)
+        .setTimestamp()
+        .setColor(0x808080)
 
-      interaction.message.edit({ embeds: [pollEmbed] });
-      console.log(pollEmbed);
+      interaction.message.edit({ embeds: [newPollEmbed], components: [] });
+      console.log(newPollEmbed);
     }
       break;
   }
