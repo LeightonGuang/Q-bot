@@ -31,7 +31,6 @@ module.exports = async (interaction) => {
 
   const yesField = pollEmbed.fields[0];
   const noField = pollEmbed.fields[1];
-  //const pollAuthor = pollEmbed.author;
 
   const votedReply = "You voted";
 
