@@ -1,4 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ChatInputCommandInteraction } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ChatInputCommandInteraction, ActionRow } = require('discord.js');
+
+/**
+ * check if there are any duplicate answers
+ */
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -52,7 +56,13 @@ module.exports = {
 
     answers = answers.filter(ans => ans != null);
 
-    console.log("answers:" + answers);
+    let uniqueAnswers = new Set(answers);
+    if (uniqueAnswers.size !== answers.length) {
+      //check if there are any duplicate answers entered
+      console.log("LOG: \t" + "there are duplicate answers");
+      await interaction.reply({ content: "Please do not enter duplicate answers", ephemeral: true });
+      return;
+    }
 
     let numAns = answers.length;
 
@@ -64,33 +74,26 @@ module.exports = {
       .setDescription("Question: " + question)
       .setTimestamp()
 
-    console.log("pollEmbed: " + JSON.stringify(pollEmbed));
-
-
     let newFieldList = [];
     for (let i = 0; i < numAns; i++) {
       let newField = { name: `${answers[i]}: `, value: "0", inline: true };
       newFieldList.push(newField);
     }
 
-    //console.log("newFieldList: " + JSON.stringify(newFieldList));
-
     pollEmbed.addFields(newFieldList);
-
-    //console.log("pollEmbed: " + JSON.stringify(pollEmbed));
 
     const replyObj = await interaction.reply({ embeds: [pollEmbed], fetchReply: true });
 
-    const voteRow = new ActionRowBuilder().setComponents(
-      new ButtonBuilder()
-        .setLabel("yes")
-        .setCustomId(`poll-yes-${replyObj.id}`)
-        .setStyle(ButtonStyle.Success),
-      new ButtonBuilder()
-        .setLabel("no")
-        .setCustomId(`poll-no-${replyObj.id}`)
-        .setStyle(ButtonStyle.Danger),
-    )
+    const voteRow = new ActionRowBuilder()
+
+    for (let i = 0; i < numAns; i++) {
+      voteRow.addComponents(
+        new ButtonBuilder()
+          .setLabel(answers[i])
+          .setCustomId(`poll-${answers[i]}-${replyObj.id}`)
+          .setStyle(ButtonStyle.Primary)
+      )
+    }
 
     const endPollRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
@@ -100,6 +103,5 @@ module.exports = {
     )
 
     interaction.editReply({ components: [voteRow, endPollRow] });
-
   }
 };
