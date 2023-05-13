@@ -44,21 +44,31 @@ module.exports = async (interaction) => {
   for (let i = 0; i < numAns; i++) {
     let buttonPressedAnswer = interaction.customId.split('-')[1];
 
-    if (buttonPressedAnswer === "end") {
+    let memberPressedEnd = interaction.message.embeds[0].author.name;
+
+    console.log("user.tag: " + interaction.user.tag);
+    console.log("memberPressedEnd: " + memberPressedEnd);
+
+    if ((buttonPressedAnswer === "end")) {
       //if end poll button is pressed remove buttons and change colour
-      console.log("LOG: \t" + "end poll button pressed");
+      if (interaction.user.tag === memberPressedEnd) {
+        //if the member pressed end poll is the creator of the poll 
+        console.log("LOG: \t" + "end poll button pressed");
+        await interaction.reply({ content: "You ended the poll", ephemeral: true });
 
-      await interaction.reply({ content: "You ended the poll", ephemeral: true });
+        let newPollEmbed = new EmbedBuilder()
+          .setColor(0x808080)
+          .setAuthor(pollEmbed.author)
+          .setTitle("Poll Ended")
+          .setDescription(pollEmbed.description)
+          .setFields(pollEmbed.fields)
+          .setTimestamp()
 
-      let newPollEmbed = new EmbedBuilder()
-        .setColor(0x808080)
-        .setAuthor(pollEmbed.author)
-        .setTitle("Poll Ended")
-        .setDescription(pollEmbed.description)
-        .setFields(pollEmbed.fields)
-        .setTimestamp()
+        interaction.message.edit({ embeds: [newPollEmbed], components: [] });
 
-      interaction.message.edit({ embeds: [newPollEmbed], components: [] });
+      } else {
+        await interaction.reply({ content: "Only poll creator can end poll", ephemeral: true });
+      }
 
       break;
 
