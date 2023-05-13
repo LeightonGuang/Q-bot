@@ -4,28 +4,35 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("poll")
     .setDescription("make a poll")
-    .addSubcommand(subcommand =>
-      subcommand
-        .setName("yes-no-poll")
-        .setDescription("poll for yes and no")
-        .addStringOption((option) =>
-          option
-            .setName("poll")
-            .setDescription("poll question for yes and no")
-            .setRequired(true)
-        )
+    .addStringOption((option) =>
+      option
+        .setName("question")
+        .setDescription("question")
+        .setRequired(true)
     )
-    .addSubcommand(subcommand =>
-      subcommand
-        .setName("multiple-choice-poll")
-        .setDescription("poll for multiple choice")
-        .addStringOption((option) =>
-          option
-            .setName("poll")
-            .setDescription("poll question for multiple choice")
-            .setRequired(true)
-        )
-    ),
+    .addStringOption((option) =>
+      option
+        .setName("answer-1")
+        .setDescription("answer 1")
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("answer-2")
+        .setDescription("answer 2")
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("answer-3")
+        .setDescription("answer 3")
+    )
+    .addStringOption((option) =>
+      option
+        .setName("answer-4")
+        .setDescription("answer 4")
+    )
+  ,
 
   /**
    * 
@@ -34,42 +41,65 @@ module.exports = {
 
   async execute(interaction) {
     console.log("FILE: \t" + "poll.js");
-    let subCommand = interaction.options.getSubcommand();
 
-    if (subCommand === "yes-no-poll") {
-      let question = interaction.options.getString("poll");
+    let question = interaction.options.getString("question");
+    let answers = [
+      interaction.options.getString("answer-1"),
+      interaction.options.getString("answer-2"),
+      interaction.options.getString("answer-3"),
+      interaction.options.getString("answer-4")
+    ];
 
-      const pollEmbed = new EmbedBuilder()
-        .setAuthor({ name: "Poll" })
-        .setTitle(question)
-        .setFields([
-          { name: "Yes: ", value: "0", inline: true },
-          { name: "No: ", value: "0", inline: true },
-        ])
-        .setTimestamp()
-        .setColor(0xFFFF00)
+    answers = answers.filter(ans => ans != null);
 
-      const replyObj = await interaction.reply({ embeds: [pollEmbed], fetchReply: true });
+    console.log("answers:" + answers);
 
-      const voteRow = new ActionRowBuilder().setComponents(
-        new ButtonBuilder()
-          .setLabel("yes")
-          .setCustomId(`poll-yes-${replyObj.id}`)
-          .setStyle(ButtonStyle.Success),
-        new ButtonBuilder()
-          .setLabel("no")
-          .setCustomId(`poll-no-${replyObj.id}`)
-          .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-          .setLabel("end poll")
-          .setCustomId("poll-end")
-          .setStyle(ButtonStyle.Secondary),
-      )
+    let numAns = answers.length;
 
-      interaction.editReply({ components: [voteRow] });
+    let pollEmbed = new EmbedBuilder()
+      .setColor(0xFFFF00)
+      .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
+      .setTitle("Poll")
+      .addFields()
+      .setDescription("Question: " + question)
+      .setTimestamp()
 
-    } else if (subCommand === "multiple-choice-poll") {
+    console.log("pollEmbed: " + JSON.stringify(pollEmbed));
 
+
+    let newFieldList = [];
+    for (let i = 0; i < numAns; i++) {
+      let newField = { name: `${answers[i]}: `, value: "0", inline: true };
+      newFieldList.push(newField);
     }
+
+    //console.log("newFieldList: " + JSON.stringify(newFieldList));
+
+    pollEmbed.addFields(newFieldList);
+
+    //console.log("pollEmbed: " + JSON.stringify(pollEmbed));
+
+    const replyObj = await interaction.reply({ embeds: [pollEmbed], fetchReply: true });
+
+    const voteRow = new ActionRowBuilder().setComponents(
+      new ButtonBuilder()
+        .setLabel("yes")
+        .setCustomId(`poll-yes-${replyObj.id}`)
+        .setStyle(ButtonStyle.Success),
+      new ButtonBuilder()
+        .setLabel("no")
+        .setCustomId(`poll-no-${replyObj.id}`)
+        .setStyle(ButtonStyle.Danger),
+    )
+
+    const endPollRow = new ActionRowBuilder().setComponents(
+      new ButtonBuilder()
+        .setLabel("end poll")
+        .setCustomId("poll-end")
+        .setStyle(ButtonStyle.Secondary),
+    )
+
+    interaction.editReply({ components: [voteRow, endPollRow] });
+
   }
 };
