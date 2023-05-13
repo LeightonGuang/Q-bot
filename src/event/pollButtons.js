@@ -32,49 +32,52 @@ module.exports = async (interaction) => {
   const yesField = pollEmbed.fields[0];
   const noField = pollEmbed.fields[1];
 
-  const votedReply = "You voted";
+  const votedReply = "vote submitted";
 
-  switch (splittedArray[1]) {
+  let answers = [];
 
-    //yes button pressed
-    case "yes": {
-      console.log("LOG: \t" + "yes button pressed");
-      const newYesCount = parseInt(yesField.value) + 1;
-      yesField.value = newYesCount;
+  let numAns = pollEmbed.fields.length;
 
-      await interaction.reply({ content: votedReply, ephemeral: true });
-      interaction.message.edit({ embeds: [pollEmbed] });
-    }
-      break;
+  let buttonComponent = interaction.message.components[0];
 
-    //no button pressed
-    case "no": {
-      console.log("LOG: \t" + "no button pressed");
-      const newNoCount = parseInt(noField.value) + 1;
-      noField.value = newNoCount;
+  for (let i = 0; i < numAns; i++) {
+    let ans = buttonComponent.components[i].customId.split('-')[1];
+    answers.push(ans);
+  }
 
-      await interaction.reply({ content: votedReply, ephemeral: true });
-      interaction.message.edit({ embeds: [pollEmbed] });
-    }
-      break;
+  for (let i = 0; i < numAns; i++) {
+    let buttonPressedAnswer = interaction.customId.split('-')[1];
 
-    //end button pressed
-    case "end": {
+    if (buttonPressedAnswer === "end") {
+      //if end poll button is pressed remove buttons and change colour
       console.log("LOG: \t" + "end poll button pressed");
-      console.log(pollEmbed);
 
       await interaction.reply({ content: "You ended the poll", ephemeral: true });
 
       let newPollEmbed = new EmbedBuilder()
-        .setAuthor({ name: "Poll Ended" })
-        .setTitle(pollEmbed.title)
+        .setColor(0x808080)
+        .setAuthor(pollEmbed.author)
+        .setTitle("Poll Ended")
+        .setDescription(pollEmbed.description)
         .setFields(pollEmbed.fields)
         .setTimestamp()
-        .setColor(0x808080)
 
       interaction.message.edit({ embeds: [newPollEmbed], components: [] });
-      console.log(newPollEmbed);
-    }
+
       break;
+
+    } else if (buttonPressedAnswer === answers[i]) {
+      //if button pressed is one of the answers in the list
+      console.log("LOG: \t" + `[${answers[i]}] button pressed`);
+
+      let count = pollEmbed.fields[i];
+      const newCount = parseInt(count.value) + 1;
+      count.value = newCount;
+
+      await interaction.reply({ content: votedReply, ephemeral: true });
+      interaction.message.edit({ embeds: [pollEmbed] });
+
+      break;
+    }
   }
 }
