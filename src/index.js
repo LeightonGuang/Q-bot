@@ -48,8 +48,8 @@ client.login(TOKEN);
 let messageHandler = require("./handlers/messageHandler");
 messageHandler(client);
 
-let interactionHandler = require("./handlers/interactionHandler");
-interactionHandler(client);
+let commandHandler = require("./handlers/commandHandler");
+commandHandler(client);
 
 let vcInviteHandler = require("./handlers/vcInviteHandler");
 vcInviteHandler(client);

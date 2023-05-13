@@ -2,6 +2,8 @@ const fs = require("node:fs");
 
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
+    console.log("FILE: \t" + "interactionHandler.js");
+
     const { guild } = interaction;
 
     let dataFile = fs.readFileSync("data.json");
@@ -36,6 +38,8 @@ module.exports = (client) => {
     //console.log("command: /" + interaction.commandName);
     let mod = interaction.guild.roles.cache.find(role => role.name === "mod");
     let isMod = interaction.member.roles.cache.has(mod.id);
+
+    let commandChannelId = "1095144647023661166";
 
     //if interaction commands are help and player-profile
     if (playerCommands.some(item => item === interaction.commandName)) {
@@ -94,7 +98,7 @@ module.exports = (client) => {
       }
 
       //if command is in queue command
-    } else if (interaction.channel.name === "⌨｜command") {
+    } else if (interaction.channel.id === commandChannelId) {
       //
       if (profileDone) {
         console.log("LOG: \t" + "running /" + interaction.commandName);
