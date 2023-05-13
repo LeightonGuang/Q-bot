@@ -31,9 +31,6 @@ module.exports = async (interaction) => {
     answers.push(ans);
   }
 
-  //member has already voted and the button is yes or no
-
-  //use for loop to check 
   for (let i = 0; i < numAns; i++) {
     if (votedMembers.has(`${interaction.user.id}-${interaction.message.id}`) && (splittedArray[1] === answers[i])) {
       //if Set() votedmembers has [user.id]-[message.id] and button pressed is one of the answers
