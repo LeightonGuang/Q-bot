@@ -18,32 +18,31 @@ module.exports = async (interaction) => {
   //if button pressed is not a poll button 
   if (splittedArray[0] !== "poll") return console.log("not a poll button");
 
-  //member has already voted and the button is yes or no
-  if (votedMembers.has(`${interaction.user.id}-${interaction.message.id}`) && (splittedArray[1] === "yes" || splittedArray[1] === "no")) {
-    return await interaction.reply({ content: "You've already voted", ephemeral: true });
-  }
-
-  //add the user id to votedMembers Set()
-  votedMembers.add(`${interaction.user.id}-${interaction.message.id}`);
-
   const pollEmbed = interaction.message.embeds[0];
   if (!pollEmbed) return;
 
-  const yesField = pollEmbed.fields[0];
-  const noField = pollEmbed.fields[1];
-
-  const votedReply = "vote submitted";
-
-  let answers = [];
 
   let numAns = pollEmbed.fields.length;
-
-  let buttonComponent = interaction.message.components[0];
+  let answers = [];
 
   for (let i = 0; i < numAns; i++) {
+    let buttonComponent = interaction.message.components[0];
     let ans = buttonComponent.components[i].customId.split('-')[1];
     answers.push(ans);
   }
+
+  //member has already voted and the button is yes or no
+
+  //use for loop to check 
+  for (let i = 0; i < numAns; i++) {
+    if (votedMembers.has(`${interaction.user.id}-${interaction.message.id}`) && (splittedArray[1] === answers[i])) {
+      //if Set() votedmembers has [user.id]-[message.id] and button pressed is one of the answers
+      return await interaction.reply({ content: "You've already voted", ephemeral: true });
+    }
+  }
+
+  //add the user id and message id to votedMembers Set()
+  votedMembers.add(`${interaction.user.id}-${interaction.message.id}`);
 
   for (let i = 0; i < numAns; i++) {
     let buttonPressedAnswer = interaction.customId.split('-')[1];
@@ -73,6 +72,8 @@ module.exports = async (interaction) => {
       let count = pollEmbed.fields[i];
       const newCount = parseInt(count.value) + 1;
       count.value = newCount;
+
+      const votedReply = "vote submitted";
 
       await interaction.reply({ content: votedReply, ephemeral: true });
       interaction.message.edit({ embeds: [pollEmbed] });
