@@ -1,5 +1,10 @@
 const fs = require("node:fs");
 
+/**
+ * if command used is /help or /player-profile
+ *  it will run anywhere 
+ */
+
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
     console.log("FILE: \t" + "interactionHandler.js");
@@ -13,7 +18,7 @@ module.exports = (client) => {
     let profileDone = false;
     let userInteracted = interaction.user.id;
 
-    let playerCommands = ["help", "player-profile"];
+    let playerCommands = ["help", "player-profile", "poll"];
     let modCommands = ["mod-help", "mod"];
 
     //check if member's player profile is setup done
@@ -97,7 +102,7 @@ module.exports = (client) => {
         console.log("LOG: \t" + "can't run this command here");
       }
 
-      //if command is in queue command
+      //if command is in command channel
     } else if (interaction.channel.id === commandChannelId) {
       //
       if (profileDone) {
