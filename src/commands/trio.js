@@ -26,7 +26,7 @@ module.exports = {
     let member2 = interaction.options.getMember("trio1");
     let member3 = interaction.options.getMember("trio2");
 
-    let queueWaitingRoomId = guild.channels.cache.find((channel) => channel.name === "queue waiting room");
+    let queueWaitingRoomId = guild.channels.cache.get("1095136188622454916");
 
     let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
