@@ -3,6 +3,7 @@ const writeToFile = require("../utils/writeToFile");
 const updateQueueEmbed = require("../utils/updateQueueEmbed");
 
 /**
+ * check if member are in queue waiting room
  * when any queue button is used
  * 
  * add the member the the corresponding queue
@@ -23,6 +24,8 @@ const updateQueueEmbed = require("../utils/updateQueueEmbed");
 module.exports = async (interaction) => {
   console.log("FILE: \t" + "queueButtonHandler.js");
   const { guild, member } = interaction;
+  let memberClicked = interaction.user;
+  //console.log("memberClicked: " + memberClicked);
 
   //===========================functions============================
 
@@ -77,6 +80,8 @@ module.exports = async (interaction) => {
   let unratedList = dataObj.unratedList;
   let playerId = member.id;
   let playerInQueue;
+  let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
+  let queueWaitingRoomId = guild.channels.cache.get("1095136188622454916");
 
   //allQueueList and allQueueRoles should have the same order of the list and roles
   let allQueueList = [
@@ -105,8 +110,6 @@ module.exports = async (interaction) => {
     "LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`
   );
 
-  let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
-
   //================start===================
 
   /**
@@ -116,6 +119,14 @@ module.exports = async (interaction) => {
    * edit the embed for duo rank queue
    * add member's discord name to duo rank queue
    */
+
+  let memberInQueueWaitingRoom = queueWaitingRoomId.members.has(memberClicked.id);
+
+  //check if members are in queue waiting room
+  if (!memberInQueueWaitingRoom) {
+    console.log("LOG: \t" + "member is not in queue waiting room");
+    return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
+  }
 
 
   switch (buttonPressed) {
