@@ -18,7 +18,7 @@ module.exports = {
     let member1 = member;
     let member2 = interaction.options.getMember("duo");
 
-    let queueWaitingRoomId = guild.channels.cache.find((channel) => channel.name === "queue waiting room");
+    let queueWaitingRoomId = guild.channels.cache.get("1095136188622454916");
 
     let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
 
