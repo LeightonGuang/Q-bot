@@ -68,7 +68,7 @@ module.exports = async (interaction) => {
             console.log("Theres a match for 1v1");
 
             let queuesId = "1102167519583817728";
-            let textChannelName = (player1Obj.tag + "-vs-" + player2Obj.tag + "s-lobby").toLowerCase();
+            let textChannelName = (player1Obj.tag + " vs " + player2Obj.tag + "'s lobby");
             let voiceChannelName = player1Obj.tag + " vs " + player2Obj.tag + "'s vc";
 
             let privateTextChannel = await guild.channels.create({
