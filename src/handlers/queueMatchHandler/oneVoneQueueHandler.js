@@ -1,16 +1,23 @@
 const Discord = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const fs = require("node:fs");
 const updateQueueEmbed = require("../../utils/updateQueueEmbed");
 const writeToFile = require('../../utils/writeToFile');
+const { info } = require("node:console");
 
 /** check for match
    * 
    * 1v1
+   * 
+   * if member is in queue waiting room
+   * let them queue
+   * 
    * if there are more than 2 people
    * check their region
    * 
    * if the region match
    * 
+   * create private text channel
    * create private vc
    * move both player to private vc
    * 
@@ -57,17 +64,38 @@ module.exports = async (interaction) => {
               (role) => role.name === "1v1"
             );
 
-            queueNotificationChannel.send(`${member1} and ${member2}, you got a 1v1 game ${oneVoneRole}`);
+            queueNotificationChannel.send(`${member1} and ${member2}, you got a ${oneVoneRole} game`);
             console.log("Theres a match for 1v1");
 
-            let categoryId = "1074976911312289862";
-            let vcName = player1Obj.tag + " vs " + player2Obj.tag;
+            let queuesId = "1102167519583817728";
+            let textChannelName = (player1Obj.tag + "-vs-" + player2Obj.tag + "s-lobby").toLowerCase();
+            let voiceChannelName = player1Obj.tag + " vs " + player2Obj.tag + "'s vc";
 
-            let createPrivateVc = await guild.channels.create({
-              name: vcName,
+            let privateTextChannel = await guild.channels.create({
+              name: textChannelName,
+              type: 0,
+              parent: queuesId,
+              permissionOverwrites: [
+                {
+                  id: guild.id,
+                  deny: [Discord.PermissionsBitField.Flags.ViewChannel],
+                },
+                {
+                  id: member1,
+                  allow: [Discord.PermissionsBitField.Flags.ViewChannel],
+                },
+                {
+                  id: member2,
+                  allow: [Discord.PermissionsBitField.Flags.ViewChannel],
+                }
+              ]
+            });
+
+            let privateVc = await guild.channels.create({
+              name: voiceChannelName,
               type: 2,
               userLimit: 2,
-              parent: categoryId,
+              parent: queuesId,
               permissionOverwrites: [
                 {
                   id: guild.id,
@@ -84,13 +112,38 @@ module.exports = async (interaction) => {
               ]
             });
 
-            let customVoiceChannel = dataObj.customVoiceChannel;
-            customVoiceChannel.push(vcName);
+            let customLobby = dataObj.customLobby;
+
+            let customVcObj = {
+              textChannelId: privateTextChannel.id,
+              voiceChannelId: privateVc.id,
+              type: "1v1",
+              region: player1Obj.region,
+              playersList: [player1Obj, player2Obj],
+            }
+
+            customLobby.push(customVcObj);
             writeToFile(dataObj, "data.json");
 
+            //send players riot id to private text Channel
+            let infoEmbed = new EmbedBuilder()
+              .setColor(0xFFFFFF)
+              .setAuthor({ name: "Q bot" })
+              .setTitle("Player Info")
+              .addFields(
+                { name: "Memmber", value: player1Obj.tag, inline: true },
+                { name: "Riot Id", value: player1Obj.riotId, inline: true },
+                { name: "\u200B", value: "\u200B" },
+                { name: "Member", value: player2Obj.tag, inline: true },
+                { name: "Riot Id", value: player2Obj.riotId, inline: true },
+              )
+              .setTimestamp()
+
+            privateTextChannel.send({ embeds: [infoEmbed] });
+
             //move the 2 players to their vc
-            member1.voice.setChannel(createPrivateVc);
-            member2.voice.setChannel(createPrivateVc);
+            member1.voice.setChannel(privateVc);
+            member2.voice.setChannel(privateVc);
 
             //remove their names from oneVoneList
             let listOfId = [player1Id, player2Id];
@@ -104,6 +157,7 @@ module.exports = async (interaction) => {
             break outerLoop;
           }
           //not in the same region
+          //console.log("LOG: \t" + "no region match");
         }
       }
     }
