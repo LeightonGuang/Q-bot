@@ -97,8 +97,8 @@ module.exports = (client) => {
                     writeToFile(dataObj, "data.json");
 
                     //add private vc name in cusotmVoiceChannel
-                    let customVoiceChannel = dataObj.customVoiceChannel;
-                    customVoiceChannel.push(member1.user.username + "'s duo vc");
+                    let customLobby = dataObj.customLobby;
+                    customLobby.push(member1.user.username + "'s duo vc");
                     writeToFile(dataObj, "data.json");
                   }
 

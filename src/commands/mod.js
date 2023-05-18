@@ -53,7 +53,7 @@ module.exports = {
       dataObj.fiveStackRankList = [];
       dataObj.oneVoneList = [];
       dataObj.tenMansList = [];
-      dataObj.customVoiceChannel = [];
+      dataObj.customLobby = [];
       dataObj.vcInvite = [];
 
       writeToFile(dataObj, "data.json");
