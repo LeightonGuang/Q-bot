@@ -29,7 +29,7 @@ module.exports = (client) => {
 
         //delete vc name in customLobby
         dataObj.customLobby = customLobby.filter(
-          (item) => item.voiceChannelName !== oldState.channel.name
+          (item) => item.voiceChannelId !== oldState.channel.id
         );
         writeToFile(dataObj, "data.json");
         break;
