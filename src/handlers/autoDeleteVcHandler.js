@@ -6,25 +6,33 @@ module.exports = (client) => {
     const { guild } = newState;
     let dataFile = fs.readFileSync("data.json");
     let dataObj = JSON.parse(dataFile);
-    let customVoiceChannel = dataObj.customVoiceChannel;
+    let customLobby = dataObj.customLobby;
 
     //if there are custom voice channel
-    if (customVoiceChannel.length !== 0) {
-      for (let name of customVoiceChannel) {
-        const channel = guild.channels.cache.find((c) => c.name === name);
+    if (customLobby.length === 0) return;
 
-        //if all member left vc that is in custom vc
-        if (channel && channel.members.size === 0) {
-          //delete vc name in customVoiceChannel
-          dataObj.customVoiceChannel = customVoiceChannel.filter(
-            (item) => item !== oldState.channel.name
-          );
-          writeToFile(dataObj, "data.json");
-          //delete vc
-          oldState.channel.delete();
-          console.log(`${oldState.channel.name} deleted`);
-          break;
-        }
+    for (let lobbyObj of customLobby) {
+      const textChannel = guild.channels.cache.get(lobbyObj.textChannelId);
+      const voiceChannel = guild.channels.cache.get(lobbyObj.voiceChannelId);
+
+      console.log("textChannel: \t" + textChannel);
+
+      //if all member left vc that is in custom vc
+      if (voiceChannel && voiceChannel.members.size === 0) {
+        //delete text channel
+        textChannel.delete();
+        console.log("LOG: \t" + `${textChannel.name} text channel deleted`)
+
+        //delete voice channel
+        oldState.channel.delete();
+        console.log("LOG: \t" + `${oldState.channel.name} deleted`);
+
+        //delete vc name in customLobby
+        dataObj.customLobby = customLobby.filter(
+          (item) => item.voiceChannelName !== oldState.channel.name
+        );
+        writeToFile(dataObj, "data.json");
+        break;
       }
     }
   });
