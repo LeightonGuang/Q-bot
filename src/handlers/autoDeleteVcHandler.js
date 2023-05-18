@@ -15,8 +15,6 @@ module.exports = (client) => {
       const textChannel = guild.channels.cache.get(lobbyObj.textChannelId);
       const voiceChannel = guild.channels.cache.get(lobbyObj.voiceChannelId);
 
-      console.log("textChannel: \t" + textChannel);
-
       //if all member left vc that is in custom vc
       if (voiceChannel && voiceChannel.members.size === 0) {
         //delete text channel
