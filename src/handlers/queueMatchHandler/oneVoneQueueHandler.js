@@ -115,10 +115,10 @@ module.exports = async (interaction) => {
             let customLobby = dataObj.customLobby;
 
             let customVcObj = {
-              textChannelId: privateTextChannel.id,
-              voiceChannelId: privateVc.id,
               type: "1v1",
               region: player1Obj.region,
+              textChannelId: privateTextChannel.id,
+              voiceChannelId: privateVc.id,
               playersList: [player1Obj, player2Obj],
             }
 
@@ -131,7 +131,7 @@ module.exports = async (interaction) => {
               .setAuthor({ name: "Q bot" })
               .setTitle("Player Info")
               .addFields(
-                { name: "Memmber", value: player1Obj.tag, inline: true },
+                { name: "Member", value: player1Obj.tag, inline: true },
                 { name: "Riot Id", value: player1Obj.riotId, inline: true },
                 { name: "\u200B", value: "\u200B" },
                 { name: "Member", value: player2Obj.tag, inline: true },
