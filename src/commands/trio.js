@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
 const fs = require("node:fs");
 const writeToFile = require('../utils/writeToFile');
 
@@ -29,12 +29,6 @@ module.exports = {
     let queueWaitingRoomId = guild.channels.cache.get("1095136188622454916");
 
     let queueNotificationChannel = guild.channels.cache.get("1082124963793866843");
-
-    const inviteEmbed = new EmbedBuilder()
-      .setTitle("Private Trio VC invite")
-      .setDescription(`${member2} and ${member3}, you got an invited from ${member1}`)
-      .setTimestamp()
-      .setColor("0x00FF00");
 
     const inviteRow = new ActionRowBuilder()
       .setComponents(
