@@ -5,11 +5,11 @@ module.exports = (client) => {
   let newPrivateTrioVc = require("../handlers/privateVc/newPrivateTrioVc");
   newPrivateTrioVc(client);
 
-  let newPrivateSquadVc = require("../handlers/privateVc/newPrivateSquadVc");
-  newPrivateSquadVc(client);
+  let newPrivateQuadVc = require("../handlers/privateVc/newPrivateQuadVc");
+  newPrivateQuadVc(client);
 
   let newPrivateStackVc = require("../handlers/privateVc/newPrivateStackVc");
   newPrivateStackVc(client);
 
-   
+
 };

@@ -69,7 +69,7 @@ Command for setting up their own profile. [region, rank, riot id]
 
 -  `/trio [trio1] [trio2]`
 
--  `/squad [squad1] [squad2] [squad3]`
+-  `/quad [quad1] [quad2] [quad3]`
 
 -  `/stack [stack1] [stack2] [stack3] [stack4] `
 
@@ -117,6 +117,6 @@ private vc
 
 - /trio
 
-- /squad
+- /quad
 
 - /stack

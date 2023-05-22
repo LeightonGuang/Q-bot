@@ -14,7 +14,7 @@ module.exports = {
         { name: "/setup", value: "Create roles for queue" },
         { name: "/creator", value: "Creator of Q Bot" },
         { name: "/player-profile", value: "Setup player information" },
-        { name: "/duo, /trio, /squad, /stack ", value: "Creates a private vc for you and the people you want" }
+        { name: "/duo, /trio, /quad, /stack ", value: "Creates a private vc for you and the people you want" }
       )
       .setTimestamp()
       .setFooter({ text: "Q bot" })

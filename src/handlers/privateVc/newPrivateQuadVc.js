@@ -43,8 +43,8 @@ module.exports = (client) => {
       }
 
       //if member is in the inviteList
-      if (invited && vcType === "squad") {
-        console.log("running squad code");
+      if (invited && vcType === "quad") {
+        console.log("running quad code");
 
         //go through each invite in vcInvite
         for (let i = 0; i < vcInvite.length; i++) {
@@ -56,7 +56,7 @@ module.exports = (client) => {
           }
           //check the vcType in that object
 
-          //if the vcType is "squad" then run then keep going
+          //if the vcType is "quad" then run then keep going
           console.log(`${sameInteraction} and ${buttonClicked}`);
           if (sameInteraction && buttonClicked === "accept") {
 
@@ -82,9 +82,9 @@ module.exports = (client) => {
               member4 = guild.members.cache.get(member4);
 
               //make private vc
-              console.log("create squad private vc");
-              let createSquadVc = await guild.channels.create({
-                name: member1.user.username + "'s squad vc",
+              console.log("create quad private vc");
+              let createQuadVc = await guild.channels.create({
+                name: member1.user.username + "'s quad vc",
                 type: 2,
                 userLimit: invite.inviteList.length,
                 parent: categoryId,
@@ -112,11 +112,11 @@ module.exports = (client) => {
                 ],
               });
 
-              let newSquadObj = guild.channels.cache.find((channel) => channel.name === member1.user.username + "'s squad vc");
-              member1.voice.setChannel(newSquadObj);
-              member2.voice.setChannel(newSquadObj);
-              member3.voice.setChannel(newSquadObj);
-              member4.voice.setChannel(newSquadObj);
+              let newQuadObj = guild.channels.cache.find((channel) => channel.name === member1.user.username + "'s quad vc");
+              member1.voice.setChannel(newQuadObj);
+              member2.voice.setChannel(newQuadObj);
+              member3.voice.setChannel(newQuadObj);
+              member4.voice.setChannel(newQuadObj);
 
               //delete message and button in queue-notification
               let interactionId = dataObj.interactionId;
@@ -128,7 +128,7 @@ module.exports = (client) => {
 
               //add private vc name in cusotmVoiceChannel
               let customLobby = dataObj.customLobby;
-              customLobby.push(member1.user.username + "'s squad vc");
+              customLobby.push(member1.user.username + "'s quad vc");
               writeToFile(dataObj, "data.json");
             }
 
