@@ -51,6 +51,9 @@ messageHandler(client);
 let commandHandler = require("./handlers/commandHandler");
 commandHandler(client);
 
+let vcStateHandler = require("./handlers/vcStateHandler");
+vcStateHandler(client);
+
 let vcInviteHandler = require("./handlers/vcInviteHandler");
 vcInviteHandler(client);
 
