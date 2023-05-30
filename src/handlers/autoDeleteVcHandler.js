@@ -8,7 +8,7 @@ module.exports = (client) => {
     let dataObj = JSON.parse(dataFile);
     let customLobby = dataObj.customLobby;
 
-    //if there are custom voice channel
+    //if there are nothing in custom lobby
     if (customLobby.length === 0) return;
 
     for (let lobbyObj of customLobby) {
