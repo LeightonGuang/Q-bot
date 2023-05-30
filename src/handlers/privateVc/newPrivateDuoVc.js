@@ -25,10 +25,16 @@ module.exports = (client) => {
     for (let invite of vcInvite) {
       //if member interacted with their own invite
       if (invite.inviteList[0] === interaction.user.id) {
-        await interaction.reply({ content: "You can't accept or decline your own invite", ephemeral: true });
-        console.log("LOG: \t" + "member interacted with their own invite");
-        return;
+        try {
+          await interaction.reply({ content: "You can't accept or decline your own invite", ephemeral: true });
+          console.log("LOG: \t" + "member interacted with their own invite");
+          return;
+
+        } catch (error) {
+          return;
+        }
       }
+
       for (let i = 1; i < invite.inviteList.length; i++) {
         let member = invite.inviteList[i];
         if (interaction.user.id === member) {
@@ -46,7 +52,7 @@ module.exports = (client) => {
 
     for (let i = 0; i < vcInvite.length; i++) {
       let invite = vcInvite[i];
-      
+
       //if interactionId is the same as interaction.message.id
       if (invite.interactionId === interaction.message.id) {
 
@@ -153,6 +159,7 @@ module.exports = (client) => {
                   { name: "\u200B", value: "\u200B" },
                   { name: "Member", value: player2Obj.tag, inline: true },
                   { name: "Riot Id", value: player2Obj.riotId, inline: true },
+                  { name: "\u200B", value: "\u200B" },
                 )
                 .setTimestamp()
 
