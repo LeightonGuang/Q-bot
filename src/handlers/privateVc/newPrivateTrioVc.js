@@ -174,6 +174,7 @@ module.exports = (client) => {
                   { name: "\u200B", value: "\u200B" },
                   { name: "Member", value: player3Obj.tag, inline: true },
                   { name: "Riot Id", value: player3Obj.riotId, inline: true },
+                  { name: "\u200B", value: "\u200B" },
                 )
                 .setTimestamp()
 
