@@ -16,7 +16,7 @@ module.exports = async (interaction) => {
   //poll-yes-[id]
   const splittedArray = interaction.customId.split('-');
   //if button pressed is not a poll button 
-  if (splittedArray[0] !== "poll") return console.log("not a poll button");
+  if (splittedArray[0] !== "poll") return;
 
   const pollEmbed = interaction.message.embeds[0];
   if (!pollEmbed) return;
