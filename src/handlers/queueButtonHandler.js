@@ -441,9 +441,13 @@ module.exports = async (interaction) => {
 
         //remove member id from list
         //console.log("index of playerid: " + listToDequeue);
-        let index = listToDequeue.indexOf(playerId);
-        listToDequeue.splice(index, 1);
-        //console.log(listToDequeue);
+        try {
+          let index = listToDequeue.indexOf(playerId);
+          listToDequeue.splice(index, 1);
+
+        } catch (error) {
+          console.log("LOG: \t" + "player is not in queue");
+        }
 
         console.log("LOG: \t" + "remove memberid from listToDequeue");
         writeToFile(dataObj, "data.json");
