@@ -136,6 +136,7 @@ module.exports = async (interaction) => {
                 { name: "\u200B", value: "\u200B" },
                 { name: "Member", value: player2Obj.tag, inline: true },
                 { name: "Riot Id", value: player2Obj.riotId, inline: true },
+                { name: "\u200B", value: "\u200B" },
               )
               .setTimestamp()
 
