@@ -90,7 +90,8 @@ module.exports = (client) => {
       //if command is /queue
     } else if (interaction.commandName === "queue") {
       //if /queue is in queue channel
-      if (interaction.channel.name === "👥｜queue") {
+      let queueId = "1090741922185887754";
+      if (interaction.channel.id === queueId) {
         console.log("LOG: \t" + "running /" + interaction.commandName);
         await command.execute(interaction);
 
