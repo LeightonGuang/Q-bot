@@ -1,12 +1,11 @@
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
 const updateQueueEmbed = require("../utils/updateQueueEmbed");
-const { InteractionCollector } = require("discord.js");
 
 /**
+ * vcStateHandler.js dequeue member when they disconnect from queue waiting room
+ * 
  * check if someone disconnected from a vc
- * 
- * 
  * 
  */
 
@@ -67,6 +66,4 @@ module.exports = (client) => {
       }
     }
   });
-
-
 };
