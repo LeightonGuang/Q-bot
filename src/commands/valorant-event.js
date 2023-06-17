@@ -3,7 +3,6 @@ const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const { promises } = require('dns');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -33,11 +32,18 @@ module.exports = {
     let dataFile = fs.readFileSync("data.json");
     let dataObj = JSON.parse(dataFile);
 
-    let ongoingEventList = dataObj.events.valorantEvents.ongoingEventList;
+    //let ongoingEventList = dataObj.events.valorantEvents.ongoingEventList;
+
+    let valorantEventEmbedList = [];
+
+    let ongoingEventList = [];
+
+    let upcomingEventList = [];
 
     if (subCommand === "ongoing-events") {
 
       async function fetchOngoingEvents() {
+
         const response = await axios.get(vlr_url + "/vct-" + year);
         const html = response.data;
         const $ = cheerio.load(html);
@@ -50,6 +56,7 @@ module.exports = {
           let eventStatus = $(eventBox).find("span.event-item-desc-item-status").text();
 
           if (eventStatus === "ongoing") {
+            //only get onoing Events
             let ongoingEventTitle = $(eventBox).find("div.event-item-title").text().trim();
 
             let ongoingEventUrl = $(eventBox).attr("href");
@@ -70,6 +77,10 @@ module.exports = {
               "upcomingMatchList": []
             };
 
+            //valorantEventEmbedList.push(ongoingEventEmbed);
+
+            interaction.editReply({ embeds: valorantEventEmbedList });
+
             ongoingEventObjList.push(newOngoingEventObj);
 
             //find the index of the object that is in the list
@@ -88,9 +99,84 @@ module.exports = {
         });
       }
 
+      async function fetchEventMatch() {
+        for (let ongoingEvent of ongoingEventList) {
+          let eventPageUrl = ongoingEvent.eventPageUrl;
+
+          let matchPageUrl;
+
+          //find match page url
+          await axios.get(eventPageUrl).then(urlResponse => {
+            const html = urlResponse.data;
+            const $ = cheerio.load(html);
+
+            matchPageUrl = $("a.wf-nav-item:eq(1)").attr("href");
+            matchPageUrl = vlr_url + matchPageUrl;
+            console.log("matchPageUrl: " + matchPageUrl);
+          });
+
+          //go on match page and find all the match infos
+          await axios.get(matchPageUrl).then(urlResponse => {
+            const html = urlResponse.data;
+            const $ = cheerio.load(html);
+
+            let eventLogoUrl = $("div.wf-avatar").find("img").attr("src");
+            eventLogoUrl = "https:" + eventLogoUrl;
+
+            const eventName = $("h1.wf-title").text().trim();
+
+            $("div.wf-card").each((i, dayBox) => {
+              //every dayBox
+              if (i !== 0) {
+                //not the first wf-card
+                $(dayBox).find("a.match-item").each((i, matchBox) => {
+                  //every matchBox
+
+                  let teamNameList = $(matchBox)
+                    .find("div.match-item-vs")
+                    .find("div.match-item-vs-team")
+                    .find("div.text-of")
+                    .text().trim();
+
+                  teamNameList = teamNameList.replace(/\t/g, '');
+                  teamNameList = teamNameList.split(/\n+/);
+
+                  //console.log(JSON.stringify(teamNameList));
+
+                  //teamName = teamName.split(' ');
+                  let team1 = teamNameList[0];
+                  let team2 = teamNameList[1];
+                  //console.log(team1 + " and " + team2);
+
+                  let matchTime = $(matchBox).find("div.match-item-time").text().trim();
+
+                  let matchUrl = $(matchBox).attr("href");
+                  matchUrl = vlr_url + matchUrl;
+                  //console.log("matchUrl: " + matchUrl);
+
+                  if (team1 !== "TBD" || team2 !== "TBD") {
+                    //only show if one of them have a team
+                    let matchObj = {
+                      "eventName": eventName,
+                      "eventLogoUrl": eventLogoUrl,
+                      "team1": team1,
+                      "team2": team2,
+                      "matchTime": matchTime,
+                      "matchUrl": matchUrl
+                    }
+
+                    ongoingEvent.upcomingMatchList.push(matchObj);
+                  }
+                });
+              }
+            });
+          });
+        }
+      }
+
       async function fetchOngoingEventTeamList() {
         for (let ongoingEvent of ongoingEventList) {
-          //loop through all the event in ongoingEventlist
+          //loop through all the event in ongoingEventList
           let eventPageUrl = ongoingEvent.eventPageUrl;
 
           await axios.get(eventPageUrl).then(urlResponse => {
@@ -131,27 +217,66 @@ module.exports = {
             .setURL(ongoingEvent.eventPageUrl)
             .setThumbnail(ongoingEvent.eventLogoUrl)
             .setDescription("Date: " + ongoingEvent.date)
-            .addFields()
+            .addFields({ name: "Teams: ", value: "\u200B" })
 
           let fieldTeamlist = [];
           for (let team of ongoingEvent.teamList) {
             //console.log(team);
-            let newField = { name: "Team", value: team.teamName, inline: true };
+            let newField = { name: "\u200B", value: `[${team.teamName}](${team.teamUrl})`, inline: true };
             fieldTeamlist.push(newField);
           }
-
           ongoingEventEmbed.addFields(fieldTeamlist);
 
-          channel.send({ embeds: [ongoingEventEmbed] });
+          valorantEventEmbedList.push(ongoingEventEmbed);
+          interaction.editReply({ embeds: valorantEventEmbedList });
+
+          for (let matchObj of ongoingEvent.upcomingMatchList) {
+
+            let matchEmbed = new EmbedBuilder()
+              .setColor(0x9464f6)
+              .setAuthor({ name: matchObj.eventName, iconURL: matchObj.eventLogoUrl })
+              .setTitle(`${matchObj.team1} vs ${matchObj.team2}`)
+              .setURL(matchObj.matchUrl)
+              .setDescription(matchObj.matchTime)
+              .setFields([
+                { name: "Team", value: matchObj.team1, inline: true },
+                { name: "Team", value: matchObj.team2, inline: true }
+              ])
+
+            valorantEventEmbedList.push(matchEmbed)
+
+            interaction.editReply({ embeds: valorantEventEmbedList });
+          }
         }
       }
 
-      await interaction.reply("Valorant Event");
+      let ongoingEventEmbedHeader = new EmbedBuilder()
+        .setColor(0xFFFFFF)
+        .setTitle("Ongoing Valorant Champions Tour " + year)
+        .setURL(vlr_url + "/vct-" + year)
+        .setDescription("Riot's official " + year + " Valorant tournament circuit")
+
+      valorantEventEmbedList.push(ongoingEventEmbedHeader);
+
+      await interaction.reply({ embeds: valorantEventEmbedList, fetchReply: true });
+
       await fetchOngoingEvents();
-      await fetchOngoingEventTeamList();
+      await fetchEventMatch();
+      //await fetchOngoingEventTeamList();
       await sendEventEmbed();
 
     } else if (subCommand === "upcoming-events") {
+
+      let ongoingEventEmbedHeader = new EmbedBuilder()
+        .setColor(0xFFFFFF)
+        .setTitle("Upcoming Valorant Champions Tour " + year)
+        .setURL(vlr_url + "/vct-" + year)
+        .setDescription("Riot's official " + year + " Valorant tournament circuit")
+
+      valorantEventEmbedList.push(ongoingEventEmbedHeader);
+
+      await interaction.reply({ embeds: valorantEventEmbedList, fetchReply: true });
+
       axios.get(vlr_url + "/vct-" + year).then(urlResponse => {
 
         const html = urlResponse.data;
@@ -175,7 +300,7 @@ module.exports = {
             upcomingEventImgUrl = "https:" + upcomingEventImgUrl;
 
             let upcomingEventEmbed = new EmbedBuilder()
-              .setColor(0xFF4553)
+              .setColor(0xc6b274)
               .setTitle(upcomingEventTitle)
               .setURL(upcomingEventUrl)
               .setThumbnail(upcomingEventImgUrl)
