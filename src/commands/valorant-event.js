@@ -3,6 +3,7 @@ const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { match } = require('assert');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -128,7 +129,7 @@ module.exports = {
             $("div.wf-card").each((i, dayBox) => {
               //every dayBox
               if (i !== 0) {
-                //not the first wf-card
+                //the first wf-card is not dayBox
                 $(dayBox).find("a.match-item").each((i, matchBox) => {
                   //every matchBox
 
@@ -148,6 +149,17 @@ module.exports = {
                   let team2 = teamNameList[1];
                   //console.log(team1 + " and " + team2);
 
+                  let matchStatus = $(matchBox).find("div.ml-status").text();
+                  console.log(matchStatus);
+
+                  let matchSeries = $(matchBox).find("div.match-item-event-series").text().trim();
+
+                  let teamScoreList = $(matchBox).find("div.match-item-vs-team-score").text().trim();
+
+                  teamScoreList = teamScoreList.replace(/\t/g, '');
+                  teamScoreList = teamScoreList.split("\n");
+                  console.log(JSON.stringify(teamScoreList));
+
                   let matchTime = $(matchBox).find("div.match-item-time").text().trim();
 
                   let matchUrl = $(matchBox).attr("href");
@@ -159,8 +171,11 @@ module.exports = {
                     let matchObj = {
                       "eventName": eventName,
                       "eventLogoUrl": eventLogoUrl,
+                      "matchStatus": matchStatus,
+                      "matchSeries": matchSeries,
                       "team1": team1,
                       "team2": team2,
+                      "teamScoreList": teamScoreList,
                       "matchTime": matchTime,
                       "matchUrl": matchUrl
                     }
@@ -227,25 +242,51 @@ module.exports = {
           }
           ongoingEventEmbed.addFields(fieldTeamlist);
 
-          valorantEventEmbedList.push(ongoingEventEmbed);
-          interaction.editReply({ embeds: valorantEventEmbedList });
+
+          if (valorantEventEmbedList.length < 10) {
+            valorantEventEmbedList.push(ongoingEventEmbed)
+            interaction.editReply({ embeds: valorantEventEmbedList });
+
+          } else {
+            channel.send({ embeds: [ongoingEventEmbed] });
+          }
 
           for (let matchObj of ongoingEvent.upcomingMatchList) {
 
             let matchEmbed = new EmbedBuilder()
-              .setColor(0x9464f6)
               .setAuthor({ name: matchObj.eventName, iconURL: matchObj.eventLogoUrl })
               .setTitle(`${matchObj.team1} vs ${matchObj.team2}`)
               .setURL(matchObj.matchUrl)
               .setDescription(matchObj.matchTime)
-              .setFields([
+              .addFields([
+                { name: "Status: ", value: matchObj.matchStatus, inline: true },
+                { name: "\u200B", value: "\u200B", inline: true },
+                { name: "Series: ", value: matchObj.matchSeries, inline: true }
+              ])
+
+
+            if (matchObj.matchStatus === "Completed") {
+              //if the match is completed show the score
+              matchEmbed.setColor(0x888888)
+              matchEmbed.addFields([
+                { name: matchObj.team1, value: matchObj.teamScoreList[0], inline: true },
+                { name: matchObj.team2, value: matchObj.teamScoreList[1], inline: true }
+              ])
+            } else {
+              matchEmbed.setColor(0x5da46c)
+              matchEmbed.addFields([
                 { name: "Team", value: matchObj.team1, inline: true },
                 { name: "Team", value: matchObj.team2, inline: true }
               ])
+            }
 
-            valorantEventEmbedList.push(matchEmbed)
+            if (valorantEventEmbedList.length < 10) {
+              valorantEventEmbedList.push(matchEmbed)
+              interaction.editReply({ embeds: valorantEventEmbedList });
 
-            interaction.editReply({ embeds: valorantEventEmbedList });
+            } else {
+              channel.send({ embeds: [matchEmbed] });
+            }
           }
         }
       }
