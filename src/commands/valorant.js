@@ -7,18 +7,18 @@ const { match } = require('assert');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("valorant-event")
-    .setDescription("get any Valorant Champions Tour event schedules")
+    .setName("valorant")
+    .setDescription("commands for valorant related stuff")
     .addSubcommand(subcommand =>
       subcommand
         .setName("ongoing-events")
-        .setDescription("csgo events that are ongoing right now.")
+        .setDescription("Ongoing Valorant Champions Tour events.")
     )
 
     .addSubcommand(subcommand =>
       subcommand
         .setName("upcoming-events")
-        .setDescription("Upcoming csgo events.")
+        .setDescription("Upcoming Valorant Champions Tour events.")
     ),
 
   async execute(interaction) {
@@ -104,7 +104,8 @@ module.exports = {
         for (let ongoingEvent of ongoingEventList) {
           let eventPageUrl = ongoingEvent.eventPageUrl;
 
-          let matchPageUrl;
+          let matchPageUrl, matchUrl;
+
 
           //find match page url
           await axios.get(eventPageUrl).then(urlResponse => {
@@ -126,10 +127,27 @@ module.exports = {
 
             const eventName = $("h1.wf-title").text().trim();
 
+            let dateList = [];
+            $("div.wf-label.mod-large").each((i, date) => {
+              let time = $(date).text().trim();
+              time = time.substring(time.indexOf(' ') + 1);
+              time = time.split(',').join('');
+              time = time.split(' ');
+              time = `${time[0]} ${time[1]} ${time[2]}`;
+
+              dateList.push(time);
+            })
+
+            //console.log(dateList);
+
             $("div.wf-card").each((i, dayBox) => {
               //every dayBox
               if (i !== 0) {
                 //the first wf-card is not dayBox
+
+                //set the matchDate from the list
+                let matchDate = dateList[i];
+
                 $(dayBox).find("a.match-item").each((i, matchBox) => {
                   //every matchBox
 
@@ -150,7 +168,7 @@ module.exports = {
                   //console.log(team1 + " and " + team2);
 
                   let matchStatus = $(matchBox).find("div.ml-status").text();
-                  console.log(matchStatus);
+                  //console.log(matchStatus);
 
                   let matchSeries = $(matchBox).find("div.match-item-event-series").text().trim();
 
@@ -158,11 +176,11 @@ module.exports = {
 
                   teamScoreList = teamScoreList.replace(/\t/g, '');
                   teamScoreList = teamScoreList.split("\n");
-                  console.log(JSON.stringify(teamScoreList));
+                  //console.log(JSON.stringify(teamScoreList));
 
                   let matchTime = $(matchBox).find("div.match-item-time").text().trim();
 
-                  let matchUrl = $(matchBox).attr("href");
+                  matchUrl = $(matchBox).attr("href");
                   matchUrl = vlr_url + matchUrl;
                   //console.log("matchUrl: " + matchUrl);
 
@@ -176,10 +194,10 @@ module.exports = {
                       "team1": team1,
                       "team2": team2,
                       "teamScoreList": teamScoreList,
+                      "matchDate": matchDate,
                       "matchTime": matchTime,
                       "matchUrl": matchUrl
                     }
-
                     ongoingEvent.upcomingMatchList.push(matchObj);
                   }
                 });
@@ -253,11 +271,18 @@ module.exports = {
 
           for (let matchObj of ongoingEvent.upcomingMatchList) {
 
+            function getTime(time) {
+              return time;
+            }
+
+            let specificTime = new Date(`${matchObj.matchDate} ${matchObj.matchTime}`);
+            specificTime = specificTime.getTime() / 1000;
+
             let matchEmbed = new EmbedBuilder()
               .setAuthor({ name: matchObj.eventName, iconURL: matchObj.eventLogoUrl })
               .setTitle(`${matchObj.team1} vs ${matchObj.team2}`)
               .setURL(matchObj.matchUrl)
-              .setDescription(matchObj.matchTime)
+              .addFields({ name: "Time and Date: ", value: `<t:${specificTime}>`, inline: false })
               .addFields([
                 { name: "Status: ", value: matchObj.matchStatus, inline: true },
                 { name: "\u200B", value: "\u200B", inline: true },
@@ -268,6 +293,12 @@ module.exports = {
             if (matchObj.matchStatus === "Completed") {
               //if the match is completed show the score
               matchEmbed.setColor(0x888888)
+              matchEmbed.addFields([
+                { name: matchObj.team1, value: matchObj.teamScoreList[0], inline: true },
+                { name: matchObj.team2, value: matchObj.teamScoreList[1], inline: true }
+              ])
+            } else if (matchObj.matchStatus === "LIVE") {
+              matchEmbed.setColor(0xFF0000)
               matchEmbed.addFields([
                 { name: matchObj.team1, value: matchObj.teamScoreList[0], inline: true },
                 { name: matchObj.team2, value: matchObj.teamScoreList[1], inline: true }
