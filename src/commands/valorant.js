@@ -1,9 +1,9 @@
-const { SlashCommandBuilder, Events, GuildScheduledEvent, EmbedBuilder, Embed } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const { match } = require('assert');
+const { profile } = require('console');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -19,6 +19,12 @@ module.exports = {
       subcommand
         .setName("upcoming-events")
         .setDescription("Upcoming Valorant Champions Tour events.")
+    )
+
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName("last-rank-game-stats")
+        .setDescription("show the stats of your last rank game")
     ),
 
   async execute(interaction) {
@@ -38,7 +44,6 @@ module.exports = {
     let valorantEventEmbedList = [];
 
     let ongoingEventList = [];
-
     let upcomingEventList = [];
 
     if (subCommand === "ongoing-events") {
@@ -114,7 +119,7 @@ module.exports = {
 
             matchPageUrl = $("a.wf-nav-item:eq(1)").attr("href");
             matchPageUrl = vlr_url + matchPageUrl;
-            console.log("matchPageUrl: " + matchPageUrl);
+            //console.log("matchPageUrl: " + matchPageUrl);
           });
 
           //go on match page and find all the match infos
@@ -128,6 +133,7 @@ module.exports = {
             const eventName = $("h1.wf-title").text().trim();
 
             let dateList = [];
+            let matchStatusList = [];
             $("div.wf-label.mod-large").each((i, date) => {
               let time = $(date).text().trim();
               time = time.substring(time.indexOf(' ') + 1);
@@ -140,13 +146,13 @@ module.exports = {
 
             //console.log(dateList);
 
-            $("div.wf-card").each((i, dayBox) => {
+            $("div.wf-card").each((index, dayBox) => {
               //every dayBox
-              if (i !== 0) {
+              if (index !== 0) {
                 //the first wf-card is not dayBox
 
                 //set the matchDate from the list
-                let matchDate = dateList[i];
+                let matchDate = dateList[index - 1];
 
                 $(dayBox).find("a.match-item").each((i, matchBox) => {
                   //every matchBox
@@ -167,9 +173,13 @@ module.exports = {
                   let team2 = teamNameList[1];
                   //console.log(team1 + " and " + team2);
 
-                  let matchStatus = $(matchBox).find("div.ml-status").text();
-                  //console.log(matchStatus);
+                  //matchStatusList is a global variable list
+                  matchStatusList.push($(matchBox).find("div.ml-status").text());
 
+                  let matchStatus = $(matchBox).find("div.ml-status").text();
+                  //console.log(matchStatusList);
+
+                  //round 1, quater final, finals etc
                   let matchSeries = $(matchBox).find("div.match-item-event-series").text().trim();
 
                   let teamScoreList = $(matchBox).find("div.match-item-vs-team-score").text().trim();
@@ -240,9 +250,65 @@ module.exports = {
         }
       }
 
+      async function fetchMapPoint() {
+
+        let mapUrlList = [];
+
+        //loop through all the ongoing event
+        for (let i = 0; i < ongoingEventList.length; i++) {
+          let ongoingEvent = ongoingEventList[i];
+
+          //loop through all the match in 
+          for (let j = 0; j < ongoingEvent.upcomingMatchList.length; j++) {
+            let matchObj = ongoingEvent.upcomingMatchList[j];
+
+            let matchUrl = matchObj.matchUrl;
+
+            //console.log(matchUrl);
+
+            if (i !== 0 && matchObj.matchStatus === "Completed") {
+              await axios.get(matchUrl).then(urlResponse => {
+                const html = urlResponse.data;
+                const $ = cheerio.load(html);
+
+                console.log("matchUrl: " + matchUrl);
+
+                let mapBox = $("div.vm-stats-gamesnav-item");
+
+                console.log(mapBox);
+
+                //get all the map box
+                $(mapBox).each((i, mapBox) => {
+                  let mapUrl = $(mapBox).attr("data-href");
+                  mapUrl = vlr_url + mapUrl;
+                  console.log("mapUrl: " + mapUrl);
+
+                  mapUrlList.push(matchUrl);
+                })
+              })
+            }
+          }
+        }
+
+        console.log("mapUrlList: " + mapUrlList);
+
+        for (let mapUrl of mapUrlList) {
+          await axios.get(mapUrl).then(urlResponse => {
+            const html = urlResponse.data;
+            const $ = cheerio.load(html);
+
+            let mapPoint = $("div.vm-stats-container").find("div.score").text().trim();
+            console.log(mapPoint);
+          })
+        }
+
+      }
+
       async function sendEventEmbed() {
-        for (let ongoingEvent of ongoingEventList) {
+        for (let i = 0; i < ongoingEventList.length; i++) {
           //console.log(JSON.stringify(ongoingEvent));
+
+          let ongoingEvent = ongoingEventList[i];
 
           let ongoingEventEmbed = new EmbedBuilder()
             .setColor(0xFF4553)
@@ -250,8 +316,9 @@ module.exports = {
             .setURL(ongoingEvent.eventPageUrl)
             .setThumbnail(ongoingEvent.eventLogoUrl)
             .setDescription("Date: " + ongoingEvent.date)
-            .addFields({ name: "Teams: ", value: "\u200B" })
+          //.addFields({ name: "Teams: ", value: "\u200B" })
 
+          /*add field to teams to the event embed
           let fieldTeamlist = [];
           for (let team of ongoingEvent.teamList) {
             //console.log(team);
@@ -259,7 +326,8 @@ module.exports = {
             fieldTeamlist.push(newField);
           }
           ongoingEventEmbed.addFields(fieldTeamlist);
-
+   
+          */
 
           if (valorantEventEmbedList.length < 10) {
             valorantEventEmbedList.push(ongoingEventEmbed)
@@ -269,11 +337,9 @@ module.exports = {
             channel.send({ embeds: [ongoingEventEmbed] });
           }
 
-          for (let matchObj of ongoingEvent.upcomingMatchList) {
-
-            function getTime(time) {
-              return time;
-            }
+          for (let j = 0; j < ongoingEvent.upcomingMatchList.length; j++) {
+            let matchObj = ongoingEvent.upcomingMatchList[j];
+            //console.log("matchStatusList: " + matchObj.matchStatusList);
 
             let specificTime = new Date(`${matchObj.matchDate} ${matchObj.matchTime}`);
             specificTime = specificTime.getTime() / 1000;
@@ -289,7 +355,6 @@ module.exports = {
                 { name: "Series: ", value: matchObj.matchSeries, inline: true }
               ])
 
-
             if (matchObj.matchStatus === "Completed") {
               //if the match is completed show the score
               matchEmbed.setColor(0x888888)
@@ -297,13 +362,15 @@ module.exports = {
                 { name: matchObj.team1, value: matchObj.teamScoreList[0], inline: true },
                 { name: matchObj.team2, value: matchObj.teamScoreList[1], inline: true }
               ])
+
             } else if (matchObj.matchStatus === "LIVE") {
               matchEmbed.setColor(0xFF0000)
               matchEmbed.addFields([
                 { name: matchObj.team1, value: matchObj.teamScoreList[0], inline: true },
                 { name: matchObj.team2, value: matchObj.teamScoreList[1], inline: true }
               ])
-            } else {
+
+            } else if (matchObj.matchStatus === "Upcoming") {
               matchEmbed.setColor(0x5da46c)
               matchEmbed.addFields([
                 { name: "Team", value: matchObj.team1, inline: true },
@@ -335,6 +402,7 @@ module.exports = {
       await fetchOngoingEvents();
       await fetchEventMatch();
       //await fetchOngoingEventTeamList();
+      await fetchMapPoint();
       await sendEventEmbed();
 
     } else if (subCommand === "upcoming-events") {
@@ -382,6 +450,21 @@ module.exports = {
           }
         });
       });
+
+    } else if (subCommand === "last-rank-game-stats") {
+      function profileUrl(riotId) {
+        let modifiedId = riotId.replace(/\s+/g, "%20");
+        modifiedId = modifiedId.replace(/#/g, "%23");
+
+        //console.log(modifiedId);
+
+        return "https://tracker.gg/valorant/profile/riot/" + modifiedId + "/overview";
+      }
+
+      let riotId = dataObj.playerList[2].riotId;
+      //console.log(riotId);
+      //console.log(profileUrl(riotId));
+      let trackerProfileUrl = profileUrl(riotId);
     }
   }
 }
