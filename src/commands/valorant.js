@@ -53,6 +53,30 @@ module.exports = {
           let eventDate = $(eventBox).find(".event-item-desc-item.mod-dates").first().text().trim();
           eventDate = eventDate.slice(0, -5).trim();
 
+          let monthNum = eventDate.split(' ');
+          monthNum = monthNum.length;
+
+          let startDate, endDate;
+
+          if (monthNum === 2) {
+            //if theres only 1 month
+            let [month, range] = eventDate.split(' ');
+            [startDate, endDate] = range.split('—');
+
+            startDate = `${month} ${startDate}`;
+            endDate = `${month} ${endDate}`;
+
+          } else if (monthNum === 3) {
+            //if there are 2 months
+            [startDate, endDate] = eventDate.split('—');
+
+            startDate = startDate.split(' ');
+            startDate = `${startDate[0]} ${startDate[1]}`;
+
+            endDate = endDate.split(' ');
+            endDate = `${endDate[0]} ${endDate[1]}`;
+          }
+
           let eventImgUrl = $(eventBox).find("img").attr("src");
           eventImgUrl = "https:" + eventImgUrl;
 
@@ -60,7 +84,8 @@ module.exports = {
             "eventName": eventTitle,
             "eventLogoUrl": eventImgUrl,
             "eventPageUrl": eventUrl,
-            "date": eventDate,
+            "startDate": startDate,
+            "endDate": endDate,
             "teamList": [],
             "upcomingMatchList": []
           };
@@ -202,12 +227,19 @@ module.exports = {
 
         let event = eventList[i];
 
+        let startDate = new Date(`${event.startDate} ${year}`);
+        startDate = startDate.getTime() / 1000;
+
+
+        let endDate = new Date(`${event.endDate} ${year}`);
+        endDate = endDate.getTime() / 1000;
+
         let eventEmbed = new EmbedBuilder()
           .setColor(0xFF4553)
           .setTitle(event.eventName)
           .setURL(event.eventPageUrl)
           .setThumbnail(event.eventLogoUrl)
-          .setDescription("Date: " + event.date)
+          .setDescription(`Date: <t:${startDate}:d> to <t:${endDate}:d>`)
 
         if (valorantEventEmbedList.length < 10) {
           valorantEventEmbedList.push(eventEmbed)
