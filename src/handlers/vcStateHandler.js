@@ -29,7 +29,16 @@ module.exports = (client) => {
 
     queueWaitingRoomId = "1095136188622454916";
 
-    if (oldState.channel.id === queueWaitingRoomId) {
+    let memberLeavingQWR;
+    try {
+      memberLeavingQWR = oldState.channel.id;
+      memberLeavingQWR = (memberLeavingQWR === queueWaitingRoomId);
+
+    } catch {
+      memberLeavingQWR = false;
+    }
+
+    if (memberLeavingQWR) {
       console.log("LOG: \t" + oldState.member.user.tag + " has disconnected from queue waiting room");
       //if someone left the queue waiting room vc
 
