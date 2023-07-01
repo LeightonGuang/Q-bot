@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
 const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 const axios = require('axios');
@@ -529,19 +529,29 @@ module.exports = {
 
         let currentRankImgUrl, currentRankName;
 
+        if (!currentRankImgElement) {
+          let errorEmbed = new EmbedBuilder()
+            .setColor(0xFF0000)
+            .setTitle("ERROR")
+            .setDescription("Please check if your riot id is correct in /player-profile\nor check if your profile in public on [tracker.gg](https://tracker.gg/valorant)")
+
+          channel.send({ embeds: [errorEmbed] })
+          return;
+        }
+
         if (currentRankImgElement) {
           currentRankImgUrl = await page.evaluate(element => element.src, currentRankImgElement);
-          //console.log(currentRankImgUrl);
+          //console.log("currentRankImgUrl: \t" + currentRankImgUrl);
         }
 
         if (currentRankNameElement) {
           currentRankName = await page.evaluate(element => element.textContent, currentRankNameElement);
-          //console.log(currentRankName);
+          //console.log("currentRankName: \t" + currentRankName);
         }
 
         let currentRankEmbedColour = currentRankName.trim().split(' ');
         currentRankEmbedColour = currentRankEmbedColour[0];
-        console.log(currentRankEmbedColour);
+        //console.log(currentRankEmbedColour);
         currentRankEmbedColour = getRankColour(currentRankEmbedColour);
 
         let currentRankEmbed = new EmbedBuilder()
@@ -552,6 +562,7 @@ module.exports = {
 
         rankEmbedList.push(currentRankEmbed);
         interaction.editReply({ embeds: rankEmbedList });
+        console.log("LOG: \t" + "sending current rank embed");
 
         const peakRankImgElement = await page.$("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div.rating-summary__content.rating-summary__content--secondary > div > div > div > div > div.rating-entry__rank-icon > img");
         const peakRankNameElement = await page.$("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div.rating-summary__content.rating-summary__content--secondary > div > div > div > div > div.rating-entry__rank-info > div.value");
@@ -568,7 +579,7 @@ module.exports = {
 
         let peakRankEmbedColour = peakRankName.trim().split(' ');
         peakRankEmbedColour = peakRankEmbedColour[0];
-        console.log(peakRankEmbedColour);
+        //console.log(peakRankEmbedColour);
         peakRankEmbedColour = getRankColour(peakRankEmbedColour);
 
         let peakRankEmbed = new EmbedBuilder()
@@ -579,12 +590,13 @@ module.exports = {
 
         rankEmbedList.push(peakRankEmbed);
         interaction.editReply({ embeds: rankEmbedList });
+        console.log("LOG: \t" + "sending peak rank embed");
 
         await browser.close();
       }
 
       getRank();
-      console.log(rankEmbedList);
+      //console.log(rankEmbedList);
       await interaction.reply({ embeds: rankEmbedList, fetchReply: true });
 
     }
