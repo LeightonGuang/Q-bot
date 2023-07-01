@@ -465,6 +465,40 @@ module.exports = {
       let trackerProfileUrl = profileUrl(riotId);
 
       async function getRank() {
+
+        function getRankColour(rank) {
+          if (rank === "Iron") {
+            return 0x3c3c3c;
+
+          } else if (rank === "Bronze") {
+            return 0xa5855e;
+
+          } else if (rank === "Silver") {
+            return 0xcdd3d1;
+
+          } else if (rank === "Gold") {
+            return 0xebca52;
+
+          } else if (rank === "Platinum") {
+            return 0x49a6b7;
+
+          } else if (rank === "Diamond") {
+            return 0xd681e9;
+
+          } else if (rank === "Ascendant") {
+            return 0x58a861;
+
+          } else if (rank === "Immortal") {
+            return 0xb13138;
+
+          } else if (rank === "Radiant") {
+            return 0xf5f4df;
+
+          } else {
+            return 0x000000;
+          }
+        }
+
         const browser = await puppeteer.launch({
           //headless: false,
           //args: ['--disable-setuid-sandbox', '--disable-extensions']
@@ -482,13 +516,21 @@ module.exports = {
 
         if (currentRankImgElement) {
           currentRankImgUrl = await page.evaluate(element => element.src, currentRankImgElement);
+          //console.log(currentRankImgUrl);
         }
 
         if (currentRankNameElement) {
           currentRankName = await page.evaluate(element => element.textContent, currentRankNameElement);
+          //console.log(currentRankName);
         }
 
+        let currentRankEmbedColour = currentRankName.trim().split(' ');
+        currentRankEmbedColour = currentRankEmbedColour[0];
+        console.log(currentRankEmbedColour);
+        currentRankEmbedColour = getRankColour(currentRankEmbedColour);
+
         let currentRankEmbed = new EmbedBuilder()
+          .setColor(currentRankEmbedColour)
           .setAuthor({ name: "Current Rank:" })
           .setTitle(currentRankName)
           .setThumbnail(currentRankImgUrl)
@@ -509,7 +551,13 @@ module.exports = {
           peakRankName = await page.evaluate(element => element.textContent, peakRankNameElement);
         }
 
+        let peakRankEmbedColour = peakRankName.trim().split(' ');
+        peakRankEmbedColour = peakRankEmbedColour[0];
+        console.log(peakRankEmbedColour);
+        peakRankEmbedColour = getRankColour(peakRankEmbedColour);
+
         let peakRankEmbed = new EmbedBuilder()
+          .setColor(peakRankEmbedColour)
           .setAuthor({ name: "Peak Rank: " })
           .setTitle(peakRankName)
           .setThumbnail(peakRankImgUrl)
