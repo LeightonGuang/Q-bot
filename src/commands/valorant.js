@@ -23,8 +23,12 @@ module.exports = {
 
     .addSubcommand(subcommand =>
       subcommand
-        .setName("my-rank")
-        .setDescription("show my current rank and peak rank")
+        .setName("check-rank")
+        .setDescription("check current rank and peak rank")
+        .addUserOption((option) =>
+          option
+            .setName("player")
+            .setDescription("default(empty) will be yourself"))
     ),
 
   async execute(interaction) {
@@ -440,7 +444,9 @@ module.exports = {
       await fetchEventMatch(upcomingEventList);
       await sendEmbed(upcomingEventList);
 
-    } else if (subCommand === "my-rank") {
+    } else if (subCommand === "check-rank") {
+
+      //list that stores the current rank and peak rank embed
       let rankEmbedList = [];
 
       function profileUrl(riotId) {
@@ -454,7 +460,16 @@ module.exports = {
         return playerUrl;
       }
 
-      let userId = interaction.user.id;
+      let userId = interaction.options.getMember("player");
+
+      //if the command is left empty
+      if (userId === null) {
+        userId = interaction.user.id;
+
+      } else {
+        userId = userId.id;
+      }
+
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
       let riotId = userObj.riotId;
 
