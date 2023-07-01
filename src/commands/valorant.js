@@ -3,7 +3,7 @@ const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const _ = require("lodash");
+const puppeteer = require('puppeteer');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,8 +23,8 @@ module.exports = {
 
     .addSubcommand(subcommand =>
       subcommand
-        .setName("last-rank-game-stats")
-        .setDescription("show the stats of your last rank game")
+        .setName("my-rank")
+        .setDescription("show my current rank and peak rank")
     ),
 
   async execute(interaction) {
@@ -440,43 +440,89 @@ module.exports = {
       await fetchEventMatch(upcomingEventList);
       await sendEmbed(upcomingEventList);
 
-    } else if (subCommand === "last-rank-game-stats") {
+    } else if (subCommand === "my-rank") {
+      let rankEmbedList = [];
+
       function profileUrl(riotId) {
         let modifiedId = riotId.replace(/\s+/g, "%20");
         modifiedId = modifiedId.replace(/#/g, "%23");
 
         //console.log(modifiedId);
 
-        return "https://tracker.gg/valorant/profile/riot/" + modifiedId + "/overview";
+        let playerUrl = "https://tracker.gg/valorant/profile/riot/" + modifiedId + "/overview";
+        //console.log(playerUrl);
+        return playerUrl;
       }
 
-      let riotId = dataObj.playerList[2].riotId;
-      //console.log(riotId);
-      //console.log(profileUrl(riotId));
+      let userId = interaction.user.id;
+      let userObj = dataObj.playerList.find(obj => obj.id === userId);
+      let riotId = userObj.riotId;
+
+      let statEmbedHeader = new EmbedBuilder()
+        .setTitle("Riot ID: " + riotId)
+
+      rankEmbedList.push(statEmbedHeader);
       let trackerProfileUrl = profileUrl(riotId);
-      console.log(trackerProfileUrl);
 
-      await axios.get(trackerProfileUrl).then(urlResponse => {
-        const html = urlResponse.data;
-        const $ = cheerio.load(html);
+      async function getRank() {
+        const browser = await puppeteer.launch({
+          //headless: false,
+          //args: ['--disable-setuid-sandbox', '--disable-extensions']
+        });
+        const page = await browser.newPage();
+        await page.goto(trackerProfileUrl);
 
-        let latestMatchStatBox = $("div.vmr.trn-match-row").first();
-        console.log(latestMatchStatBox);
+        await page.screenshot({ path: "trackergg.png", fullPage: true });
+        console.log("LOG: \t" + "screenshot");
 
-        let map = $(latestMatchStatBox).find("div.trn-match-row__text-value").text().trim();
-        console.log(map);
+        const currentRankImgElement = await page.$("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div > div > div > div > div > div.rating-entry__rank-icon > img");
+        const currentRankNameElement = await page.$("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div > div > div > div > div > div.rating-entry__rank-info > div.value");
 
-        let matchScore = $(latestMatchStatBox).find("span").text().trim();
+        let currentRankImgUrl, currentRankName;
 
-        console.log(matchScore);
-      });
+        if (currentRankImgElement) {
+          currentRankImgUrl = await page.evaluate(element => element.src, currentRankImgElement);
+        }
 
-      let errorEmbed = new EmbedBuilder()
-        .setAuthor({ name: "Q bot" })
-        .setTitle("Profile not found")
-        .addFields([
-          { name: "Profile not found", value: "Please double check your /player-profile riot id to see if it is correct" },
-        ])
+        if (currentRankNameElement) {
+          currentRankName = await page.evaluate(element => element.textContent, currentRankNameElement);
+        }
+
+        let currentRankEmbed = new EmbedBuilder()
+          .setAuthor({ name: "Current Rank:" })
+          .setTitle(currentRankName)
+          .setThumbnail(currentRankImgUrl)
+
+        rankEmbedList.push(currentRankEmbed);
+        interaction.editReply({ embeds: rankEmbedList });
+
+        const peakRankImgElement = await page.$("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div.rating-summary__content.rating-summary__content--secondary > div > div > div > div > div.rating-entry__rank-icon > img");
+        const peakRankNameElement = await page.$("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div.rating-summary__content.rating-summary__content--secondary > div > div > div > div > div.rating-entry__rank-info > div.value");
+
+        let peakRankImgUrl, peakRankName;
+
+        if (peakRankImgElement) {
+          peakRankImgUrl = await page.evaluate(element => element.src, peakRankImgElement);
+        }
+
+        if (peakRankNameElement) {
+          peakRankName = await page.evaluate(element => element.textContent, peakRankNameElement);
+        }
+
+        let peakRankEmbed = new EmbedBuilder()
+          .setAuthor({ name: "Peak Rank: " })
+          .setTitle(peakRankName)
+          .setThumbnail(peakRankImgUrl)
+
+        rankEmbedList.push(peakRankEmbed);
+        interaction.editReply({ embeds: rankEmbedList });
+
+        await browser.close();
+      }
+
+      getRank();
+      console.log(rankEmbedList);
+      await interaction.reply({ embeds: rankEmbedList, fetchReply: true });
 
     }
   }
