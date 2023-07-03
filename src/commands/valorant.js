@@ -533,7 +533,7 @@ module.exports = {
           let errorEmbed = new EmbedBuilder()
             .setColor(0xFF0000)
             .setTitle("ERROR")
-            .setDescription("Please check if your riot id is correct in /player-profile\nor check if your profile in public on [tracker.gg](https://tracker.gg/valorant)")
+            .setDescription("Please check if your riot id is correct in /player-profile\nor check if your profile is public on [tracker.gg](https://tracker.gg/valorant)")
 
           channel.send({ embeds: [errorEmbed] })
           return;
