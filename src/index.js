@@ -9,7 +9,7 @@ console.log(`
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { Client, Collection, GatewayIntentBits } = require("discord.js");
+const { Client, Collection, GatewayIntentBits, TextChannel } = require("discord.js");
 const { config } = require("dotenv");
 
 const client = new Client({
@@ -62,3 +62,14 @@ buttonHandler(client);
 
 let autoDeleteVcHandler = require("./handlers/autoDeleteVcHandler");
 autoDeleteVcHandler(client);
+
+//announce the bot is going offline
+process.on('SIGINT', async () => {
+  const annoucmentChannel = await client.channels.fetch("1077779475175059506");
+
+  await annoucmentChannel.send("Bot is offline");
+  console.log("LOG: \t" + "Bot is offline");
+
+  client.destroy();
+  process.exit();
+});
