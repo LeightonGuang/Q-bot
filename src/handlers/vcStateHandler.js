@@ -35,6 +35,7 @@ module.exports = (client) => {
     memberLeavingQWR = oldState.channelId;
     memberLeavingQWR = (memberLeavingQWR === queueWaitingRoomId);
 
+    //member joining, leaving and moving vc log
     if (!oldState.channelId && newState.channelId) {
       //if member joins a vc
       console.log("LOG: \t" + `${newState.member.user.tag} has joined [${newState.channel.name}]`);
@@ -48,6 +49,25 @@ module.exports = (client) => {
       console.log("LOG: \t" + `${oldState.member.user.tag} has moved from [${oldState.channel.name}] to [${newState.channel.name}]`);
     }
 
+    //member muting and defening log
+    if (oldState.selfMute === false && newState.selfMute === true) {
+      //if member muted themselves
+      console.log("LOG: \t" + `${newState.member.user.tag} has muted`);
+
+    } else if (oldState.selfMute === true && newState.selfMute === false) {
+      //if member unmuted themselves
+      console.log("LOG: \t" + `${newState.member.user.tag} has unmuted`);
+
+    } else if (oldState.selfDeaf === false && newState.selfDeaf === true) {
+      //if member deafened themselves
+      console.log("LOG: \t" + `${newState.member.user.tag} has deafened`);
+
+    } else if (oldState.selfDeaf === true && newState.selfDeaf === false) {
+      //if member undeafened themselves
+      console.log("LOG: \t" + `${newState.member.user.tag} has undeafened`);
+    }
+
+    //QWR queue waiting room
     if (memberLeavingQWR) {
       console.log("LOG: \t" + oldState.member.user.tag + " has disconnected from queue waiting room");
       //if someone left the queue waiting room vc
