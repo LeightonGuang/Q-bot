@@ -450,6 +450,7 @@ module.exports = {
       let rankEmbedList = [];
 
       function profileUrl(riotId) {
+        //gets the tracker.gg profile url using their riot id
         let modifiedId = riotId.replace(/\s+/g, "%20");
         modifiedId = modifiedId.replace(/#/g, "%23");
 
@@ -473,11 +474,13 @@ module.exports = {
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
       let riotId = userObj.riotId;
 
+      let trackerProfileUrl = profileUrl(riotId);
+
       let statEmbedHeader = new EmbedBuilder()
         .setTitle("Riot ID: " + riotId)
+        .setURL(trackerProfileUrl);
 
       rankEmbedList.push(statEmbedHeader);
-      let trackerProfileUrl = profileUrl(riotId);
 
       async function getRank() {
 
@@ -533,7 +536,7 @@ module.exports = {
           let errorEmbed = new EmbedBuilder()
             .setColor(0xFF0000)
             .setTitle("ERROR")
-            .setDescription("Please check if your riot id is correct in /player-profile\nor check if your profile is public on [tracker.gg](https://tracker.gg/valorant)")
+            .setDescription(`Please check if your riot id is correct in /player-profile\nor check if your profile is public on [tracker.gg](${trackerProfileUrl})`)
 
           channel.send({ embeds: [errorEmbed] })
           return;
