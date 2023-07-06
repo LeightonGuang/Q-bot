@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
 const updateQueueEmbed = require("../utils/updateQueueEmbed");
+const newPrivateDuoVc = require("./privateVc/newPrivateDuoVc");
 
 /**
  * vcStateHandler.js dequeue member when they disconnect from queue waiting room
@@ -30,12 +31,21 @@ module.exports = (client) => {
     queueWaitingRoomId = "1095136188622454916";
 
     let memberLeavingQWR;
-    try {
-      memberLeavingQWR = oldState.channel.id;
-      memberLeavingQWR = (memberLeavingQWR === queueWaitingRoomId);
 
-    } catch {
-      memberLeavingQWR = false;
+    memberLeavingQWR = oldState.channelId;
+    memberLeavingQWR = (memberLeavingQWR === queueWaitingRoomId);
+
+    if (!oldState.channelId && newState.channelId) {
+      //if member joins a vc
+      console.log("LOG: \t" + `${newState.member.user.tag} has joined [${newState.channel.name}]`);
+
+    } else if (oldState.channelId && !newState.channelId) {
+      //if member left a vc
+      console.log("LOG: \t" + `${oldState.member.user.tag} has left [${oldState.channel.name}]`);
+
+    } else if (oldState.channelId !== newState.channelId) {
+      //if a member moved from a vc to another vc
+      console.log("LOG: \t" + `${oldState.member.user.tag} has moved from [${oldState.channel.name}] to [${newState.channel.name}]`);
     }
 
     if (memberLeavingQWR) {
@@ -45,8 +55,8 @@ module.exports = (client) => {
       for (let queueList of allQueueList) {
         let queueListName = queueList;
         queueList = dataObj[queueList];
-        //check if that member is in any of these queue list
 
+        //check if that member is in any of these queue list
         for (let memberId of queueList) {
           let memberFound = (oldState.member.id === memberId);
 
