@@ -276,10 +276,39 @@ module.exports = {
             //if the match is completed show the score
 
             matchEmbed.setColor(0x888888);
-            matchEmbed.addFields([
-              { name: matchObj.team1, value: matchObj.teamScoreList[0], inline: true },
-              { name: matchObj.team2, value: matchObj.teamScoreList[1], inline: true }
-            ]);
+            matchEmbed.addFields({ name: `${matchObj.team1}  vs  ${matchObj.team2}`, value: `${matchObj.teamScoreList[0]} - ${matchObj.teamScoreList[1]}`, inline: false });
+
+            /* The above code is iterating over an array of map points in a match object. It retrieves
+            the map name and map point at each index and adds them as fields to a matchEmbed object.
+            If the index is odd, it adds an empty field to create a visual separation between map
+            points. */
+            //mnIndex is mapNameIndex
+            let mnIndex = 0;
+
+            for (let mpIndex = 0; mpIndex < matchObj.allMapsPointList.length; mpIndex++) {
+              //mpIndex == mapPointIndex
+
+              let map = matchObj.mapNameList[mnIndex];
+              console.log("map: " + map);
+              let mapPoint = matchObj.allMapsPointList[mpIndex];
+              console.log("mapPoint: " + mapPoint);
+
+              function isOdd(num) {
+                return num % 2 !== 0;
+              }
+
+              //no need for map name for the second team
+              if (isOdd(mpIndex)) {
+                map = "\u200B";
+                matchEmbed.addFields({ name: "\u200B", value: "\u200B", inline: true });
+              }
+
+              matchEmbed.addFields([
+                { name: map, value: mapPoint, inline: true }
+              ]);
+
+              if (isOdd(mpIndex)) mnIndex++;
+            }
 
           } else if (matchObj.matchStatus === "LIVE") {
             matchEmbed.setColor(0xFF0000);
