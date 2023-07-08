@@ -6,7 +6,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("account")
     .setDescription("setup and manage accounts")
-    //add a steam account
+    //add a riot account
     .addSubcommand(addSubcommand =>
       addSubcommand
         .setName("add-riot-account")
@@ -94,6 +94,22 @@ module.exports = {
         .setName("edit-steam-account")
         .setDescription("edit an existing steam account in Qs")
     )
+    //select which account to play with
+    .addSubcommand(addSubcommand =>
+      addSubcommand
+        .setName("select")
+        .setDescription("select which account to play with")
+        .addStringOption((option) =>
+          option
+            .setName("type")
+            .setDescription("the type of account")
+            .setRequired(true)
+            .setChoices(
+              { name: "riot", value: "riot" },
+              { name: "steam", value: "steam" }
+            )
+        )
+    )
     //delete an existing account
     .addSubcommand(addSubcommand =>
       addSubcommand
@@ -104,111 +120,99 @@ module.exports = {
   async execute(interaction) {
     let dataFile = fs.readFileSync('data.json');
     let dataObj = JSON.parse(dataFile);
-
     let playerList = dataObj.playerList;
+
     let playerId = interaction.member.id;
     let playerTag = interaction.member.user.tag;
+
+    let riotId = interaction.options.get("riot-id").value;
     let region = interaction.options.get("region").value;
     let rank = interaction.options.get("rank").value;
-    let riotId = interaction.options.get("riot-id").value;
-    let player_is_in_list, propertyChange = false;
-    let playerObj;
 
-    //if list is empty just add player profile to data.json
-    for (let i = 0; i < playerList.length; i++) {
-      player_is_in_list = (playerId == playerList[i].id);
+    let playerObj = playerList.find(obj => obj.id === playerId);
 
-      //if player already exist in playerList
-      if (player_is_in_list) {
-        playerObj = playerList[i];
-        break;
+    //add discord id and tag if player is not found in playerList
+
+    if (!playerObj) {
+      //if no player info in playerList create a new obj
+      console.log("LOG: \t" + "player is not in playerList");
+
+      playerObj = {
+        "id": playerId,
+        "tag": playerTag,
+        "riotAccountList": [],
+        "steamAccountList": []
       }
     }
 
-    if (player_is_in_list) {
-      //if new region is different
-      if (playerObj.tag !== playerTag) {
-        playerObj.tag === playerTag;
-        writeToFile(dataObj, 'data.json');
-        interaction.user.send("Tag updated to -> " + playerTag);
-        console.log("LOG: \tTag updated to -> " + playerTag);
-        propertyChange = true;
-      }
+    let subCommand = interaction.options.getSubcommand();
 
-      if (playerObj.region !== region) {
-        playerObj.region = region;
-        writeToFile(dataObj, 'data.json');
-        interaction.user.send("Region updated to -> " + region);
-        console.log("LOG: \tRegion updated to -> " + region);
-        propertyChange = true;
-      }
+    switch (subCommand) {
+      case "add-riot-account":
+        console.log(JSON.stringify(playerObj));
 
-      //if new rank is different
-      if (playerObj.rank !== rank) {
-        playerObj.rank = rank;
-        writeToFile(dataObj, 'data.json');
-        interaction.user.send("Rank updated to -> " + rank);
-        console.log("LOG: \tRank updated to -> " + rank);
-        propertyChange = true;
-      }
+        let duplicate = playerObj.riotAccountList.find(obj => obj.riotId === riotId);
+        if (duplicate) {
+          //if the riot account is already added
+          interaction.reply({ content: "You've already added this account.", ephemeral: true });
+          console.log("LOG: \t" + "riot id already added");
+          return;
+        }
 
-      //if riot id is different
-      if (playerObj.riotId !== riotId) {
-        playerObj.riotId = riotId;
-        writeToFile(dataObj, 'data.json');
-        interaction.user.send("Riot ID updated to -> " + riotId);
-        console.log("LOG: \tRiot ID updated to -> " + riotId);
-        propertyChange = true;
-      }
+        let riotAccountObj = {
+          "riotId": riotId,
+          "region": region,
+          "rank": rank,
+          "active": false
+        }
 
-      //if player is in playerList but property is changed
-      if (propertyChange) {
+        playerObj.riotAccountList.push(riotAccountObj);
+        playerList.push(playerObj);
+        writeToFile(dataObj, "data.json");
+
         await interaction.reply({
-          content:
-            "player profile updated\n" +
-            `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`,
+          content: `new riot account added
+          tag:\t ${playerTag}
+          riot-id:\t ${riotId}
+          region:\t ${region}
+          rank:\t ${rank}`,
           ephemeral: true
-        });
-        console.log("LOG: \t" +
-          "player profile updated\n" +
-          `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`
+        })
+
+        interaction.user.send(`new riot account added
+        tag:\t ${playerTag}
+        riot-id:\t ${riotId}
+        region:\t ${region}
+        rank:\t ${rank}`
         );
 
-        //if player is in playerList and no property is changed
-      } else {
-        await interaction.reply({
-          content:
-            `No changes have been made\n` +
-            `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`,
-          ephemeral: true
-        });
-        console.log("LOG: \t" +
-          "No changes have been made\n" +
-          `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`
+        console.log(`new riot account added
+        tag:\t ${playerTag}
+        riot-id:\t ${riotId}
+        region:\t ${region}
+        rank:\t ${rank}`
         );
-      }
+        break;
 
-      //if player does not exist in playerList
-    } else if (!player_is_in_list) {
-      await interaction.reply({
-        content:
-          `new player profile added\n` +
-          `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`,
-        ephemeral: true
-      });
-      console.log("LOG: \t" + "new player profile added");
-      console.log("LOG: \t" + `${playerTag} \t Region: ${region} \t Rank: ${rank} \t Riot ID: ${riotId}`);
+      case "add-steam-account":
 
-      let player = {
-        id: playerId,
-        tag: playerTag,
-        region: region,
-        rank: rank,
-        riotId: riotId
-      }
+        break;
 
-      playerList.push(player);
-      writeToFile(dataObj, 'data.json');
+      case "edit-riot-account":
+
+        break;
+
+      case "edit-steam-account":
+
+        break;
+
+      case "delete-account":
+
+        break;
+
+      case "select":
+
+        break;
     }
   },
 };
