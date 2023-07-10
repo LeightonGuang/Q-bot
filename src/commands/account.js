@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 
@@ -10,7 +10,7 @@ module.exports = {
     .addSubcommand(addSubcommand =>
       addSubcommand
         .setName("add-riot-account")
-        .setDescription("add a new riot account to Qs")
+        .setDescription("Add a new riot account to Qs")
         .addStringOption((option) =>
           option
             .setName("region")
@@ -68,7 +68,7 @@ module.exports = {
     .addSubcommand(addSubcommand =>
       addSubcommand
         .setName("add-steam-account")
-        .setDescription("add a new steam account to Qs")
+        .setDescription("Add a new steam account to Qs")
         .addStringOption((option) =>
           option
             .setName("friend-code")
@@ -86,19 +86,25 @@ module.exports = {
     .addSubcommand(addSubcommand =>
       addSubcommand
         .setName("edit-riot-account")
-        .setDescription("edit an existing riot account in Qs")
+        .setDescription("Edit your existing riot account in Qs")
     )
     //edit an existing steam account
     .addSubcommand(addSubcommand =>
       addSubcommand
         .setName("edit-steam-account")
-        .setDescription("edit an existing steam account in Qs")
+        .setDescription("Edit your existing steam account in Qs")
+    )
+    //list all accounts that the member ownd
+    .addSubcommand(addSubcommand =>
+      addSubcommand
+        .setName("list-all-accounts")
+        .setDescription("List all accounts that you ownd")
     )
     //select which account to play with
     .addSubcommand(addSubcommand =>
       addSubcommand
         .setName("select")
-        .setDescription("select which account to play with")
+        .setDescription("Select which account to play with")
         .addStringOption((option) =>
           option
             .setName("type")
@@ -125,10 +131,6 @@ module.exports = {
     let playerId = interaction.member.id;
     let playerTag = interaction.member.user.tag;
 
-    let riotId = interaction.options.get("riot-id").value;
-    let region = interaction.options.get("region").value;
-    let rank = interaction.options.get("rank").value;
-
     let playerObj = playerList.find(obj => obj.id === playerId);
 
     //add discord id and tag if player is not found in playerList
@@ -149,6 +151,9 @@ module.exports = {
 
     switch (subCommand) {
       case "add-riot-account":
+        let riotId = interaction.options.get("riot-id").value;
+        let region = interaction.options.get("region").value;
+        let rank = interaction.options.get("rank").value;
         console.log(JSON.stringify(playerObj));
 
         let duplicate = playerObj.riotAccountList.find(obj => obj.riotId === riotId);
@@ -204,6 +209,35 @@ module.exports = {
 
       case "edit-steam-account":
 
+        break;
+
+      case "list-all-accounts":
+        let accountEmbedList = [];
+        console.log("LENGTH: " + playerObj.riotAccountList.length);
+        for (let riotAccountObj of playerObj.riotAccountList) {
+          let riotAccountEmbed = new EmbedBuilder()
+            .setColor(0xFF4553)
+            .setTitle(riotAccountObj.riotId)
+            .addFields([
+              { name: "Region:", value: riotAccountObj.region, inline: true },
+              { name: "Rank:", value: riotAccountObj.rank, inline: true },
+              { name: "Active:", value: riotAccountObj.active.toString(), inline: true }
+            ])
+
+          //console.log(JSON.stringify(riotAccountEmbed));
+          accountEmbedList.push(riotAccountEmbed);
+        }
+
+        for (let steamAccountObj of playerObj.steamAccountList) {
+          let steamAccountEmbed = new EmbedBuilder()
+            .setColor(0x2a475e)
+            .setTitle(steamAccountObj.accountName)
+            .setFields({ name: "LINK:", value: `[profile](${steamAccountObj.steamProfileUrl})` })
+
+          accountEmbedList.push(steamAccountEmbed);
+        }
+
+        interaction.reply({ embeds: accountEmbedList, ephemeral: true });
         break;
 
       case "delete-account":
