@@ -1,6 +1,6 @@
 const fs = require("node:fs");
-const writeToFile = require("../utils/writeToFile");
-const updateQueueEmbed = require("../utils/updateQueueEmbed");
+const writeToFile = require("../../utils/writeToFile");
+const updateQueueEmbed = require("../../utils/updateQueueEmbed");
 
 /**
  * check if member are in queue waiting room
@@ -128,7 +128,6 @@ module.exports = async (interaction) => {
     return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
   }
 
-
   switch (buttonPressed) {
     case "duoRankQueue": {
       //loop through duoRankList to see if member is in duo
@@ -167,7 +166,7 @@ module.exports = async (interaction) => {
         updateQueueEmbed(interaction);
 
 
-        const duoQueueVcHandler = require("./queueMatchHandler/duoRankQueueMatchHandler");
+        const duoQueueVcHandler = require("../queueMatchHandler/duoRankQueueMatchHandler");
         duoQueueVcHandler(interaction);
 
         //if player is already in queue
@@ -258,7 +257,7 @@ module.exports = async (interaction) => {
         //embed message object id
         updateQueueEmbed(interaction);
 
-        const fiveStackRankQueueHandler = require("../handlers/queueMatchHandler/fiveStackRankQueueHandler");
+        const fiveStackRankQueueHandler = require("../queueMatchHandler/fiveStackRankQueueHandler");
         fiveStackRankQueueHandler(interaction);
 
         //if player is already in queue
@@ -306,7 +305,7 @@ module.exports = async (interaction) => {
         //embed message object id
         updateQueueEmbed(interaction);
 
-        const oneVoneQueueHandler = require("../handlers/queueMatchHandler/oneVoneQueueHandler");
+        const oneVoneQueueHandler = require("../queueMatchHandler/oneVoneQueueHandler");
         oneVoneQueueHandler(interaction);
 
         //if player is already in queue
@@ -353,7 +352,7 @@ module.exports = async (interaction) => {
         //embed message object id
         updateQueueEmbed(interaction);
 
-        const tenMansQueueHandler = require("../handlers/queueMatchHandler/tenMansQueueMatchHandler");
+        const tenMansQueueHandler = require("../queueMatchHandler/tenMansQueueMatchHandler");
         tenMansQueueHandler(interaction);
 
         //if player is already in queue
