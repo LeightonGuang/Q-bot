@@ -7,7 +7,7 @@ const fs = require("node:fs");
 
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
-    console.log("FILE: \t" + "interactionHandler.js");
+    console.log("FILE: \t" + "commandHandler.js");
 
     const { guild } = interaction;
 
@@ -15,21 +15,13 @@ module.exports = (client) => {
     let dataObj = JSON.parse(dataFile);
     let playerList = dataObj.playerList;
 
-    let profileDone = false;
-    let userInteracted = interaction.user.id;
+    let userId = interaction.user.id;
 
-    let playerCommands = ["help", "player-profile", "poll"];
+    let playerCommands = ["help", "account", "poll"];
     let modCommands = ["mod-help", "mod"];
 
-    //check if member's player profile is setup done
-    for (let i = 0; i < playerList.length; i++) {
-
-      //if member alrady setup player profile
-      if (userInteracted === playerList[i].id) {
-        profileDone = true;
-        break;
-      }
-    }
+    //check if member is in playerList already
+    let playerExist = playerList.find(obj => obj.id === userId);
 
     //=========================interaction is a command===========================
     if (!interaction.isChatInputCommand()) return;
@@ -106,7 +98,7 @@ module.exports = (client) => {
       //if command is in command channel
     } else if (interaction.channel.id === commandChannelId) {
       //
-      if (profileDone) {
+      if (playerExist) {
         console.log("LOG: \t" + "running /" + interaction.commandName);
         await command.execute(interaction);
 
