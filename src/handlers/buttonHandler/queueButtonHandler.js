@@ -122,14 +122,14 @@ module.exports = async (interaction) => {
 
   let memberInQueueWaitingRoom = queueWaitingRoomId.members.has(memberClicked.id);
 
-  //check if members are in queue waiting room
-  if (!memberInQueueWaitingRoom) {
-    console.log("LOG: \t" + "member is not in queue waiting room");
-    return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
-  }
-
   switch (buttonPressed) {
     case "duoRankQueue": {
+      //check if members are in queue waiting room
+      if (!memberInQueueWaitingRoom) {
+        console.log("LOG: \t" + "member is not in queue waiting room");
+        return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
+      }
+
       //loop through duoRankList to see if member is in duo
       for (let i = 0; i < duoRankList.length; i++) {
         //check if player is in duoRankList
@@ -181,6 +181,12 @@ module.exports = async (interaction) => {
       break;
 
     case "trioRankQueue": {
+      //check if members are in queue waiting room
+      if (!memberInQueueWaitingRoom) {
+        console.log("LOG: \t" + "member is not in queue waiting room");
+        return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
+      }
+
       //loop through trioRankList to see if member is in trio
       for (let i = 0; i < trioRankList.length; i++) {
         //check if player is in trioRankList
@@ -225,6 +231,12 @@ module.exports = async (interaction) => {
       break;
 
     case "fiveStackRankQueue": {
+      //check if members are in queue waiting room
+      if (!memberInQueueWaitingRoom) {
+        console.log("LOG: \t" + "member is not in queue waiting room");
+        return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
+      }
+
       //loop through fiveStackRankList to see if member is in 5 stack
       for (let i = 0; i < fiveStackRankList.length; i++) {
         //check if player is in fiveStackRankList
@@ -273,6 +285,12 @@ module.exports = async (interaction) => {
       break;
 
     case "oneVoneQueue": {
+      //check if members are in queue waiting room
+      if (!memberInQueueWaitingRoom) {
+        console.log("LOG: \t" + "member is not in queue waiting room");
+        return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
+      }
+
       //loop through oneVoneList to see if member is in 1v1
       for (let i = 0; i < oneVoneList.length; i++) {
         //check if player is in oneVoneList
@@ -320,6 +338,12 @@ module.exports = async (interaction) => {
       break;
 
     case "tenMansQueue": {
+      //check if members are in queue waiting room
+      if (!memberInQueueWaitingRoom) {
+        console.log("LOG: \t" + "member is not in queue waiting room");
+        return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
+      }
+
       //loop through tenMansList to see if member is in 1v1
       for (let i = 0; i < tenMansList.length; i++) {
         //check if player is in tenMansList
@@ -367,6 +391,12 @@ module.exports = async (interaction) => {
       break;
 
     case "unrated": {
+      //check if members are in queue waiting room
+      if (!memberInQueueWaitingRoom) {
+        console.log("LOG: \t" + "member is not in queue waiting room");
+        return await interaction.reply({ content: `${memberClicked} Please join ${queueWaitingRoomId} to queue for games.`, ephemeral: true });
+      }
+
       //loop through unratedList to see if member is in 1v1
       for (let i = 0; i < unratedList.length; i++) {
         //check if player is in unratedList
