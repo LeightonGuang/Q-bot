@@ -1,11 +1,4 @@
-const {
-  SlashCommandBuilder,
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  Embed,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const fs = require("fs");
 const writeToFile = require("../utils/writeToFile");
 
@@ -108,7 +101,7 @@ module.exports = {
         .setName("edit-steam-account")
         .setDescription("Edit your existing steam account in Qs")
     )
-    //list all accounts that the member ownd
+    //list all accounts that the member owns
     .addSubcommand((addSubcommand) =>
       addSubcommand
         .setName("list-all")
@@ -135,6 +128,16 @@ module.exports = {
       addSubcommand
         .setName("delete")
         .setDescription("delete an existing account in Qs")
+        .addStringOption((option) =>
+          option
+            .setName("type")
+            .setDescription("the type of account")
+            .setRequired(true)
+            .setChoices(
+              { name: "Riot", value: "riot" },
+              { name: "Steam", value: "steam" }
+            )
+        )
     ),
 
   async execute(interaction) {
@@ -175,7 +178,7 @@ module.exports = {
         );
         if (riotIdDuplicate) {
           //if the riot account is already added
-          interaction.reply({
+          await interaction.reply({
             content: "You've already added this account.",
             ephemeral: true,
           });
@@ -264,6 +267,7 @@ module.exports = {
         break;
 
       case "edit-riot-account":
+
         break;
 
       case "edit-steam-account":
@@ -316,17 +320,17 @@ module.exports = {
           accountEmbedList.push(steamAccountEmbed);
         }
 
-        interaction.reply({ embeds: accountEmbedList, ephemeral: true });
-        break;
-
-      case "delete":
+        await interaction.reply({
+          embeds: accountEmbedList,
+          ephemeral: true
+        });
         break;
 
       case "select":
-        let accountType = interaction.options.get("type").value;
+        let selectAcountType = interaction.options.get("type").value;
 
         //if player chose to select a riot account
-        switch (accountType) {
+        switch (selectAcountType) {
           case "riot":
             let riotAccountEmbedList = [];
             const selectRiotAccountRow = new ActionRowBuilder();
@@ -352,7 +356,11 @@ module.exports = {
                     value: riotAccountObj.region,
                     inline: true,
                   },
-                  { name: "Rank:", value: riotAccountObj.rank, inline: true },
+                  {
+                    name: "Rank:",
+                    value: riotAccountObj.rank,
+                    inline: true
+                  },
                   {
                     name: "Active:",
                     value: riotAccountObj.active.toString(),
@@ -364,21 +372,18 @@ module.exports = {
 
               riotAccountEmbedList.push(riotAccountEmbed);
 
-              const replyObj = await interaction.reply({
-                embeds: riotAccountEmbedList,
-                fetchReply: true,
-                ephemeral: false,
-              });
-
               selectRiotAccountRow.addComponents(
                 new ButtonBuilder()
                   .setLabel(riotAccountObj.riotId)
-                  .setCustomId(
-                    `select-riot-${riotAccountObj.riotId}-${interaction.id}`
-                  )
+                  .setCustomId(`select-riot-${riotAccountObj.riotId}-${interaction.id}`)
                   .setStyle(selectButtonStyle)
               );
             }
+
+            await interaction.reply({
+              embeds: riotAccountEmbedList,
+              fetchReply: true
+            });
 
             interaction.editReply({ components: [selectRiotAccountRow] });
 
@@ -390,7 +395,6 @@ module.exports = {
 
             for (let steamAccountObj of playerObj.steamAccountList) {
               let selectButtonStyle, embedColour;
-
               //check if if its an active account change colour of embed and button
               if (riotAccountObj.active) {
                 embedColour = 0x3ba55b;
@@ -419,7 +423,7 @@ module.exports = {
               );
             }
 
-            interaction.reply({
+            await interaction.reply({
               embeds: steamAccountEmbedList,
               components: [selectSteamAccountRow],
               fetchReply: true,
@@ -427,6 +431,59 @@ module.exports = {
             });
             break;
         }
+
+      case "delete":
+        let deleteAccountType = interaction.options.get("type").value;
+
+        switch (deleteAccountType) {
+          case "riot":
+            let riotAccountEmbedList = [];
+            const deleteRiotAccountRow = new ActionRowBuilder();
+
+            for (let riotAccountObj of playerObj.riotAccountList) {
+              //go through each riot account to make an embed and button
+              let riotAccountEmbed = new EmbedBuilder()
+                .setColor(0xec4245)
+                .setTitle(riotAccountObj.riotId)
+                .addFields([
+                  {
+                    name: "Region:",
+                    value: riotAccountObj.region,
+                    inline: true,
+                  },
+                  { name: "Rank:", value: riotAccountObj.rank, inline: true },
+                  {
+                    name: "Active:",
+                    value: riotAccountObj.active.toString(),
+                    inline: true,
+                  },
+                ]);
+
+              riotAccountEmbedList.push(riotAccountEmbed);
+
+              deleteRiotAccountRow.addComponents(
+                new ButtonBuilder()
+                  .setLabel(`DELETE: ${riotAccountObj.riotId}`)
+                  .setCustomId(`delete-riot-${riotAccountObj.riotId}-${interaction.id}`)
+                  .setStyle(ButtonStyle.Danger)
+              );
+            }
+
+            await interaction.reply({
+              embeds: riotAccountEmbedList,
+              components: [deleteRiotAccountRow],
+              fetchReply: true
+            });
+
+            break;
+
+          case "steam":
+
+            break;
+
+        }
+
+        break;
     }
   },
 };
