@@ -3,7 +3,10 @@ const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
+puppeteer.use(StealthPlugin());
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,6 +32,12 @@ module.exports = {
           option
             .setName("player")
             .setDescription("default(empty) will be yourself"))
+    )
+
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName("win-percentage")
+        .setDescription("check current rank and peak rank")
     ),
 
   async execute(interaction) {
@@ -338,6 +347,18 @@ module.exports = {
       }
     }
 
+    function profileUrl(riotId) {
+      //gets the tracker.gg profile url using their riot id
+      let modifiedId = riotId.replace(/\s+/g, "%20");
+      modifiedId = modifiedId.replace(/#/g, "%23");
+
+      //console.log(modifiedId);
+
+      let playerUrl = "https://tracker.gg/valorant/profile/riot/" + modifiedId + "/overview";
+      //console.log(playerUrl);
+      return playerUrl;
+    }
+
     const { channel } = interaction;
 
     let vlr_url = "https://vlr.gg";
@@ -404,7 +425,7 @@ module.exports = {
             console.log(matchUrl);
 
             if (matchObj.matchStatus === "Completed") {
-              console.log("LOG: \t" + "it is live");
+              //console.log("LOG: \t" + "it is live");
               let response = await axios.get(matchUrl);
               const html = response.data;
               const $ = cheerio.load(html);
@@ -478,18 +499,6 @@ module.exports = {
       //list that stores the current rank and peak rank embed
       let rankEmbedList = [];
 
-      function profileUrl(riotId) {
-        //gets the tracker.gg profile url using their riot id
-        let modifiedId = riotId.replace(/\s+/g, "%20");
-        modifiedId = modifiedId.replace(/#/g, "%23");
-
-        //console.log(modifiedId);
-
-        let playerUrl = "https://tracker.gg/valorant/profile/riot/" + modifiedId + "/overview";
-        //console.log(playerUrl);
-        return playerUrl;
-      }
-
       let userId = interaction.options.getMember("player");
 
       //if the command is left empty
@@ -553,7 +562,7 @@ module.exports = {
         const page = await browser.newPage();
         await page.goto(trackerProfileUrl);
 
-        await page.screenshot({ path: "trackergg.png", fullPage: true });
+        await page.screenshot({ path: "screenshot.png", fullPage: true });
         console.log("LOG: \t" + "screenshot");
 
         const currentRankImgElement = await page.$("#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div > div > div > div > div > div.rating-entry__rank-icon > img");
@@ -631,6 +640,74 @@ module.exports = {
       //console.log(rankEmbedList);
       await interaction.reply({ embeds: rankEmbedList, fetchReply: true });
 
+    } else if (subCommand === "win-percentage") {
+
+      async function fetchWinPercentage() {
+        let userId = interaction.user.id;
+
+        console.log(userId);
+
+        let userObj = dataObj.playerList.find(obj => obj.id === userId);
+
+        console.log(JSON.stringify(userObj));
+
+        let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
+
+        let riotId = accountObj.riotId;
+
+        console.log(riotId);
+
+        let trackerProfileUrl = profileUrl(riotId);
+
+        const browser = await puppeteer.launch({ headless: false });
+
+        const page = await browser.newPage();
+        await page.setViewport({ width: 1920, height: 1080 });
+        await page.goto(trackerProfileUrl);
+        //await page.waitForSelector(".vmr");
+
+
+
+        const winSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(1)";
+        const loseSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(2)";
+
+        //get the win number
+        const winNumString = await page.evaluate((selector) => {
+          const element = document.querySelector(selector);
+          return element ? element.textContent : null;
+        }, winSelector);
+
+        //get the lost number
+        const loseNumString = await page.evaluate((selector) => {
+          const element = document.querySelector(selector);
+          return element ? element.textContent : null;
+        }, loseSelector);
+
+        let winNum = parseInt(winNumString);
+        loseNum = parseInt(loseNumString);
+
+        let winPercentage = (winNum / (winNum + loseNum)) * 100;
+        winPercentage = winPercentage.toFixed(1);
+
+        let winPercentageEmbed = new EmbedBuilder()
+          .setColor(0xFFFFFF)
+          .setTitle(riotId)
+          .setDescription(`Win Percentage: ${winPercentage}%`)
+          .addFields([
+            { name: "Wins: ", value: winNumString, inline: true },
+            { name: "Loses: ", value: loseNumString, inline: true }
+          ])
+
+        interaction.reply({ embeds: [winPercentageEmbed] });
+        console.log("Win Percentage Embed");
+
+        await page.screenshot({ path: "screenshot.png", fullPage: true });
+        console.log("LOG: \t" + "screenshot");
+
+        await browser.close();
+      }
+
+      fetchWinPercentage();
     }
   }
 }
