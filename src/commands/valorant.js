@@ -474,7 +474,6 @@ module.exports = {
 
       await fetchEvents(ongoingEventList);
       await fetchEventMatch(ongoingEventList);
-      //await fetchOngoingEventTeamList();
       await fetchMapPoint();
       await sendEmbed(ongoingEventList);
 
@@ -642,72 +641,73 @@ module.exports = {
 
     } else if (subCommand === "win-percentage") {
 
-      async function fetchWinPercentage() {
-        let userId = interaction.user.id;
+      await interaction.reply("Loading info...");
 
-        console.log(userId);
+      let userId = interaction.user.id;
 
-        let userObj = dataObj.playerList.find(obj => obj.id === userId);
+      let userObj = dataObj.playerList.find(obj => obj.id === userId);
 
-        console.log(JSON.stringify(userObj));
+      console.log(JSON.stringify(userObj));
 
-        let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
+      let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
 
-        let riotId = accountObj.riotId;
+      let riotId = accountObj.riotId;
 
-        console.log(riotId);
+      let trackerProfileUrl = profileUrl(riotId);
 
-        let trackerProfileUrl = profileUrl(riotId);
+      const browser = await puppeteer.launch({ headless: false });
 
-        const browser = await puppeteer.launch({ headless: false });
+      const page = await browser.newPage();
+      await page.setViewport({ width: 1920, height: 1080 });
+      await page.goto(trackerProfileUrl);
+      //await page.waitForSelector(".vmr");
 
-        const page = await browser.newPage();
-        await page.setViewport({ width: 1920, height: 1080 });
-        await page.goto(trackerProfileUrl);
-        //await page.waitForSelector(".vmr");
+      const playerIconSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.ph > div.ph__container > div.user-avatar.user-avatar--large.ph-avatar > img.user-avatar__image";
+      const winSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(1)";
+      const loseSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(2)";
 
+      //get the player icon url
+      const playerIconUrl = await page.evaluate((selector) => {
+        const element = document.querySelector(selector);
+        return element ? element.src : null;
+      }, playerIconSelector);
 
+      //get the win number
+      const winNumString = await page.evaluate((selector) => {
+        const element = document.querySelector(selector);
+        return element ? element.textContent : null;
+      }, winSelector);
 
-        const winSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(1)";
-        const loseSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(2)";
+      //get the lost number
+      const loseNumString = await page.evaluate((selector) => {
+        const element = document.querySelector(selector);
+        return element ? element.textContent : null;
+      }, loseSelector);
 
-        //get the win number
-        const winNumString = await page.evaluate((selector) => {
-          const element = document.querySelector(selector);
-          return element ? element.textContent : null;
-        }, winSelector);
+      let winNum = parseInt(winNumString);
+      loseNum = parseInt(loseNumString);
 
-        //get the lost number
-        const loseNumString = await page.evaluate((selector) => {
-          const element = document.querySelector(selector);
-          return element ? element.textContent : null;
-        }, loseSelector);
+      let winPercentage = (winNum / (winNum + loseNum)) * 100;
+      winPercentage = winPercentage.toFixed(1);
 
-        let winNum = parseInt(winNumString);
-        loseNum = parseInt(loseNumString);
+      let winPercentageEmbed = new EmbedBuilder()
+        .setColor(0xFFFFFF)
+        .setTitle(riotId)
+        .setURL(trackerProfileUrl)
+        .setThumbnail(playerIconUrl)
+        .setDescription(`Win Percentage: ${winPercentage}%`)
+        .addFields([
+          { name: "Wins: ", value: winNumString, inline: true },
+          { name: "Loses: ", value: loseNumString, inline: true }
+        ])
 
-        let winPercentage = (winNum / (winNum + loseNum)) * 100;
-        winPercentage = winPercentage.toFixed(1);
+      await page.screenshot({ path: "screenshot.png", fullPage: true });
+      console.log("LOG: \t" + "screenshot");
 
-        let winPercentageEmbed = new EmbedBuilder()
-          .setColor(0xFFFFFF)
-          .setTitle(riotId)
-          .setDescription(`Win Percentage: ${winPercentage}%`)
-          .addFields([
-            { name: "Wins: ", value: winNumString, inline: true },
-            { name: "Loses: ", value: loseNumString, inline: true }
-          ])
+      await browser.close();
 
-        interaction.reply({ embeds: [winPercentageEmbed] });
-        console.log("Win Percentage Embed");
-
-        await page.screenshot({ path: "screenshot.png", fullPage: true });
-        console.log("LOG: \t" + "screenshot");
-
-        await browser.close();
-      }
-
-      fetchWinPercentage();
+      await interaction.editReply({ content: "", embeds: [winPercentageEmbed] });
+      console.log("Win Percentage Embed");
     }
   }
 }
