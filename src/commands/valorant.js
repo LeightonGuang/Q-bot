@@ -509,7 +509,10 @@ module.exports = {
       }
 
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
-      let riotId = userObj.riotId;
+
+      let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
+
+      let riotId = accountObj.riotId;
 
       let trackerProfileUrl = profileUrl(riotId);
 
@@ -646,8 +649,6 @@ module.exports = {
       let userId = interaction.user.id;
 
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
-
-      console.log(JSON.stringify(userObj));
 
       let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
 
