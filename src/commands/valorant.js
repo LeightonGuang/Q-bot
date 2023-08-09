@@ -655,7 +655,7 @@ module.exports = {
 
       let trackerProfileUrl = profileUrl(riotId);
 
-      const browser = await puppeteer.launch({ headless: false });
+      const browser = await puppeteer.launch({ headless: true });
 
       const page = await browser.newPage();
       await page.setViewport({ width: 1920, height: 1080 });
@@ -685,7 +685,7 @@ module.exports = {
       }, loseSelector);
 
       let winNum = parseInt(winNumString);
-      loseNum = parseInt(loseNumString);
+      let loseNum = parseInt(loseNumString);
 
       let winPercentage = (winNum / (winNum + loseNum)) * 100;
       winPercentage = winPercentage.toFixed(1);
@@ -698,7 +698,8 @@ module.exports = {
         .setDescription(`Win Percentage: ${winPercentage}%`)
         .addFields([
           { name: "Wins: ", value: winNumString, inline: true },
-          { name: "Loses: ", value: loseNumString, inline: true }
+          { name: "Loses: ", value: loseNumString, inline: true },
+          { name: "Games: ", value: (winNum + loseNum).toString(), inline: true }
         ])
 
       await page.screenshot({ path: "screenshot.png", fullPage: true });
