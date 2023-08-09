@@ -57,7 +57,7 @@ vcStateHandler(client);
 let vcInviteHandler = require("./handlers/vcInviteHandler");
 vcInviteHandler(client);
 
-let buttonHandler = require("./handlers/buttonHandler");
+let buttonHandler = require("./handlers/buttonHandler/buttonHandler");
 buttonHandler(client);
 
 let autoDeleteVcHandler = require("./handlers/autoDeleteVcHandler");
@@ -68,7 +68,7 @@ process.on('SIGINT', async () => {
   const annoucmentChannel = await client.channels.fetch("1077779475175059506");
 
   await annoucmentChannel.send("Bot is offline");
-  console.log("LOG: \t" + "Bot is offline");
+  console.log("\nLOG: \t" + "Bot is offline");
 
   client.destroy();
   process.exit();
