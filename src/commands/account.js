@@ -330,6 +330,7 @@ module.exports = {
         let selectAcountType = interaction.options.get("type").value;
 
         //if player chose to select a riot account
+        //list all riot accounts with a button for each account for user
         switch (selectAcountType) {
           case "riot":
             let riotAccountEmbedList = [];
@@ -396,7 +397,7 @@ module.exports = {
             for (let steamAccountObj of playerObj.steamAccountList) {
               let selectButtonStyle, embedColour;
               //check if if its an active account change colour of embed and button
-              if (riotAccountObj.active) {
+              if (steamAccountObj.active) {
                 embedColour = 0x3ba55b;
                 selectButtonStyle = ButtonStyle.Success;
               } else {
@@ -431,6 +432,7 @@ module.exports = {
             });
             break;
         }
+        break;
 
       case "delete":
         let deleteAccountType = interaction.options.get("type").value;
