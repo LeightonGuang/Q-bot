@@ -34,7 +34,7 @@ module.exports = (interaction) => {
 
   let playerObj = playerList.find((obj) => obj.id === userId);
 
-  console.log(interaction.member.id + " and " + userId);
+  //console.log(interaction.member.id + " and " + userId);
 
   //only the account owner can select their account
   if (interaction.member.id !== userId) {
