@@ -38,6 +38,12 @@ module.exports = {
       subcommand
         .setName("win-percentage")
         .setDescription("check current rank and peak rank")
+    )
+
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName("last-game-stats")
+        .setDescription("check current rank and peak rank")
     ),
 
   async execute(interaction) {
@@ -710,6 +716,70 @@ module.exports = {
 
       await interaction.editReply({ content: "", embeds: [winPercentageEmbed] });
       console.log("Win Percentage Embed");
+    } else if (subCommand === "last-game-stats") {
+      await interaction.reply("Loading info...");
+
+      let userId = interaction.user.id;
+
+      let userObj = dataObj.playerList.find(obj => obj.id === userId);
+
+      let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
+
+      let riotId = accountObj.riotId;
+
+      let trackerProfileUrl = profileUrl(riotId);
+
+      const browser = await puppeteer.launch({ headless: false });
+
+      const page = await browser.newPage();
+      await page.setViewport({ width: 1920, height: 1080 });
+      await page.goto(trackerProfileUrl);
+      await page.waitForSelector(".vmr");
+
+      //first game on the list
+      const lastGameSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-matches.flex.flex-col.gap-4 > div.matches > div.trn-gamereport-list.trn-gamereport-list--compact > div:nth-child(1) > div.trn-gamereport-list__group-entries > div:nth-child(1)";
+
+      await page.click(lastGameSelector);
+
+      await page.waitForSelector(".st-content__item .trn-ign .trn-ign__username");
+
+      const allPlayerStats = await page.evaluate(() => {
+        const allStats = Array.from(document.querySelectorAll('.scoreboard .st-content__item')).flatMap(item => Array.from(item.querySelectorAll('.value'))).map(element => element.textContent);
+        return allStats;
+      });
+
+      console.log(allPlayerStats);
+
+      //allPlayerInfo is a list of object with player stats 
+      const allPlayerInfo = await page.evaluate(() => {
+        const playerInfo = Array.from(document.querySelectorAll(".vm-table .st-content__item"));
+
+        let playerNum = 1;
+
+        const stats = playerInfo.map((player) => ({
+          riotName: player.querySelector(".st-content__item .trn-ign .trn-ign__username").textContent.trim(),
+          riotId: player.querySelector(".st-content__item .trn-ign .trn-ign__discriminator").textContent.trim(),
+          agentIconUrl: player.querySelector(".scoreboard .st-content__item .st-custom-name .image img").getAttribute("src"),
+          rank: player.querySelector(".scoreboard .st-content__item .info .rank span").textContent,
+          rankIconUrl: player.querySelector(".scoreboard .st-content__item .st__item--align-center .image img").getAttribute("src"),
+          acs: allPlayerStats[1 * playerNum],
+          kill: allPlayerStats[2 * playerNum],
+          death: allPlayerStats[3 * playerNum],
+          assist: allPlayerStats[4 * playerNum]
+        }));
+        return stats;
+      });
+
+      console.log(allPlayerInfo);
+
+      for (let i = 0; i < 10; i++) {
+
+      }
+
+      await page.screenshot({ path: "screenshot.png", fullPage: true });
+      console.log("LOG: \t" + "screenshot");
+
+      await browser.close();
     }
   }
 }
