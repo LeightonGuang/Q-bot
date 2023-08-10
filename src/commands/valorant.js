@@ -738,6 +738,14 @@ module.exports = {
 
       await page.waitForSelector(".st-content__item .trn-ign .trn-ign__username");
 
+      const matchInfo = await page.evaluate(() => {
+        const mapName = document.querySelector(".vm-header-info > div.trn-match-drawer__header-block > div.trn-match-drawer__header-value").textContent;
+        const gamePoints = Array.from(document.querySelectorAll(".team .value")).map(el => el.textContent);
+
+        return [mapName, gamePoints[0], gamePoints[1]];
+      })
+      //console.log(matchInfo);
+
       //allPlayerInfo is a list of object with player stats 
       const allPlayerInfo = await page.evaluate(() => {
         const allPlayerStats = Array.from(document.querySelectorAll('.scoreboard .st-content__item')).flatMap(item => Array.from(item.querySelectorAll('.value'))).map(element => element.textContent);
@@ -762,22 +770,28 @@ module.exports = {
         return stats;
       });
 
-      console.log(allPlayerInfo);
+      let teamAEmbedList = [];
+      // add team A embed
+      teamAEmbed = new EmbedBuilder()
+        .setColor(0x49c6b8)
+        .setTitle("Team A")
+        .setDescription(`Map Points: ${matchInfo[1]}`)
 
-      let embedList = []
+      teamAEmbedList.push(teamAEmbed);
+
+      let teamBEmbedList = [];
+      // add team B embed
+      teamBEmbed = new EmbedBuilder()
+        .setColor(0xb95564)
+        .setTitle("Team B")
+        .setDescription(`Map Points: ${matchInfo[2]}`)
+
+      teamBEmbedList.push(teamBEmbed);
+
       for (let i = 0; i < 10; i++) {
         let playerObj = allPlayerInfo[i];
 
-        let embedColour;
-        if (i < 5) {
-          embedColour = 0x49c6b8;
-
-        } else if (i > 4) {
-          embedColour = 0xb95564;
-        }
-
         let playerEmbed = new EmbedBuilder()
-          .setColor(embedColour)
           .setAuthor({ name: playerObj.riotName + playerObj.riotId, iconURL: playerObj.agentIconUrl })
           .setThumbnail(playerObj.rankIconUrl)
           .addFields([
@@ -792,10 +806,29 @@ module.exports = {
             { name: "First Death:", value: playerObj.fd, inline: true }
           ])
 
-        embedList.push(playerEmbed);
+        if (i < 5) {
+          playerEmbed.setColor(0x49c6b8);
+          teamAEmbedList.push(playerEmbed);
+
+        } else if (i > 4) {
+          playerEmbed.setColor(0xb95564);
+          teamBEmbedList.push(playerEmbed);
+        }
       }
 
-      interaction.editReply({ content: "", embeds: embedList });
+      let MatchInfoEmbed = new EmbedBuilder()
+        .setColor(0xffffff)
+        .setTitle(matchInfo[0])
+        .addFields([
+          { name: "Team A", value: matchInfo[1], inline: true },
+          { name: "\u200B", value: `-`, inline: true },
+          { name: "Team B", value: matchInfo[2], inline: true }
+        ])
+
+      interaction.editReply({ content: "", embeds: [MatchInfoEmbed] });
+
+      channel.send({ embeds: teamAEmbedList });
+      channel.send({ embeds: teamBEmbedList });
 
       await page.screenshot({ path: "screenshot.png", fullPage: true });
       console.log("LOG: \t" + "screenshot");
