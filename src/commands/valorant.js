@@ -1,11 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const writeToFile = require('../utils/writeToFile');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-const { stat } = require('fs/promises');
 
 puppeteer.use(StealthPlugin());
 
@@ -39,6 +38,10 @@ module.exports = {
       subcommand
         .setName("win-percentage")
         .setDescription("check current rank and peak rank")
+        .addUserOption((option) =>
+          option
+            .setName("player")
+            .setDescription("default(empty) will be yourself"))
     )
 
     .addSubcommand(subcommand =>
@@ -657,7 +660,14 @@ module.exports = {
 
       await interaction.reply("Loading info...");
 
-      let userId = interaction.user.id;
+      let userId = interaction.options.getMember("player");
+
+      if (userId === null) {
+        userId = interaction.user.id;
+
+      } else {
+        userId = userId.id;
+      }
 
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
 
