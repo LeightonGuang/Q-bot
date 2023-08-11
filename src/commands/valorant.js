@@ -5,6 +5,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const { stat } = require('fs/promises');
 
 puppeteer.use(StealthPlugin());
 
@@ -43,7 +44,11 @@ module.exports = {
     .addSubcommand(subcommand =>
       subcommand
         .setName("last-game-stats")
-        .setDescription("check current rank and peak rank")
+        .setDescription("check player's last game stats")
+        .addUserOption((option) =>
+          option
+            .setName("player")
+            .setDescription("default(empty) will be yourself"))
     ),
 
   async execute(interaction) {
@@ -719,13 +724,21 @@ module.exports = {
     } else if (subCommand === "last-game-stats") {
       await interaction.reply("Loading info...");
 
-      let userId = interaction.user.id;
+      let userId = interaction.options.getMember("player");
+
+      if (userId === null) {
+        userId = interaction.user.id;
+
+      } else {
+        userId = userId.id;
+      }
+
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
       let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
       let riotId = accountObj.riotId;
       let trackerProfileUrl = profileUrl(riotId);
 
-      const browser = await puppeteer.launch({ headless: false });
+      const browser = await puppeteer.launch({ headless: true });
 
       const page = await browser.newPage();
       await page.setViewport({ width: 1920, height: 1080 });
@@ -764,11 +777,13 @@ module.exports = {
           kd: allPlayerStats[(playerNum * 14) + 6],
           adr: allPlayerStats[(playerNum * 14) + 8],
           hs: allPlayerStats[(playerNum * 14) + 9],
-          fk: allPlayerStats[(playerNum * 14) + 11],
+          fb: allPlayerStats[(playerNum * 14) + 11],
           fd: allPlayerStats[(playerNum * 14) + 12]
         }));
         return stats;
       });
+
+      //console.log(allPlayerInfo);
 
       let teamAEmbedList = [];
       // add team A embed
@@ -796,13 +811,13 @@ module.exports = {
           .setThumbnail(playerObj.rankIconUrl)
           .addFields([
             { name: "Kills: ", value: playerObj.kill, inline: true },
-            { name: "Deaths:", value: playerObj.kill, inline: true },
-            { name: "Assists:", value: playerObj.kill, inline: true },
+            { name: "Deaths:", value: playerObj.death, inline: true },
+            { name: "Assists:", value: playerObj.assist, inline: true },
             { name: "ACS:    ", value: playerObj.acs, inline: true },
             { name: "K/D:", value: playerObj.kd, inline: true },
             { name: "Headshot%:", value: playerObj.hs, inline: true },
             { name: "ADR: ", value: playerObj.adr, inline: true },
-            { name: "First Kill:", value: playerObj.fk, inline: true },
+            { name: "First Blood:", value: playerObj.fb, inline: true },
             { name: "First Death:", value: playerObj.fd, inline: true }
           ])
 
