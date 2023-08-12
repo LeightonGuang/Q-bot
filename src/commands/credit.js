@@ -8,6 +8,7 @@ module.exports = {
 
   async execute(interaction) {
     let creditEmbed = new EmbedBuilder()
+      .setColor(0xffd700)
       .setAuthor({ name: "Q bot" })
       .setTitle("Credit")
       .setDescription("Thank you to the people that helped made Q bot")
