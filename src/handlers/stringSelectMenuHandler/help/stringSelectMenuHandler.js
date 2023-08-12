@@ -14,7 +14,7 @@ module.exports = (client) => {
         const helpEmbed = new EmbedBuilder()
           .setColor(0xffffff)
           .setAuthor({ name: "Q bot" })
-          .setTitle("HELP")
+          .setTitle("/help")
           .setDescription("List of commands available for Q bot")
           .addFields(
             { name: "/ping", value: "Ping the bot to check online status" },
