@@ -17,7 +17,10 @@ module.exports = (client) => {
 
     let userId = interaction.user.id;
 
-    let playerCommands = ["help", "account", "poll"];
+    //list of commands that can be used in general chat
+    let playerCommands = ["help", "account", "poll", "credit"];
+
+    //list of commands that only mods can use
     let modCommands = ["mod-help", "mod"];
 
     //check if member is in playerList already
@@ -43,24 +46,24 @@ module.exports = (client) => {
       console.log("LOG: \t" + "running /" + interaction.commandName);
       await command.execute(interaction);
 
-      //if commands are mod commands 
     } else if (modCommands.some(item => item === interaction.commandName)) {
-      //if member is a mod
+      //if commands are mod commands 
       if (isMod) {
-        //if its /mod run
+        //if member is a mod
         if (interaction.commandName === "mod") {
+          //if its /mod run
           console.log("LOG: \t" + "running /" + interaction.commandName);
           await command.execute(interaction);
 
-          //if its /mod-help then it had to be in 
         } else if (interaction.commandName === "mod-help") {
-          //check if the command is used in command channel
+          //if its /mod-help then it had to be in 
           if (interaction.channel.name === "⌨｜command") {
+            //check if the command is used in command channel
             console.log("LOG: \t" + "running /" + interaction.commandName);
             await command.execute(interaction);
 
-            //if its not in command channel
           } else {
+            //if its not in command channel
             let modCommandChannel = guild.channels.cache.find((channel) => channel.name === "⌨｜command");
             interaction.reply({
               content: `Please use ${interaction} in ${modCommandChannel}`,
@@ -70,8 +73,8 @@ module.exports = (client) => {
           }
         }
 
-        //if member interacted is not a mod
       } else {
+        //if member interacted is not a mod
         await interaction.reply({
           content: "you are not a mod",
           ephemeral: true
