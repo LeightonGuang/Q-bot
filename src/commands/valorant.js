@@ -27,7 +27,7 @@ module.exports = {
     .addSubcommand(subcommand =>
       subcommand
         .setName("check-rank")
-        .setDescription("check current rank and peak rank")
+        .setDescription("Check player's current rank and peak rank")
         .addUserOption((option) =>
           option
             .setName("player")
@@ -37,7 +37,7 @@ module.exports = {
     .addSubcommand(subcommand =>
       subcommand
         .setName("win-percentage")
-        .setDescription("check current rank and peak rank")
+        .setDescription("Check player's current act rank win percentage")
         .addUserOption((option) =>
           option
             .setName("player")
@@ -47,7 +47,7 @@ module.exports = {
     .addSubcommand(subcommand =>
       subcommand
         .setName("last-game-stats")
-        .setDescription("check player's last game stats")
+        .setDescription("Check player's last game stats")
         .addUserOption((option) =>
           option
             .setName("player")
