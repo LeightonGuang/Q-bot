@@ -5,7 +5,7 @@ const writeToFile = require("../../utils/writeToFile");
 
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
-    console.log("LOG: \t" + "newPrivateDuoVc.js");
+    console.log("FILE: \t" + "newPrivateDuoVc.js");
     //if interaction is not a button then return
     if (!interaction.isButton()) return;
     const { guild } = interaction;
@@ -80,7 +80,10 @@ module.exports = (client) => {
               member2 = guild.members.cache.get(member2);
 
               const player1Obj = playerList.find(obj => obj.id === member1.id);
+              const player1RiotAccount = player1Obj.riotAccountList.find((obj) => obj.active === true);
+
               const player2Obj = playerList.find(obj => obj.id === member2.id);
+              const player2RiotAccount = player2Obj.riotAccountList.find((obj) => obj.active === true);
 
               let textChannelName = member1.user.username + "'s duo lobby";
               let vcName = member1.user.username + "'s duo vc";
@@ -155,10 +158,10 @@ module.exports = (client) => {
                 .setTitle("Player Info")
                 .addFields(
                   { name: "Member", value: player1Obj.tag, inline: true },
-                  { name: "Riot Id", value: player1Obj.riotId, inline: true },
+                  { name: "Riot Id", value: player1RiotAccount.riotId, inline: true },
                   { name: "\u200B", value: "\u200B" },
                   { name: "Member", value: player2Obj.tag, inline: true },
-                  { name: "Riot Id", value: player2Obj.riotId, inline: true },
+                  { name: "Riot Id", value: player2RiotAccount.riotId, inline: true },
                   { name: "\u200B", value: "\u200B" },
                 )
                 .setTimestamp()
