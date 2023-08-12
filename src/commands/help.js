@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -11,7 +11,7 @@ module.exports = {
       .setColor(0xffffff)
       .setAuthor({ name: "Q bot" })
       .setTitle("/help")
-      .setDescription("list of commands available for Q bot")
+      .setDescription("All the commands that are available to use in the server")
       .addFields(
         { name: "/ping", value: "Ping the bot to check online status" },
         { name: "/setup", value: "Create roles for queue" },
@@ -22,13 +22,26 @@ module.exports = {
 
     const replyObj = await interaction.reply({ embeds: [helpEmbed], fetchReply: true });
 
-    const helpSelectMenu = new ActionRowBuilder().setComponents(
-      new StringSelectMenuBuilder().setCustomId(`help-${replyObj.id}`).setOptions([
-        { label: "/help", value: "help" },
-        { label: "/account", value: "account" },
-        { label: "/valorant", value: "valorant" }
-      ])
-    );
+    const helpSelectMenu = new ActionRowBuilder()
+      .setComponents(
+        new StringSelectMenuBuilder()
+          .setPlaceholder("sub-commands")
+          .setCustomId(`help-${replyObj.id}`)
+          .addOptions(
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/help")
+              .setDescription("All the commands that are available to use in the server")
+              .setValue("help"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/account")
+              .setDescription("Sub commands that is used to manage your account")
+              .setValue("account"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/valorant")
+              .setDescription("Sub commands that are valorant related")
+              .setValue("valorant")
+          )
+      );
 
     interaction.editReply({ components: [helpSelectMenu.toJSON()] });
 
