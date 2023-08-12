@@ -21,6 +21,8 @@
     "cheerio": "^1.0.0-rc.12",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
-    "puppeteer": "^20.7.4"
+    "puppeteer": "^20.9.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }
