@@ -28,8 +28,6 @@ module.exports = (client) => {
         break;
 
       case "account":
-
-
         const accountEmbed = new EmbedBuilder()
           .setColor(0xFFFF00)
           .setAuthor({ name: "Q bot" })
