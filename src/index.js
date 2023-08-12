@@ -60,6 +60,9 @@ vcInviteHandler(client);
 let buttonHandler = require("./handlers/buttonHandler/buttonHandler");
 buttonHandler(client);
 
+let selectMenuHandler = require("./handlers/selectMenuHandler/help/selectMenuHandler")
+selectMenuHandler(client);
+
 let autoDeleteVcHandler = require("./handlers/autoDeleteVcHandler");
 autoDeleteVcHandler(client);
 
