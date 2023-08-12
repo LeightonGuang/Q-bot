@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { clear } = require('node:console');
 const fs = require("node:fs");
 const writeToFile = require("../utils/writeToFile");
 
