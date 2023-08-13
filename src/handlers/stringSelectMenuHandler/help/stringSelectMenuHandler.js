@@ -86,7 +86,7 @@ module.exports = (client) => {
           )
           .setTimestamp()
 
-        interaction.message.edit({ embeds: [valorantEmbed] });
+        interaction.message.edit({ embeds: [privateVcEmbed] });
         console.log("LOG:\t" + "changed the /help command embed to valorantEmbed");
         await interaction.deferUpdate();
         break;
