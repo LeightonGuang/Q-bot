@@ -17,13 +17,17 @@ module.exports = (client) => {
           .setTitle("/help")
           .setDescription("All the commands that are available to use in the server")
           .addFields(
+            { name: "/help", value: "THIS" },
+            { name: "/account [***sub-command***]", value: "Set up and manage your accounts" },
+            { name: "/valorant [***sub-command***]", value: "Commands for Valorant related stuff" },
+            { name: "/private-vc [***sub-command***]", value: "Creates a private vc for you and the people you want" },
             { name: "/ping", value: "Ping the bot to check online status" },
-            { name: "/setup", value: "Create roles for queue" },
-            { name: "/duo, /trio, /quad, /stack ", value: "Creates a private vc for you and the people you want" }
+            { name: "/credit", value: "The people who contributed to this server" }
           )
           .setTimestamp()
 
         interaction.message.edit({ embeds: [helpEmbed] });
+        console.log("LOG:\t" + "changed the /help command embed to helpEmbed");
         await interaction.deferUpdate();
         break;
 
@@ -44,6 +48,7 @@ module.exports = (client) => {
           .setTimestamp()
 
         interaction.message.edit({ embeds: [accountEmbed] });
+        console.log("LOG:\t" + "changed the /help command embed to accountEmbed");
         await interaction.deferUpdate();
         break;
 
@@ -63,6 +68,26 @@ module.exports = (client) => {
           .setTimestamp()
 
         interaction.message.edit({ embeds: [valorantEmbed] });
+        console.log("LOG:\t" + "changed the /help command embed to valorantEmbed");
+        await interaction.deferUpdate();
+        break;
+
+      case "private-vc":
+        const privateVcEmbed = new EmbedBuilder()
+          .setColor(0xFF4553)
+          .setAuthor({ name: "Q bot" })
+          .setTitle("/private-vc ***sub-command***")
+          .setDescription("List of all sub commands availble for /valorant")
+          .addFields(
+            { name: "***duo***", value: "Select a duo to private vc with" },
+            { name: "***trio***", value: "Select 2 trios to private vc with" },
+            { name: "***quad***", value: "Select 3 people to private vc with" },
+            { name: "***stack***", value: "Select 4 people to private vc with" }
+          )
+          .setTimestamp()
+
+        interaction.message.edit({ embeds: [valorantEmbed] });
+        console.log("LOG:\t" + "changed the /help command embed to valorantEmbed");
         await interaction.deferUpdate();
         break;
     }
