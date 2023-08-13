@@ -284,7 +284,6 @@ module.exports = {
 
         for (let riotAccountObj of playerObj.riotAccountList) {
           let riotAccountEmbed = new EmbedBuilder()
-            .setColor(0xff4553)
             .setTitle(riotAccountObj.riotId)
             .addFields([
               { name: "Region:", value: riotAccountObj.region, inline: true },
@@ -295,6 +294,13 @@ module.exports = {
                 inline: true,
               },
             ]);
+
+          if (riotAccountObj.active === true) {
+            riotAccountEmbed.setColor(0x3ba55b);
+
+          } else if (riotAccountObj.active === false) {
+            riotAccountEmbed.setColor(0xec4245);
+          }
 
           //console.log(JSON.stringify(riotAccountEmbed));
           accountEmbedList.push(riotAccountEmbed);
@@ -309,12 +315,18 @@ module.exports = {
 
         for (let steamAccountObj of playerObj.steamAccountList) {
           let steamAccountEmbed = new EmbedBuilder()
-            .setColor(0x2a475e)
             .setTitle(steamAccountObj.accountName)
             .setFields({
               name: "LINK:",
               value: `[profile](${steamAccountObj.steamProfileUrl})`,
             });
+
+          if (steamAccountObj.active === true) {
+            steamAccountEmbed.setColor(0x3ba55b);
+
+          } else if (steamAccountObj.active === false) {
+            steamAccountEmbed.setColor(0x2a475e);
+          }
 
           accountEmbedList.push(steamAccountEmbed);
         }
