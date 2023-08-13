@@ -74,7 +74,7 @@ module.exports = (client) => {
 
       case "private-vc":
         const privateVcEmbed = new EmbedBuilder()
-          .setColor(0xFF4553)
+          .setColor(0x7dd181)
           .setAuthor({ name: "Q bot" })
           .setTitle("/private-vc ***sub-command***")
           .setDescription("List of all sub commands availble for /valorant")
