@@ -5,7 +5,7 @@ const writeToFile = require("../utils/writeToFile");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("account")
-    .setDescription("setup and manage accounts")
+    .setDescription("Setup and manage your accounts")
     //add a riot account
     .addSubcommand((addSubcommand) =>
       addSubcommand
@@ -173,9 +173,8 @@ module.exports = {
         let region = interaction.options.get("region").value;
         let rank = interaction.options.get("rank").value;
 
-        let riotIdDuplicate = playerObj.riotAccountList.find(
-          (obj) => obj.riotId === riotId
-        );
+        let riotIdDuplicate = playerObj.riotAccountList.find((obj) => obj.riotId === riotId);
+
         if (riotIdDuplicate) {
           //if the riot account is already added
           await interaction.reply({
@@ -376,7 +375,7 @@ module.exports = {
               selectRiotAccountRow.addComponents(
                 new ButtonBuilder()
                   .setLabel(riotAccountObj.riotId)
-                  .setCustomId(`select-riot-${riotAccountObj.riotId}-${interaction.id}`)
+                  .setCustomId(`select-riot-${interaction.member.id}-${riotAccountObj.riotId}-${interaction.id}`)
                   .setStyle(selectButtonStyle)
               );
             }
