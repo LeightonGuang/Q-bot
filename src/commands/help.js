@@ -13,10 +13,11 @@ module.exports = {
       .setTitle("/help")
       .setDescription("All the commands that are available to use in the server")
       .addFields(
+        { name: "/account [***sub-command***]", value: "Set up and manage your accounts" },
+        { name: "/valorant [***sub-command***]", value: "Commands for Valorant related stuff" },
+        { name: "/private-vc [***sub-command***]", value: "Creates a private vc for you and the people you want" },
         { name: "/ping", value: "Ping the bot to check online status" },
-        { name: "/setup", value: "Create roles for queue" },
-        { name: "/creator", value: "Creator of Q Bot" },
-        { name: "/duo, /trio, /quad, /stack ", value: "Creates a private vc for you and the people you want" }
+        { name: "/credit", value: "The people who contributed to this server" }
       )
       .setTimestamp()
 
@@ -39,8 +40,12 @@ module.exports = {
             new StringSelectMenuOptionBuilder()
               .setLabel("/valorant")
               .setDescription("Sub commands that are valorant related")
-              .setValue("valorant")
-          )
+              .setValue("valorant"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/private-vc")
+              .setDescription("create a private vc")
+              .setValue("private-vc")
+          ),
       );
 
     interaction.editReply({ components: [helpSelectMenu.toJSON()] });
