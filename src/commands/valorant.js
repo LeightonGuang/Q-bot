@@ -11,7 +11,7 @@ puppeteer.use(StealthPlugin());
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("valorant")
-    .setDescription("commands for valorant related stuff")
+    .setDescription("Commands for Valorant related stuff")
     .addSubcommand(subcommand =>
       subcommand
         .setName("ongoing-events")
