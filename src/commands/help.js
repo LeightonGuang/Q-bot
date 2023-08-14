@@ -43,7 +43,7 @@ module.exports = {
               .setValue("valorant"),
             new StringSelectMenuOptionBuilder()
               .setLabel("/private-vc")
-              .setDescription("create a private vc")
+              .setDescription("Sub commands that creates private vc")
               .setValue("private-vc")
           ),
       );
