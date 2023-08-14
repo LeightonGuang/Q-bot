@@ -731,6 +731,7 @@ module.exports = {
 
       await interaction.editReply({ content: "", embeds: [winPercentageEmbed] });
       console.log("Win Percentage Embed");
+
     } else if (subCommand === "last-game-stats") {
       await interaction.reply("Loading info...");
 
@@ -844,6 +845,7 @@ module.exports = {
       let MatchInfoEmbed = new EmbedBuilder()
         .setColor(0xffffff)
         .setTitle(matchInfo[0])
+        .setURL(trackerProfileUrl)
         .addFields([
           { name: "Team A", value: matchInfo[1], inline: true },
           { name: "\u200B", value: `-`, inline: true },
