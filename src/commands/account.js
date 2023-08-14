@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Embed } = require("discord.js");
 const fs = require("fs");
 const writeToFile = require("../utils/writeToFile");
 
@@ -89,13 +89,63 @@ module.exports = {
             .setRequired(true)
         )
     )
-    //edit an existing riot account
+    //edit member's riot account
     .addSubcommand((addSubcommand) =>
       addSubcommand
         .setName("edit-riot-account")
-        .setDescription("Edit your existing riot account in Qs")
+        .setDescription("Edit your existing riot accounts in Qs")
+        .addStringOption((option) =>
+          option
+            .setName("rank")
+            .setDescription("Edit your rank")
+            .setChoices(
+              { name: "Iron 1", value: "I1" },
+              { name: "Iron 2", value: "I2" },
+              { name: "Iron 3", value: "I3" },
+              { name: "Bronze 1", value: "B1" },
+              { name: "Bronze 2", value: "B2" },
+              { name: "Bronze 3", value: "B3" },
+              { name: "Silver 1", value: "S1" },
+              { name: "Silver 2", value: "S2" },
+              { name: "Silver 3", value: "S3" },
+              { name: "Gold 1", value: "G1" },
+              { name: "Gold 2", value: "G2" },
+              { name: "Gold 3", value: "G3" },
+              { name: "Platinum 1", value: "P1" },
+              { name: "Platinum 2", value: "P2" },
+              { name: "Platinum 3", value: "P3" },
+              { name: "Diamond 1", value: "D1" },
+              { name: "Diamond 2", value: "D2" },
+              { name: "Diamond 3", value: "D3" },
+              { name: "Ascendant 1", value: "A1" },
+              { name: "Ascendant 2", value: "A2" },
+              { name: "Ascendant 3", value: "A3" },
+              { name: "Immortal 1", value: "Im1" },
+              { name: "Immortal 2", value: "Im2" },
+              { name: "Immortal 3", value: "Im3" },
+              { name: "Radiant", value: "R" }
+            )
+        )
+        .addStringOption((option) =>
+          option
+            .setName("riot-id")
+            .setDescription("Edit your Riot id")
+        )
+        .addStringOption((option) =>
+          option
+            .setName("region")
+            .setDescription("Edit your region")
+            .setChoices(
+              { name: "NA", value: "na" },
+              { name: "LATAM", value: "latam" },
+              { name: "BR", value: "br" },
+              { name: "EU", value: "eu" },
+              { name: "KR", value: "kr" },
+              { name: "APAC", value: "apac" }
+            )
+        )
     )
-    //edit an existing steam account
+    //edit member's steam account
     .addSubcommand((addSubcommand) =>
       addSubcommand
         .setName("edit-steam-account")
@@ -168,7 +218,7 @@ module.exports = {
     let subCommand = interaction.options.getSubcommand();
 
     switch (subCommand) {
-      case "add-riot-account":
+      case "add-riot-account": {
         let riotId = interaction.options.get("riot-id").value;
         let region = interaction.options.get("region").value;
         let rank = interaction.options.get("rank").value;
@@ -217,7 +267,7 @@ module.exports = {
         );
         break;
 
-      case "add-steam-account":
+      } case "add-steam-account": {
         let steamAccountName = interaction.options.get("account-name").value;
         let steamFriendCode = interaction.options.get("friend-code").value;
         let steamProfileUrl =
@@ -265,14 +315,53 @@ module.exports = {
 
         break;
 
-      case "edit-riot-account":
+      } case "edit-riot-account": {
+        let rank = interaction.options.get("rank")?.value;
+        let riotId = interaction.options.get("riot-id")?.value;
+        let region = interaction.options.get("region")?.value;
+
+        if (rank || riotId || region) {
+          let memberId = interaction.member.id;
+          let playerObj = playerList.find((obj) => obj.id === memberId);
+          let riotAccount = playerObj.riotAccountList.find((obj) => obj.active === true);
+
+          if (rank) {
+            riotAccount.rank = rank;
+            writeToFile(dataObj, "data.json");
+            console.log("LOG:\t" + `member has edited their rank to ${rank}`);
+          }
+
+          if (riotId) {
+            riotAccount.riotId = riotId;
+            writeToFile(dataObj, "data.json");
+            console.log("LOG:\t" + `member has edited their Riot id to ${riotId}`);
+          }
+
+          if (region) {
+            riotAccount.region = region;
+            writeToFile(dataObj, "data.json");
+            console.log("LOG:\t" + `member has edited their region to ${region}`);
+          }
+
+          let riotAccountEmbed = new EmbedBuilder()
+            .setColor(0x3ba55b)
+            .setTitle(riotAccount.riotId)
+            .addFields(
+              { name: "Rank:", value: riotAccount.rank },
+              { name: "Region:", value: riotAccount.region }
+            )
+
+          await interaction.reply({ content: "Riot account edited successfully", embeds: [riotAccountEmbed], ephemeral: true });
+
+        }
+
 
         break;
 
-      case "edit-steam-account":
+      } case "edit-steam-account": {
         break;
 
-      case "list-all":
+      } case "list-all": {
         let accountEmbedList = [];
 
         //embed indicating steam accounts
@@ -337,7 +426,7 @@ module.exports = {
         });
         break;
 
-      case "select":
+      } case "select": {
         let selectAcountType = interaction.options.get("type").value;
 
         //if player chose to select a riot account
@@ -445,7 +534,7 @@ module.exports = {
         }
         break;
 
-      case "delete":
+      } case "delete": {
         let deleteAccountType = interaction.options.get("type").value;
 
         switch (deleteAccountType) {
@@ -464,7 +553,11 @@ module.exports = {
                     value: riotAccountObj.region,
                     inline: true,
                   },
-                  { name: "Rank:", value: riotAccountObj.rank, inline: true },
+                  {
+                    name: "Rank:",
+                    value: riotAccountObj.rank,
+                    inline: true
+                  },
                   {
                     name: "Active:",
                     value: riotAccountObj.active.toString(),
@@ -497,6 +590,7 @@ module.exports = {
         }
 
         break;
+      }
     }
   },
 };
