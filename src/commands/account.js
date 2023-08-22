@@ -223,7 +223,8 @@ module.exports = {
         let region = interaction.options.get("region").value;
         let rank = interaction.options.get("rank").value;
 
-        let riotIdDuplicate = playerObj.riotAccountList.find((obj) => obj.riotId === riotId);
+        let riotAccountList = playerObj.riotAccountList;
+        let riotIdDuplicate = riotAccountList.find((obj) => obj.riotId === riotId);
 
         if (riotIdDuplicate) {
           //if the riot account is already added
@@ -233,6 +234,13 @@ module.exports = {
           });
           console.log("LOG: \t" + "riot id already added");
           return;
+        }
+
+        if (riotAccountList) {
+          //if there are not riot account in player object
+          for (let riotAccount of riotAccountList) {
+            riotAccount.active = false;
+          }
         }
 
         let riotAccountObj = {
