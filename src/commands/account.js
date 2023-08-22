@@ -239,7 +239,7 @@ module.exports = {
           riotId: riotId,
           region: region,
           rank: rank,
-          active: false,
+          active: true,
         };
 
         playerObj.riotAccountList.push(riotAccountObj);
