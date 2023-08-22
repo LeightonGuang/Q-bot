@@ -220,6 +220,25 @@ module.exports = {
     switch (subCommand) {
       case "add-riot-account": {
         let riotId = interaction.options.get("riot-id").value;
+
+        const [name, tag] = riotId.split('#');
+
+        if (!tag) {
+          interaction.reply({
+            content: "Please include a tag in the riot Id",
+            ephemeral: true
+          });
+          return;
+        }
+
+        if ((name.length < 3) || (name.length > 16) || (tag.length < 3) || (tag.length > 5)) {
+          interaction.reply({
+            content: "Keep your riot id between 3-16 characters\n#tag between 3-5 characters",
+            ephemeral: true
+          });
+          return;
+        }
+
         let region = interaction.options.get("region").value;
         let rank = interaction.options.get("rank").value;
 
