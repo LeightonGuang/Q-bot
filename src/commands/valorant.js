@@ -5,6 +5,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const { registerCustomQueryHandler } = require('puppeteer');
 
 puppeteer.use(StealthPlugin());
 
@@ -55,7 +56,7 @@ module.exports = {
     ),
 
   async execute(interaction) {
-
+    console.log("FILE:\t" + "valorant.js");
     async function fetchEvents(eventList) {
 
       const response = await axios.get(vlr_url + "/vct-" + year);
@@ -373,6 +374,21 @@ module.exports = {
       return playerUrl;
     }
 
+    function registered(userId) {
+      const playerRegistered = dataObj.playerList.find(obj => obj.id === userId);
+
+      if (playerRegistered) {
+        return true;
+
+      } else if (!playerRegistered) {
+        interaction.reply({
+          content: "Please use the command ***/account add-riot-account*** to add a riot account",
+          ephemeral: true
+        });
+        return false;
+      }
+    }
+
     const { channel } = interaction;
 
     let vlr_url = "https://vlr.gg";
@@ -522,12 +538,11 @@ module.exports = {
         userId = userId.id;
       }
 
+      if (!registered(userId)) return;
+
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
-
       let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
-
       let riotId = accountObj.riotId;
-
       let trackerProfileUrl = profileUrl(riotId);
 
       let statEmbedHeader = new EmbedBuilder()
@@ -657,9 +672,6 @@ module.exports = {
       await interaction.reply({ embeds: rankEmbedList, fetchReply: true });
 
     } else if (subCommand === "win-percentage") {
-
-      await interaction.reply("Loading info...");
-
       let userId = interaction.options.getMember("player");
 
       if (userId === null) {
@@ -669,12 +681,13 @@ module.exports = {
         userId = userId.id;
       }
 
+      if (!registered(userId)) return;
+
+      await interaction.reply("Loading info...");
+
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
-
       let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
-
       let riotId = accountObj.riotId;
-
       let trackerProfileUrl = profileUrl(riotId);
 
       const browser = await puppeteer.launch({ headless: true });
@@ -685,8 +698,8 @@ module.exports = {
       //await page.waitForSelector(".vmr");
 
       const playerIconSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.ph > div.ph__container > div.user-avatar.user-avatar--large.ph-avatar > img.user-avatar__image";
-      const winSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(1)";
-      const loseSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(2)";
+      const winSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(1)"
+      const loseSelector = "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-main > div.area-main-stats > div.segment-stats.card.bordered.header-bordered.responsive > div.highlighted.highlighted--giants > div.highlighted__content > div > div.trn-profile-highlighted-content__stats > div > div.trn-profile-highlighted-content__ratio > svg > g:nth-child(3) > text:nth-child(2)";
 
       //get the player icon url
       const playerIconUrl = await page.evaluate((selector) => {
@@ -699,6 +712,8 @@ module.exports = {
         const element = document.querySelector(selector);
         return element ? element.textContent : null;
       }, winSelector);
+
+      console.log(winNumString);
 
       //get the lost number
       const loseNumString = await page.evaluate((selector) => {
@@ -733,8 +748,6 @@ module.exports = {
       console.log("Win Percentage Embed");
 
     } else if (subCommand === "last-game-stats") {
-      await interaction.reply("Loading info...");
-
       let userId = interaction.options.getMember("player");
 
       if (userId === null) {
@@ -743,6 +756,10 @@ module.exports = {
       } else {
         userId = userId.id;
       }
+
+      if (!registered(userId)) return;
+
+      await interaction.reply("Loading info...");
 
       let userObj = dataObj.playerList.find(obj => obj.id === userId);
       let accountObj = userObj.riotAccountList.find(obj => obj.active === true);
