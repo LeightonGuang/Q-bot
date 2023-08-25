@@ -24,8 +24,11 @@ const updateQueueEmbed = require("../../utils/updateQueueEmbed");
 module.exports = async (interaction) => {
   console.log("FILE: \t" + "queueButtonHandler.js");
   const { guild, member } = interaction;
+  const splittedArray = interaction.customId.split('-');
   let memberClicked = interaction.user;
   //console.log("memberClicked: " + memberClicked);
+
+  if (splittedArray[0] !== "queue") return;
 
   //===========================functions============================
 
@@ -102,14 +105,6 @@ module.exports = async (interaction) => {
     "unrated",
   ];
 
-  //=========================interaction is button======================
-
-  let buttonPressed = interaction.customId;
-  let memberWhoPressed = interaction.user;
-  console.log(
-    "LOG: \t" + `${memberWhoPressed.tag} clicked on (${buttonPressed})`
-  );
-
   //================start===================
 
   /**
@@ -122,7 +117,7 @@ module.exports = async (interaction) => {
 
   let memberInQueueWaitingRoom = queueWaitingRoomId.members.has(memberClicked.id);
 
-  switch (buttonPressed) {
+  switch (splittedArray[1]) {
     case "duoRankQueue": {
       //check if members are in queue waiting room
       if (!memberInQueueWaitingRoom) {
