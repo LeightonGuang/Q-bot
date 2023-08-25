@@ -19,7 +19,7 @@ module.exports = (client) => {
     let guildId = interaction.guildId;
 
     //list of commands that can be used in general chat
-    let playerCommands = ["help", "account", "poll", "credit"];
+    let generalCommands = ["help", "account", "poll", "credit"];
 
     //list of commands that only mods can use
     let modCommands = ["mod-help", "mod"];
@@ -46,7 +46,7 @@ module.exports = (client) => {
       let commandChannelId = "1095144647023661166";
 
       //if interaction commands are help and player-profile
-      if (playerCommands.some(item => item === interaction.commandName)) {
+      if (generalCommands.some(item => item === interaction.commandName)) {
         console.log("LOG: \t" + "running /" + interaction.commandName);
         await command.execute(interaction);
 
@@ -122,7 +122,10 @@ module.exports = (client) => {
 
     } else if (guildId === "1061462082140262400") {
       //if gulid is shruge
-      await command.execute(interaction);
+
+      let disabledCommands =
+
+        await command.execute(interaction);
 
     }
 
