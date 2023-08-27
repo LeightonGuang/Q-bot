@@ -85,8 +85,6 @@ module.exports = {
       }
     }
 
-    const { channel } = interaction;
-
     let subCommand = interaction.options.getSubcommand();
 
     if (subCommand === "ongoing-events") {
