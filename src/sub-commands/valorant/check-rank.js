@@ -1,8 +1,11 @@
 const { EmbedBuilder } = require("discord.js");
+const fs = require("node:fs");
 const puppeteer = require("puppeteer-extra");
 
-module.exports = async (interaction, dataObj) => {
+module.exports = async (interaction) => {
   //list that stores the current rank and peak rank embed
+  let dataFile = fs.readFileSync("data.json");
+  let dataObj = JSON.parse(dataFile);
   let rankEmbedList = [];
   let userId = interaction.options.getMember("player");
   //if the command is left empty
