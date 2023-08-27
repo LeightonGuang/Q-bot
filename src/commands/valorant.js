@@ -1,7 +1,4 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const writeToFile = require("../utils/writeToFile");
-const axios = require("axios");
-const cheerio = require("cheerio");
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 
@@ -58,12 +55,6 @@ module.exports = {
 
   async execute(interaction) {
     console.log("FILE:\t" + "valorant.js");
-    async function fetchEvents(eventList) {}
-
-    async function fetchEventMatch(eventList) {}
-
-    async function sendEmbed(eventList) {}
-
     function profileUrl(riotId) {
       //gets the tracker.gg profile url using their riot id
       let modifiedId = riotId.replace(/\s+/g, "%20");
@@ -99,38 +90,19 @@ module.exports = {
     let vlr_url = "https://vlr.gg";
 
     let subCommand = interaction.options.getSubcommand();
-    let valorantEventEmbedList = [];
-
-    let upcomingEventList = [];
 
     if (subCommand === "ongoing-events") {
       const ongoingEvents = require("../sub-commands/valorant/ongoing-events");
       ongoingEvents(interaction);
     } else if (subCommand === "upcoming-events") {
-      let upcomingEventEmbedHeader = new EmbedBuilder()
-        .setColor(0xffffff)
-        .setTitle("Upcoming Valorant Champions Tour " + year)
-        .setURL(vlr_url + "/vct-" + year)
-        .setDescription(
-          "Riot's official " + year + " Valorant tournament circuit"
-        );
-
-      valorantEventEmbedList.push(upcomingEventEmbedHeader);
-
-      await interaction.reply({
-        embeds: valorantEventEmbedList,
-        fetchReply: true,
-      });
-
-      await fetchEvents(upcomingEventList);
-      await fetchEventMatch(upcomingEventList);
-      await sendEmbed(upcomingEventList);
+      const upcomingEvents = require("../sub-commands/valorant/upcoming-events");
+      upcomingEvents(interaction);
     } else if (subCommand === "check-rank") {
       let checkRank = require("../sub-commands/valorant/check-rank");
-      checkRank(interaction, dataObj);
+      checkRank(interaction);
     } else if (subCommand === "win-percentage") {
       let winPercentage = require("../sub-commands/valorant/win-percentage");
-      winPercentage(interaction, dataObj);
+      winPercentage(interaction);
     } else if (subCommand === "last-game-stats") {
       let userId = interaction.options.getMember("player");
 
