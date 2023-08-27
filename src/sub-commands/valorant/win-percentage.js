@@ -1,8 +1,12 @@
 const { EmbedBuilder } = require("discord.js");
+const fs = require("node:fs");
 const puppeteer = require("puppeteer-extra");
 
-module.exports = async (interaction, dataObj) => {
+module.exports = async (interaction) => {
   let userId = interaction.options.getMember("player");
+
+  let dataFile = fs.readFileSync("data.json");
+  let dataObj = JSON.parse(dataFile);
 
   if (userId === null) {
     userId = interaction.user.id;
@@ -47,8 +51,6 @@ module.exports = async (interaction, dataObj) => {
     const element = document.querySelector(selector);
     return element ? element.textContent : null;
   }, winSelector);
-
-  console.log(winNumString);
 
   //get the lost number
   const loseNumString = await page.evaluate((selector) => {
