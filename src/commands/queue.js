@@ -88,15 +88,15 @@ module.exports = {
     //all the buttons for rank queue
     const rankRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
-        .setCustomId("duoRankQueue")
+        .setCustomId("queue-duoRankQueue")
         .setLabel("duo rank")
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
-        .setCustomId("trioRankQueue")
+        .setCustomId("queue-trioRankQueue")
         .setLabel("trio rank")
         .setStyle(ButtonStyle.Success),
       new ButtonBuilder()
-        .setCustomId("fiveStackRankQueue")
+        .setCustomId("queue-fiveStackRankQueue")
         .setLabel("5 stack rank")
         .setStyle(ButtonStyle.Success),
     )
@@ -104,15 +104,15 @@ module.exports = {
     //all the buttons for unrated queue
     const unratedRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
-        .setCustomId("unrated")
+        .setCustomId("queue-unrated")
         .setLabel("unrated")
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
-        .setCustomId("oneVoneQueue")
+        .setCustomId("queue-oneVoneQueue")
         .setLabel("1v1 queue")
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
-        .setCustomId("tenMansQueue")
+        .setCustomId("queue-tenMansQueue")
         .setLabel("10 mans queue")
         .setStyle(ButtonStyle.Primary),
     )
@@ -120,11 +120,11 @@ module.exports = {
     //buttons for controls
     const controlRow = new ActionRowBuilder().setComponents(
       new ButtonBuilder()
-        .setCustomId("dequeue")
+        .setCustomId("queue-dequeue")
         .setLabel("dequeue")
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
-        .setCustomId("refresh")
+        .setCustomId("queue-refresh")
         .setLabel("refresh")
         .setStyle(ButtonStyle.Secondary),
     )
