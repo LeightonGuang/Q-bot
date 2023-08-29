@@ -23,7 +23,7 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName("check-rank")
-        .setDescription("Check player's current rank and peak rank")
+        .setDescription("Shows your current rank and peak rank")
         .addUserOption((option) =>
           option
             .setName("player")
@@ -34,7 +34,7 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName("win-percentage")
-        .setDescription("Check player's current act rank win percentage")
+        .setDescription("Shows your current act rank win percentage")
         .addUserOption((option) =>
           option
             .setName("player")
@@ -45,7 +45,18 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName("last-game-stats")
-        .setDescription("Check player's last game stats")
+        .setDescription("Shows your last game stats")
+        .addUserOption((option) =>
+          option
+            .setName("player")
+            .setDescription("default(empty) will be yourself")
+        )
+    )
+
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("match-history")
+        .setDescription("Shows your last 10 games results")
         .addUserOption((option) =>
           option
             .setName("player")
@@ -102,6 +113,9 @@ module.exports = {
     } else if (subCommand === "last-game-stats") {
       let lastGameStats = require("../sub-commands/valorant/last-game-stats");
       lastGameStats(interaction);
+    } else if (subCommand === "match-history") {
+      let matchHistory = require("../sub-commands/valorant/match-history");
+      matchHistory(interaction);
     }
   },
 };
