@@ -2,7 +2,7 @@ const fs = require("node:fs");
 
 /**
  * if command used is /help or /player-profile
- *  it will run anywhere 
+ *  it will run anywhere
  */
 
 module.exports = (client) => {
@@ -25,7 +25,7 @@ module.exports = (client) => {
     let modCommands = ["mod-help", "mod"];
 
     //check if member is in playerList already
-    let playerExist = playerList.find(obj => obj.id === userId);
+    let playerExist = playerList.find((obj) => obj.id === userId);
 
     //=========================interaction is a command===========================
     if (!interaction.isChatInputCommand()) return;
@@ -40,50 +40,54 @@ module.exports = (client) => {
       //if guild is Qs
 
       //console.log("command: /" + interaction.commandName);
-      let mod = interaction.guild.roles.cache.find(role => role.name === "mod");
+      let mod = interaction.guild.roles.cache.find(
+        (role) => role.name === "mod"
+      );
       let isMod = interaction.member.roles.cache.has(mod.id);
 
       let commandChannelId = "1095144647023661166";
 
       //if interaction commands are help and player-profile
-      if (generalCommands.some(item => item === interaction.commandName)) {
+      if (generalCommands.some((item) => item === interaction.commandName)) {
         console.log("LOG: \t" + "running /" + interaction.commandName);
         await command.execute(interaction);
-
-      } else if (modCommands.some(item => item === interaction.commandName)) {
-        //if commands are mod commands 
+      } else if (modCommands.some((item) => item === interaction.commandName)) {
+        //if commands are mod commands
         if (isMod) {
           //if member is a mod
           if (interaction.commandName === "mod") {
             //if its /mod run
             console.log("LOG: \t" + "running /" + interaction.commandName);
             await command.execute(interaction);
-
           } else if (interaction.commandName === "mod-help") {
-            //if its /mod-help then it had to be in 
+            //if its /mod-help then it had to be in
             if (interaction.channel.name === "⌨｜command") {
               //check if the command is used in command channel
               console.log("LOG: \t" + "running /" + interaction.commandName);
               await command.execute(interaction);
-
             } else {
               //if its not in command channel
-              let modCommandChannel = guild.channels.cache.find((channel) => channel.name === "⌨｜command");
+              let modCommandChannel = guild.channels.cache.find(
+                (channel) => channel.name === "⌨｜command"
+              );
               interaction.reply({
                 content: `Please use ${interaction} in ${modCommandChannel}`,
-                ephemeral: true
+                ephemeral: true,
               });
-              console.log("/" + interaction.commandName + " is not in ⌨｜command");
+              console.log(
+                "/" + interaction.commandName + " is not in ⌨｜command"
+              );
             }
           }
-
         } else {
           //if member interacted is not a mod
           await interaction.reply({
             content: "you are not a mod",
-            ephemeral: true
+            ephemeral: true,
           });
-          console.log("LOG: \t" + "member who is not a mod is trying to use mod command");
+          console.log(
+            "LOG: \t" + "member who is not a mod is trying to use mod command"
+          );
         }
 
         //if command is /queue
@@ -93,11 +97,10 @@ module.exports = (client) => {
         if (interaction.channel.id === queueId) {
           console.log("LOG: \t" + "running /" + interaction.commandName);
           await command.execute(interaction);
-
         } else {
           interaction.reply({
             content: "You can't run this command here",
-            ephemeral: true
+            ephemeral: true,
           });
           console.log("LOG: \t" + "can't run this command here");
         }
@@ -109,27 +112,23 @@ module.exports = (client) => {
           console.log("LOG: \t" + "running /" + interaction.commandName);
           await command.execute(interaction);
 
-
           //if player profile is not done
         } else {
           await interaction.reply({
-            content: "Please use /player-profile to setup your info before queueing",
-            ephemeral: true
+            content:
+              "Please use /account add-riot-account to setup your info before queueing",
+            ephemeral: true,
           });
-          console.log("LOG: \t" + "Please use /player-profile to setup your info before queueing");
+          console.log(
+            "LOG: \t" +
+              "Please use /player-profile to setup your info before queueing"
+          );
         }
       }
-
     } else if (guildId === "1061462082140262400") {
       //if gulid is shruge
 
-      let disabledCommands =
-
-        await command.execute(interaction);
-
+      let disabledCommands = await command.execute(interaction);
     }
-
-
-
   });
 };
