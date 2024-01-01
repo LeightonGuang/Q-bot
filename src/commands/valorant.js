@@ -62,8 +62,18 @@ module.exports = {
             .setName("player")
             .setDescription("default(empty) will be yourself")
         )
-    ),
+    )
 
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("map-win-percentage")
+        .setDescription("Shows your maps win percentage")
+        .addUserOption((option) =>
+          option
+            .setName("player")
+            .setDescription("default(empty) will be yourself")
+        )
+    ),
   async execute(interaction) {
     console.log("FILE:\t" + "valorant.js");
     function profileUrl(riotId) {
@@ -116,6 +126,9 @@ module.exports = {
     } else if (subCommand === "match-history") {
       let matchHistory = require("../sub-commands/valorant/match-history");
       matchHistory(interaction);
+    } else if (subCommand === "map-win-percentage") {
+      let mapWinPercentage = require("../sub-commands/valorant/map-win-percentage");
+      mapWinPercentage(interaction);
     }
   },
 };
