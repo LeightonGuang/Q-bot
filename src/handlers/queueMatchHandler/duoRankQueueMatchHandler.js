@@ -57,8 +57,8 @@ module.exports = async (interaction) => {
       ]
     });
 
-    let customVoiceChannel = dataObj.customVoiceChannel;
-    customVoiceChannel.push(vcName);
+    let customLobby = dataObj.customLobby;
+    customLobby.push(vcName);
     writeToFile(dataObj, "data.json");
 
     //move the 2 players to their vc
