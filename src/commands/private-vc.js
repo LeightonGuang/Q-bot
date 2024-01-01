@@ -93,15 +93,22 @@ module.exports = {
     switch (subCommand) {
       case "duo":
 
-        let member1 = member;
-        let member2 = interaction.options.getMember("duo");
+        let duo1 = member;
+        let duo2 = interaction.options.getMember("duo");
 
-        let duo = require("../utils/private-vc/duo");
-        duo(interaction, member1, member2);
+        let duoCommand = require("../utils/private-vc/duo");
+        duoCommand(interaction, duo1, duo2);
 
         break;
 
       case "trio":
+
+        let trio1 = member;
+        let trio2 = interaction.options.getMember("trio1");
+        let trio3 = interaction.options.getMember("trio2");
+
+        let trioCommand = require("../utils/private-vc/trio");
+        trioCommand(interaction, trio1, trio2, trio3);
 
         break;
 
