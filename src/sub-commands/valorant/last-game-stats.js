@@ -60,17 +60,17 @@ module.exports = async (interaction) => {
 
   //allPlayerInfo is a list of object with player stats
   const allPlayerInfo = await page.evaluate(() => {
+    //playerInfo is list of players' stats container
+    const playerInfo = Array.from(
+      document.querySelectorAll(".vm-table .st-content__item")
+    );
+
     //allPlayerStats is a list full of numbers stats in order
     const allPlayerStats = Array.from(
       document.querySelectorAll(".scoreboard .st-content__item")
     )
       .flatMap((item) => Array.from(item.querySelectorAll(".value")))
       .map((element) => element.textContent);
-
-    //playerInfo is list of players' stats container
-    const playerInfo = Array.from(
-      document.querySelectorAll(".vm-table .st-content__item")
-    );
 
     const stats = playerInfo.map((player, playerNum) => ({
       riotName: player
