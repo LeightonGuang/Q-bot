@@ -7,6 +7,9 @@ module.exports = async (interaction) => {
   let dataFile = fs.readFileSync("data.json");
   let dataObj = JSON.parse(dataFile);
   let rankEmbedList = [];
+
+  let { channel } = interaction;
+
   let userId = interaction.options.getMember("player");
   //if the command is left empty
   if (userId === null) {
