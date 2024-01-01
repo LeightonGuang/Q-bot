@@ -5,7 +5,7 @@ const writeToFile = require("../../utils/writeToFile");
 
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
-    console.log("LOG: \t" + "newPrivateTrioVc.js");
+    console.log("FILE: \t" + "newPrivateTrioVc.js");
 
     if (!interaction.isButton()) return;
     const { guild } = interaction;
@@ -80,8 +80,13 @@ module.exports = (client) => {
               member3 = guild.members.cache.get(member3);
 
               const player1Obj = playerList.find(obj => obj.id === member1.id);
+              const player1RiotAccount = player1Obj.riotAccountList.find((obj) => obj.active === true);
+
               const player2Obj = playerList.find(obj => obj.id === member2.id);
+              const player2RiotAccount = player2Obj.riotAccountList.find((obj) => obj.active === true);
+
               const player3Obj = playerList.find(obj => obj.id === member3.id);
+              const player3RiotAccount = player3Obj.riotAccountList.find((obj) => obj.active === true);
 
               let textChannelName = member1.user.username + "'s trio lobby";
               let vcName = member1.user.username + "'s trio vc";
@@ -167,13 +172,13 @@ module.exports = (client) => {
                 .setTitle("Player Info")
                 .addFields(
                   { name: "Member", value: player1Obj.tag, inline: true },
-                  { name: "Riot Id", value: player1Obj.riotId, inline: true },
+                  { name: "Riot Id", value: player1RiotAccount.riotId, inline: true },
                   { name: "\u200B", value: "\u200B" },
                   { name: "Member", value: player2Obj.tag, inline: true },
-                  { name: "Riot Id", value: player2Obj.riotId, inline: true },
+                  { name: "Riot Id", value: player2RiotAccount.riotId, inline: true },
                   { name: "\u200B", value: "\u200B" },
                   { name: "Member", value: player3Obj.tag, inline: true },
-                  { name: "Riot Id", value: player3Obj.riotId, inline: true },
+                  { name: "Riot Id", value: player3RiotAccount.riotId, inline: true },
                   { name: "\u200B", value: "\u200B" },
                 )
                 .setTimestamp()
