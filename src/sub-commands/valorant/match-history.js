@@ -52,15 +52,28 @@ module.exports = async (interaction) => {
 
     allMatchResultsList = allMatchResultsList.slice(0, 10);
 
+    //
+    let winLoseClass = Array.from(document.querySelectorAll(".vmr")).map(
+      (element) => element.classList
+    );
+    let mapPoints = Array.from(document.querySelectorAll(".vmr-score"));
+    let groupedSpan = [];
+
+    mapPoints.forEach((div) => {
+      const spanElements = div.querySelectorAll("span");
+      const spanArray = Array.from(spanElements);
+
+      for (let i = 0; i < spanArray.length; i += 3) {
+        const group = spanArray.slice(i, i + 3);
+        groupedSpan.push(group);
+      }
+    });
+    //Array.from() turn all the argument to an array
     const kda = Array.from(document.querySelectorAll(".vmr-stats"))
       .flatMap((stats) =>
         Array.from(stats.querySelectorAll(".trn-match-row__text-value"))
       )
       .map((element) => element.textContent);
-
-    let classNames = Array.from(document.querySelectorAll(".vmr")).map(
-      (element) => element.classList
-    );
 
     const allMatchInfo = allMatchResultsList.map((container, counter) => ({
       agenticonUrl: container
@@ -69,11 +82,14 @@ module.exports = async (interaction) => {
       mapName: container
         .querySelector(".vmr .vmr-info-left .trn-match-row__text-value")
         .textContent.trim(),
-      winLoss: classNames[counter][2],
+      winLoss: winLoseClass[counter][2],
+      mapPoints: groupedSpan,
       kda: kda[counter * 6].trim(),
     }));
     return allMatchInfo;
   });
+
+  console.log(JSON.stringify(matchResults));
 
   let winCounter = 0;
   let lossCounter = 0;
@@ -99,13 +115,15 @@ module.exports = async (interaction) => {
 
   let matchEmbedList = [];
 
-  for (let match of matchResults) {
+  for (let i = 0; i < matchResults.length; i++) {
+    let match = matchResults[i];
     matchEmbed = new EmbedBuilder()
       .setAuthor({
         name: match.winLoss.split("-")[5].toUpperCase(),
         iconURL: match.agenticonUrl,
       })
       .addFields(
+        { name: "Game Point:", value: match.groupedSpan, inline: true },
         { name: "Map:", value: match.mapName, inline: true },
         { name: "KDA:", value: match.kda, inline: true }
       );
