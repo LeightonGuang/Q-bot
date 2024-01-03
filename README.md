@@ -72,6 +72,10 @@ Make an announcement message in a channel.
 
 Deletes all the queue in data.json.
 
+### `/valorant`
+
+valorant related commands
+
 ---
 
 - /ping
