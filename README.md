@@ -18,6 +18,8 @@ This is a discord bot used for queuing duo, trio, 5 stack, 1v1 and 10 mans.
 
 - `npm i axios cheerio discord.js dotenv puppeteer puppeteer-extra puppeteer-extra-plugin-stealth`
 
+- setup .env file
+
 website help:
 
 - https://discordjs.guide
