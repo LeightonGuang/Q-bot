@@ -52,21 +52,25 @@ module.exports = async (interaction) => {
 
     allMatchResultsList = allMatchResultsList.slice(0, 10);
 
-    //
     let winLoseClass = Array.from(document.querySelectorAll(".vmr")).map(
       (element) => element.classList
     );
-    let mapPoints = Array.from(document.querySelectorAll(".vmr-score"));
-    let groupedSpan = [];
+    const allMapPointsContainer = Array.from(
+      document.querySelectorAll(".vmr-score")
+    );
+    let groupedMapPoints;
 
-    mapPoints.forEach((div) => {
+    allMapPointsContainer.forEach((div) => {
       const spanElements = div.querySelectorAll("span");
       const spanArray = Array.from(spanElements);
+      const textArray = spanArray.map((element) => element.textContent);
 
-      for (let i = 0; i < spanArray.length; i += 3) {
-        const group = spanArray.slice(i, i + 3);
-        groupedSpan.push(group);
-      }
+      groupedMapPoints = textArray.join("");
+
+      // for (let i = 0; i < spanArray.length; i += 3) {
+      //   const group = spanArray.slice(i, i + 3);
+      //   groupedMapPoints.push(group);
+      // }
     });
     //Array.from() turn all the argument to an array
     const kda = Array.from(document.querySelectorAll(".vmr-stats"))
@@ -75,21 +79,21 @@ module.exports = async (interaction) => {
       )
       .map((element) => element.textContent);
 
-    const allMatchInfo = allMatchResultsList.map((container, counter) => ({
+    const allMatchInfo = allMatchResultsList.map((container, index) => ({
       agenticonUrl: container
         .querySelector(".vmr .vmr-info-left .vmr-agent img")
         .getAttribute("src"),
       mapName: container
         .querySelector(".vmr .vmr-info-left .trn-match-row__text-value")
         .textContent.trim(),
-      winLoss: winLoseClass[counter][2],
-      mapPoints: groupedSpan,
-      kda: kda[counter * 6].trim(),
+      winLoss: winLoseClass[index][2],
+      mapPoints: groupedMapPoints[index],
+      kda: kda[index * 6].trim(),
     }));
     return allMatchInfo;
   });
 
-  console.log(JSON.stringify(matchResults));
+  // console.log(JSON.stringify(matchResults));
 
   let winCounter = 0;
   let lossCounter = 0;
@@ -114,17 +118,28 @@ module.exports = async (interaction) => {
   console.log("LOG: \t" + "screenshot");
 
   let matchEmbedList = [];
+  console.log("Match Results: " + JSON.stringify(matchResults[0]));
 
-  for (let i = 0; i < matchResults.length; i++) {
-    let match = matchResults[i];
+  matchResults.forEach((match, index) => {
+    console.log(match.mapPoints);
+    console.log(match.mapName);
+    console.log(match.winLoss);
     matchEmbed = new EmbedBuilder()
       .setAuthor({
         name: match.winLoss.split("-")[5].toUpperCase(),
         iconURL: match.agenticonUrl,
       })
       .addFields(
-        { name: "Game Point:", value: match.groupedSpan, inline: true },
-        { name: "Map:", value: match.mapName, inline: true },
+        {
+          name: "Game Point:",
+          value: match.mapPoints,
+          inline: true,
+        },
+        {
+          name: "Map:",
+          value: match.mapName,
+          inline: true,
+        },
         { name: "KDA:", value: match.kda, inline: true }
       );
 
@@ -136,7 +151,7 @@ module.exports = async (interaction) => {
 
     matchEmbedList.push(matchEmbed);
     matchEmbedMessage.edit({ content: "", embeds: matchEmbedList });
-  }
+  });
 
   console.log("LOG:\t" + "match history embed sent");
 
