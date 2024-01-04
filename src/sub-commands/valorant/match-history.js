@@ -22,10 +22,10 @@ module.exports = async (interaction) => {
 
   if (!registered(userId)) return;
 
-  let userObj = dataObj.playerList.find((obj) => obj.id === userId);
+  const userObj = dataObj.playerList.find((obj) => obj.id === userId);
   let accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
   let riotId = accountObj.riotId;
-  let trackerProfileUrl = profileUrl(riotId);
+  const trackerProfileUrl = profileUrl(riotId);
 
   let embedHeader = new EmbedBuilder()
     .setTitle(riotId)
@@ -50,29 +50,25 @@ module.exports = async (interaction) => {
   const matchResults = await page.evaluate(() => {
     let allMatchResultsList = Array.from(document.querySelectorAll(".vmr"));
 
+    // get the first 10 matches
     allMatchResultsList = allMatchResultsList.slice(0, 10);
 
     let winLoseClass = Array.from(document.querySelectorAll(".vmr")).map(
       (element) => element.classList
     );
-    const allMapPointsContainer = Array.from(
-      document.querySelectorAll(".vmr-score")
-    );
-    let groupedMapPoints;
 
-    allMapPointsContainer.forEach((div) => {
-      const spanElements = div.querySelectorAll("span");
-      const spanArray = Array.from(spanElements);
-      const textArray = spanArray.map((element) => element.textContent);
+    // get all the map points
+    const mapPointDivs = document.querySelectorAll(".vmr-score");
+    const allMapPointsArr = [];
 
-      groupedMapPoints = textArray.join("");
-
-      // for (let i = 0; i < spanArray.length; i += 3) {
-      //   const group = spanArray.slice(i, i + 3);
-      //   groupedMapPoints.push(group);
-      // }
+    mapPointDivs.forEach((div) => {
+      const spans = div.querySelectorAll("span");
+      const mapPoint = `${spans[0].textContent} ${spans[1].textContent} ${spans[2].textContent}`;
+      allMapPointsArr.push(mapPoint);
     });
-    //Array.from() turn all the argument to an array
+
+    // get all the kda
+    // Array.from() turn all the argument to an array
     const kda = Array.from(document.querySelectorAll(".vmr-stats"))
       .flatMap((stats) =>
         Array.from(stats.querySelectorAll(".trn-match-row__text-value"))
@@ -87,7 +83,7 @@ module.exports = async (interaction) => {
         .querySelector(".vmr .vmr-info-left .trn-match-row__text-value")
         .textContent.trim(),
       winLoss: winLoseClass[index][2],
-      mapPoints: groupedMapPoints[index],
+      mapPoints: allMapPointsArr[index],
       kda: kda[index * 6].trim(),
     }));
     return allMatchInfo;
@@ -117,13 +113,13 @@ module.exports = async (interaction) => {
   await page.screenshot({ path: "screenshot.png", fullPage: true });
   console.log("LOG: \t" + "screenshot");
 
-  let matchEmbedList = [];
+  const matchEmbedList = [];
   console.log("Match Results: " + JSON.stringify(matchResults[0]));
 
-  matchResults.forEach((match, index) => {
-    console.log(match.mapPoints);
-    console.log(match.mapName);
-    console.log(match.winLoss);
+  matchResults.forEach((match) => {
+    console.log("mapPoints: " + match.mapPoints);
+    console.log("mapName: " + match.mapName);
+    console.log("winLoss: " + match.winLoss);
     matchEmbed = new EmbedBuilder()
       .setAuthor({
         name: match.winLoss.split("-")[5].toUpperCase(),
