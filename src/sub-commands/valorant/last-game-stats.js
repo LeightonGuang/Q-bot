@@ -23,7 +23,7 @@ module.exports = async (interaction) => {
   const registered = require("../../utils/valorant/registered");
   const profileUrl = require("../../utils/valorant/profileUrl");
 
-  if (!registered(userId)) return;
+  if (!registered(interaction, userId)) return;
 
   await interaction.reply("Loading info...");
 
