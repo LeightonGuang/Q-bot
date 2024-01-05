@@ -11,17 +11,19 @@ module.exports = async (interaction) => {
   let { channel } = interaction;
 
   let userId = interaction.options.getMember("player");
+  let isOther = false;
   //if the command is left empty
   if (userId === null) {
     userId = interaction.user.id;
   } else {
     userId = userId.id;
+    isOther = true;
   }
 
   const registered = require("../../utils/valorant/registered");
   const profileUrl = require("../../utils/valorant/profileUrl");
 
-  if (!registered(userId)) return;
+  if (!registered(interaction, userId, isOther)) return;
 
   let userObj = dataObj.playerList.find((obj) => obj.id === userId);
   let accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
