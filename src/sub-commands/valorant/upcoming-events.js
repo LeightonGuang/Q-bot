@@ -24,7 +24,8 @@ module.exports = async (interaction) => {
     fetchReply: true,
   });
 
-  await fetchEvents(upcomingEventList);
+  const eventList = await fetchEvents(interaction);
+  console.log(eventList);
   await fetchEventMatch(upcomingEventList);
   await sendEmbed(upcomingEventList);
 };
