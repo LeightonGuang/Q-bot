@@ -60,7 +60,7 @@ List all the moderation command for mods.
 
 ### `/mod`
 
-#### `/mod clear-channel [channel] (optional)`
+#### `/mod clear-channel [channel(optional)]`
 
 Clears all the messages in the channel.
 
@@ -73,6 +73,20 @@ Make an announcement message in a channel.
 Deletes all the queue in data.json.
 
 ### `/valorant`
+
+#### `/valorant check-rank [player(optional)]`
+
+#### `/valorant win-percentage [player(optional)]`
+
+#### `/valorant last-game-stats [player(optional)]`
+
+#### `/valorant match-history [player(optional)]`
+
+#### `/valorant map-win-percentage [player(optional)]`
+
+#### `/valorant ongoing-events`
+
+#### `/valorant upcoming-events`
 
 valorant related commands
 
