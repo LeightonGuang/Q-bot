@@ -20,7 +20,7 @@ module.exports = async (interaction) => {
   const registered = require("../../utils/valorant/registered");
   const profileUrl = require("../../utils/valorant/profileUrl");
 
-  if (!registered(userId)) return;
+  if (!registered(interaction, userId)) return;
 
   const userObj = dataObj.playerList.find((obj) => obj.id === userId);
   let accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
@@ -117,9 +117,6 @@ module.exports = async (interaction) => {
   console.log("Match Results: " + JSON.stringify(matchResults[0]));
 
   matchResults.forEach((match) => {
-    console.log("mapPoints: " + match.mapPoints);
-    console.log("mapName: " + match.mapName);
-    console.log("winLoss: " + match.winLoss);
     matchEmbed = new EmbedBuilder()
       .setAuthor({
         name: match.winLoss.split("-")[5].toUpperCase(),
