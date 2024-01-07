@@ -30,7 +30,7 @@ module.exports = async (interaction) => {
   const embedHeader = new EmbedBuilder()
     .setTitle(riotId)
     .setURL(trackerProfileMapsUrl)
-    .setDescription("Map Win Percentage");
+    .setDescription("Map Win %");
 
   embedList.push(embedHeader);
 
@@ -40,7 +40,7 @@ module.exports = async (interaction) => {
     fetchReply: true,
   });
 
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   await page.setViewport({ width: 1920, height: 1080 });
@@ -48,11 +48,23 @@ module.exports = async (interaction) => {
 
   const mapStats = await page.evaluate(() => {
     const allMaps = document.querySelectorAll(".st-content__item");
-    const allBackgroundImg = document.querySelectorAll("--background-image");
+    const allBackgroundImg = document.querySelectorAll(
+      ".st-content__item .st__item.st-content__item-value.st__item--sticky"
+    );
+
+    const allBackgroundImgArray = [];
+
+    for (let i = 0; i < allBackgroundImg.length; i++) {
+      const style = allBackgroundImg[i].getAttribute("style");
+      const regex = /url\(['"](.+?)['"]\)/;
+
+      const imgUrl = style.match(regex)[1];
+      allBackgroundImgArray.push(imgUrl);
+    }
 
     const mapStatsList = [];
 
-    allMaps.forEach((map) => {
+    allMaps.forEach((map, index) => {
       const allStats = map.querySelectorAll(".info .value");
 
       const mapStats = {
@@ -63,6 +75,7 @@ module.exports = async (interaction) => {
         kd: allStats[4].textContent,
         adr: allStats[5].textContent,
         acs: allStats[6].textContent,
+        mapImg: allBackgroundImgArray[index],
       };
 
       mapStatsList.push(mapStats);
@@ -107,7 +120,8 @@ module.exports = async (interaction) => {
           value: map.acs,
           inline: true,
         }
-      );
+      )
+      .setImage(map.mapImg);
 
     embedList.push(mapEmbed);
     interaction.editReply({
