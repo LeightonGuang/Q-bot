@@ -2,4 +2,4 @@
 data.json
 test/
 screenshot.png
-/node-modules
+node_modules
