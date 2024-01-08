@@ -2,7 +2,7 @@ const { EmbedBuilder } = require("discord.js");
 module.exports = (client) => {
   client.on("interactionCreate", async (interaction) => {
     if (!interaction.isStringSelectMenu()) return;
-    const splittedArray = interaction.customId.split('-');
+    const splittedArray = interaction.customId.split("-");
 
     //if it is not a help select menu then end this code file
     if (splittedArray[0] !== "help") return;
@@ -15,16 +15,30 @@ module.exports = (client) => {
           .setColor(0xffffff)
           .setAuthor({ name: "Q bot" })
           .setTitle("/help")
-          .setDescription("All the commands that are available to use in the server")
+          .setDescription(
+            "All the commands that are available to use in the server"
+          )
           .addFields(
             { name: "/help", value: "THIS" },
-            { name: "/account [***sub-command***]", value: "Set up and manage your accounts" },
-            { name: "/valorant [***sub-command***]", value: "Commands for Valorant related stuff" },
-            { name: "/private-vc [***sub-command***]", value: "Creates a private vc for you and the people you want" },
+            {
+              name: "/account [***sub-command***]",
+              value: "Set up and manage your accounts",
+            },
+            {
+              name: "/valorant [***sub-command***]",
+              value: "Commands for Valorant related stuff",
+            },
+            {
+              name: "/private-vc [***sub-command***]",
+              value: "Creates a private vc for you and the people you want",
+            },
             { name: "/ping", value: "Ping the bot to check online status" },
-            { name: "/credit", value: "The people who contributed to this server" }
+            {
+              name: "/credit",
+              value: "The people who contributed to this server",
+            }
           )
-          .setTimestamp()
+          .setTimestamp();
 
         interaction.message.edit({ embeds: [helpEmbed] });
         console.log("LOG:\t" + "changed the /help command embed to helpEmbed");
@@ -33,42 +47,85 @@ module.exports = (client) => {
 
       case "account":
         const accountEmbed = new EmbedBuilder()
-          .setColor(0xFFFF00)
+          .setColor(0xffff00)
           .setAuthor({ name: "Q bot" })
           .setTitle("/account ***sub-command***")
           .setDescription("List of all sub commands available for /account")
           .addFields(
-            { name: "***add-riot-account***", value: "Add a riot account with riot id, rank and region." },
-            { name: "***add-steam-account***", value: "Add a steam account with account name, friend code and profile url." },
-            { name: "***edit-riot-account***", value: "Edit your riot id, rank, region." },
-            { name: "***edit-steam-account***", value: "Edit your account name, friend code and profile url." },
-            { name: "***list-all***", value: "List al the accounts you have added to Qs" },
-            { name: "***select***", value: "If you have multiple accounts, you can select which account to queue with." }
+            {
+              name: "***add-riot-account***",
+              value: "Add a riot account with riot id, rank and region.",
+            },
+            {
+              name: "***add-steam-account***",
+              value:
+                "Add a steam account with account name, friend code and profile url.",
+            },
+            {
+              name: "***edit-riot-account***",
+              value: "Edit your riot id, rank, region.",
+            },
+            {
+              name: "***edit-steam-account***",
+              value: "Edit your account name, friend code and profile url.",
+            },
+            {
+              name: "***list-all***",
+              value: "List al the accounts you have added to Qs",
+            },
+            {
+              name: "***select***",
+              value:
+                "If you have multiple accounts, you can select which account to queue with.",
+            }
           )
-          .setTimestamp()
+          .setTimestamp();
 
         interaction.message.edit({ embeds: [accountEmbed] });
-        console.log("LOG:\t" + "changed the /help command embed to accountEmbed");
+        console.log(
+          "LOG:\t" + "changed the /help command embed to accountEmbed"
+        );
         await interaction.deferUpdate();
         break;
 
       case "valorant":
         const valorantEmbed = new EmbedBuilder()
-          .setColor(0xFF4553)
+          .setColor(0xff4553)
           .setAuthor({ name: "Q bot" })
           .setTitle("/valorant ***sub-command***")
           .setDescription("List of all sub commands availble for /valorant")
           .addFields(
-            { name: "***check-rank***", value: "Check current rank and peak rank" },
-            { name: "***last-game-stats***", value: "Check a player's last game stats" },
-            { name: "***win-percentage***", value: "Check your current act rank win percentage" },
-            { name: "***upcoming-events***", value: "Upcoming Valorant Champions Tour events" },
-            { name: "***ongoing-events***", value: "Ongoing Valorant Champions Tour events" }
+            {
+              name: "***check-rank***",
+              value: "Shows your current rank and peak rank",
+            },
+            {
+              name: "***last-game-stats***",
+              value: "Shows your last game stats",
+            },
+            {
+              name: "***win-percentage***",
+              value: "Shows your current act rank win percentage",
+            },
+            {
+              name: "***upcoming-events***",
+              value: "Shows upcoming Valorant Champions Tour events",
+            },
+            {
+              name: "***ongoing-events***",
+              value: "Shows ongoing Valorant Champions Tour events",
+            },
+            {
+              name: "***map-win-percentage***",
+              value: "Shows your maps win percentage",
+            }
           )
-          .setTimestamp()
+          .setTimestamp();
 
         interaction.message.edit({ embeds: [valorantEmbed] });
-        console.log("LOG:\t" + "changed the /help command embed to valorantEmbed");
+        console.log(
+          "LOG:\t" + "changed the /help command embed to valorantEmbed"
+        );
         await interaction.deferUpdate();
         break;
 
@@ -84,12 +141,14 @@ module.exports = (client) => {
             { name: "***quad***", value: "Select 3 people to private vc with" },
             { name: "***stack***", value: "Select 4 people to private vc with" }
           )
-          .setTimestamp()
+          .setTimestamp();
 
         interaction.message.edit({ embeds: [privateVcEmbed] });
-        console.log("LOG:\t" + "changed the /help command embed to valorantEmbed");
+        console.log(
+          "LOG:\t" + "changed the /help command embed to valorantEmbed"
+        );
         await interaction.deferUpdate();
         break;
     }
-  })
-}
+  });
+};
