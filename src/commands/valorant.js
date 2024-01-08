@@ -68,10 +68,22 @@ module.exports = {
       subcommand
         .setName("map-win-percentage")
         .setDescription("Shows your maps win percentage")
-        .addUserOption((option) =>
+        .addStringOption((option) =>
           option
-            .setName("player")
-            .setDescription("default(empty) will be yourself")
+            .setName("map")
+            .setDescription("default is all maps")
+            .setChoices(
+              { name: "Bind", value: "bind" },
+              { name: "Haven", value: "haven" },
+              { name: "Split", value: "split" },
+              { name: "Ascent", value: "ascent" },
+              { name: "Breeze", value: "breeze" },
+              { name: "Lotus", value: "lotus" },
+              { name: "Sunset", value: "sunset" }
+            )
+        )
+        .addUserOption((option) =>
+          option.setName("player").setDescription("default is yourself")
         )
     ),
   async execute(interaction) {
