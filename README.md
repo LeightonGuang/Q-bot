@@ -4,27 +4,9 @@
 
 Invite Link: [Discord](https://discord.com/invite/cQBxJNeD3F)
 
-## About
+## Features
 
 This is a discord bot used for queuing duo, trio, 5 stack, 1v1 and 10 mans.
-
-## Instructions
-
-- enable server members intent
-
-- enable message content intent
-
-- `npm init`
-
-- `npm i axios cheerio discord.js dotenv puppeteer puppeteer-extra puppeteer-extra-plugin-stealth`
-
-- setup .env file
-
-website help:
-
-- https://discordjs.guide
-
-- https://discord.js.org
 
 ## Commands
 
@@ -33,6 +15,12 @@ website help:
 Adds all the necessary roles for the server.
 
 ### `/help`
+
+| /help                                                    | /help (account)                                              |
+| -------------------------------------------------------- | ------------------------------------------------------------ |
+| ![help](./README/screenShots/help.png)                   | ![help-account](./README/screenShots/help-account.png)       |
+| /help (valorant)                                         | /help (private-vc)                                           |
+| ![help-valorant](./README/screenShots/help-valorant.png) | ![help-private-vc](./README/screenShots/help-private-vc.png) |
 
 List all the commands that are available for discord members.
 
@@ -44,7 +32,9 @@ Command used to see if the bot is online.
 
 Command for setting up their own profile. [region, rank, riot id]
 
-### All the commands for private vc
+### Commands for private vc
+
+![private-vc](./README/screenShots/private-vc.png)
 
 - `/duo [duo]`
 
@@ -107,3 +97,21 @@ private vc
 - /quad
 
 - /stack
+
+## Instructions
+
+- enable server members intent
+
+- enable message content intent
+
+- `npm init`
+
+- `npm i axios cheerio discord.js dotenv puppeteer puppeteer-extra puppeteer-extra-plugin-stealth`
+
+- setup .env file
+
+website help:
+
+- https://discordjs.guide
+
+- https://discord.js.org
