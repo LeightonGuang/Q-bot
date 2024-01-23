@@ -4,9 +4,10 @@
 
 Invite Link: [Discord](https://discord.com/invite/cQBxJNeD3F)
 
-## Features
+## About
 
-This is a discord bot used for queuing duo, trio, 5 stack, 1v1 and 10 mans.
+Q bot is a discord bot that allows you to check your Valorant stats,
+manage Valorant accounts you've added, create private voice channels in the server, and more.
 
 ## Commands
 
