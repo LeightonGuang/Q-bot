@@ -1,4 +1,11 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Embed } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Embed,
+} = require("discord.js");
 const fs = require("fs");
 const writeToFile = require("../utils/writeToFile");
 
@@ -127,9 +134,7 @@ module.exports = {
             )
         )
         .addStringOption((option) =>
-          option
-            .setName("riot-id")
-            .setDescription("Edit your Riot id")
+          option.setName("riot-id").setDescription("Edit your Riot id")
         )
         .addStringOption((option) =>
           option
@@ -219,82 +224,11 @@ module.exports = {
 
     switch (subCommand) {
       case "add-riot-account": {
-        let riotId = interaction.options.get("riot-id").value;
-
-        const [name, tag] = riotId.split('#');
-
-        if (!tag) {
-          interaction.reply({
-            content: "Please include a tag in the riot Id",
-            ephemeral: true
-          });
-          return;
-        }
-
-        if ((name.length < 3) || (name.length > 16) || (tag.length < 3) || (tag.length > 5)) {
-          interaction.reply({
-            content: "Keep your riot id between 3-16 characters\n#tag between 3-5 characters",
-            ephemeral: true
-          });
-          return;
-        }
-
-        let region = interaction.options.get("region").value;
-        let rank = interaction.options.get("rank").value;
-
-        let riotAccountList = playerObj.riotAccountList;
-        let riotIdDuplicate = riotAccountList.find((obj) => obj.riotId === riotId);
-
-        if (riotIdDuplicate) {
-          //if the riot account is already added
-          await interaction.reply({
-            content: "You've already added this account.",
-            ephemeral: true,
-          });
-          console.log("LOG: \t" + "riot id already added");
-          return;
-        }
-
-        if (riotAccountList) {
-          //if there are not riot account in player object
-          for (let riotAccount of riotAccountList) {
-            riotAccount.active = false;
-          }
-        }
-
-        let riotAccountObj = {
-          riotId: riotId,
-          region: region,
-          rank: rank,
-          active: true,
-        };
-
-        playerObj.riotAccountList.push(riotAccountObj);
-
-        //the line below might not be needed
-        playerList.push(playerObj);
-        writeToFile(dataObj, "data.json");
-
-        await interaction.reply({
-          content:
-            "new riot account added\n" +
-            `tag:\t${playerTag}\n` +
-            `riot-id:\t${riotId}\n` +
-            `region:\t${region}\n` +
-            `rank:\t${rank}`,
-          ephemeral: true,
-        });
-
-        console.log(
-          "new riot account added\n" +
-          `tag:\t${playerTag}\n` +
-          `riot-id:\t${riotId}\n` +
-          `region:\t${region}\n` +
-          `rank:\t${rank}`
-        );
+        const addRiotAccount = require("../sub-commands/account/add-riot-account");
+        addRiotAccount(interaction);
         break;
-
-      } case "add-steam-account": {
+      }
+      case "add-steam-account": {
         let steamAccountName = interaction.options.get("account-name").value;
         let steamFriendCode = interaction.options.get("friend-code").value;
         let steamProfileUrl =
@@ -335,14 +269,14 @@ module.exports = {
 
         console.log(
           "new steam account added\n" +
-          `Account Name: \t${steamAccountName}\n` +
-          `Friend Code: \t${steamFriendCode}\n` +
-          `Steam Profile URL: \t${steamProfileUrl}`
+            `Account Name: \t${steamAccountName}\n` +
+            `Friend Code: \t${steamFriendCode}\n` +
+            `Steam Profile URL: \t${steamProfileUrl}`
         );
 
         break;
-
-      } case "edit-riot-account": {
+      }
+      case "edit-riot-account": {
         let rank = interaction.options.get("rank")?.value;
         let riotId = interaction.options.get("riot-id")?.value;
         let region = interaction.options.get("region")?.value;
@@ -350,7 +284,9 @@ module.exports = {
         if (rank || riotId || region) {
           let memberId = interaction.member.id;
           let playerObj = playerList.find((obj) => obj.id === memberId);
-          let riotAccount = playerObj.riotAccountList.find((obj) => obj.active === true);
+          let riotAccount = playerObj.riotAccountList.find(
+            (obj) => obj.active === true
+          );
 
           if (rank) {
             riotAccount.rank = rank;
@@ -361,13 +297,17 @@ module.exports = {
           if (riotId) {
             riotAccount.riotId = riotId;
             writeToFile(dataObj, "data.json");
-            console.log("LOG:\t" + `member has edited their Riot id to ${riotId}`);
+            console.log(
+              "LOG:\t" + `member has edited their Riot id to ${riotId}`
+            );
           }
 
           if (region) {
             riotAccount.region = region;
             writeToFile(dataObj, "data.json");
-            console.log("LOG:\t" + `member has edited their region to ${region}`);
+            console.log(
+              "LOG:\t" + `member has edited their region to ${region}`
+            );
           }
 
           let riotAccountEmbed = new EmbedBuilder()
@@ -376,19 +316,21 @@ module.exports = {
             .addFields(
               { name: "Rank:", value: riotAccount.rank },
               { name: "Region:", value: riotAccount.region }
-            )
+            );
 
-          await interaction.reply({ content: "Riot account edited successfully", embeds: [riotAccountEmbed], ephemeral: true });
-
+          await interaction.reply({
+            content: "Riot account edited successfully",
+            embeds: [riotAccountEmbed],
+            ephemeral: true,
+          });
         }
 
-
         break;
-
-      } case "edit-steam-account": {
+      }
+      case "edit-steam-account": {
         break;
-
-      } case "list-all": {
+      }
+      case "list-all": {
         let accountEmbedList = [];
 
         //embed indicating steam accounts
@@ -413,7 +355,6 @@ module.exports = {
 
           if (riotAccountObj.active === true) {
             riotAccountEmbed.setColor(0x3ba55b);
-
           } else if (riotAccountObj.active === false) {
             riotAccountEmbed.setColor(0xec4245);
           }
@@ -439,7 +380,6 @@ module.exports = {
 
           if (steamAccountObj.active === true) {
             steamAccountEmbed.setColor(0x3ba55b);
-
           } else if (steamAccountObj.active === false) {
             steamAccountEmbed.setColor(0x2a475e);
           }
@@ -449,11 +389,11 @@ module.exports = {
 
         await interaction.reply({
           embeds: accountEmbedList,
-          ephemeral: true
+          ephemeral: true,
         });
         break;
-
-      } case "select": {
+      }
+      case "select": {
         let selectAcountType = interaction.options.get("type").value;
 
         //if player chose to select a riot account
@@ -487,7 +427,7 @@ module.exports = {
                   {
                     name: "Rank:",
                     value: riotAccountObj.rank,
-                    inline: true
+                    inline: true,
                   },
                   {
                     name: "Active:",
@@ -503,14 +443,16 @@ module.exports = {
               selectRiotAccountRow.addComponents(
                 new ButtonBuilder()
                   .setLabel(riotAccountObj.riotId)
-                  .setCustomId(`select-riot-${interaction.member.id}-${riotAccountObj.riotId}-${interaction.id}`)
+                  .setCustomId(
+                    `select-riot-${interaction.member.id}-${riotAccountObj.riotId}-${interaction.id}`
+                  )
                   .setStyle(selectButtonStyle)
               );
             }
 
             await interaction.reply({
               embeds: riotAccountEmbedList,
-              fetchReply: true
+              fetchReply: true,
             });
 
             interaction.editReply({ components: [selectRiotAccountRow] });
@@ -560,8 +502,8 @@ module.exports = {
             break;
         }
         break;
-
-      } case "delete": {
+      }
+      case "delete": {
         let deleteAccountType = interaction.options.get("type").value;
 
         switch (deleteAccountType) {
@@ -583,7 +525,7 @@ module.exports = {
                   {
                     name: "Rank:",
                     value: riotAccountObj.rank,
-                    inline: true
+                    inline: true,
                   },
                   {
                     name: "Active:",
@@ -597,7 +539,9 @@ module.exports = {
               deleteRiotAccountRow.addComponents(
                 new ButtonBuilder()
                   .setLabel(`DELETE: ${riotAccountObj.riotId}`)
-                  .setCustomId(`delete-riot-${riotAccountObj.riotId}-${interaction.id}`)
+                  .setCustomId(
+                    `delete-riot-${riotAccountObj.riotId}-${interaction.id}`
+                  )
                   .setStyle(ButtonStyle.Danger)
               );
             }
@@ -605,15 +549,13 @@ module.exports = {
             await interaction.reply({
               embeds: riotAccountEmbedList,
               components: [deleteRiotAccountRow],
-              fetchReply: true
+              fetchReply: true,
             });
 
             break;
 
           case "steam":
-
             break;
-
         }
 
         break;
