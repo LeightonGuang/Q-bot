@@ -4,7 +4,6 @@ const {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-  Embed,
 } = require("discord.js");
 const fs = require("fs");
 const writeToFile = require("../utils/writeToFile");
@@ -229,51 +228,8 @@ module.exports = {
         break;
       }
       case "add-steam-account": {
-        let steamAccountName = interaction.options.get("account-name").value;
-        let steamFriendCode = interaction.options.get("friend-code").value;
-        let steamProfileUrl =
-          interaction.options.get("steam-profile-url").value;
-
-        let steamFriendCodeDuplicate = playerObj.steamAccountList.find(
-          (obj) => obj.friendCode === steamFriendCode
-        );
-        if (steamFriendCodeDuplicate) {
-          //if the riot account is already added
-          interaction.reply({
-            content: "You've already added this account.",
-            ephemeral: true,
-          });
-          console.log("LOG: \t" + "riot id already added");
-          return;
-        }
-
-        let steamAccountObj = {
-          accountName: steamAccountName,
-          friendCode: steamFriendCode,
-          steamProfileUrl: steamProfileUrl,
-          active: false,
-        };
-
-        playerObj.steamAccountList.push(steamAccountObj);
-        playerList.push(playerObj);
-        writeToFile(dataObj, "data.json");
-
-        await interaction.reply({
-          content:
-            "new steam account added\n" +
-            `Account Name: \t${steamAccountName}\n` +
-            `Friend Code: \t${steamFriendCode}\n` +
-            `Steam Profile URL: \t${steamProfileUrl}`,
-          ephemeral: true,
-        });
-
-        console.log(
-          "new steam account added\n" +
-            `Account Name: \t${steamAccountName}\n` +
-            `Friend Code: \t${steamFriendCode}\n` +
-            `Steam Profile URL: \t${steamProfileUrl}`
-        );
-
+        const addSteamAccount = require("../sub-commands/account/add-steam-account");
+        addSteamAccount(interaction);
         break;
       }
       case "edit-riot-account": {
