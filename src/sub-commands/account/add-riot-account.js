@@ -2,13 +2,13 @@ const fs = require("fs");
 const writeToFile = require("../../utils/writeToFile");
 
 module.exports = async (interaction) => {
-  let riotId = interaction.options.get("riot-id").value;
-  let playerId = interaction.member.id;
-  let playerTag = interaction.member.user.tag;
+  const riotId = interaction.options.get("riot-id").value;
+  const playerId = interaction.member.id;
+  const playerTag = interaction.member.user.tag;
 
-  let dataFile = fs.readFileSync("data.json");
-  let dataObj = JSON.parse(dataFile);
-  let playerList = dataObj.playerList;
+  const dataFile = fs.readFileSync("data.json");
+  const dataObj = JSON.parse(dataFile);
+  const playerList = dataObj.playerList;
 
   let playerObj = playerList.find((obj) => obj.id === playerId);
 
@@ -38,7 +38,7 @@ module.exports = async (interaction) => {
   let riotIdDuplicate = riotAccountList.find((obj) => obj.riotId === riotId);
 
   if (riotIdDuplicate) {
-    //if the riot account is already added
+    // check for duplicate riot id
     await interaction.reply({
       content: "You've already added this account.",
       ephemeral: true,
@@ -48,7 +48,7 @@ module.exports = async (interaction) => {
   }
 
   if (riotAccountList) {
-    //if there are not riot account in player object
+    // make all old riot accounts inactive
     for (let riotAccount of riotAccountList) {
       riotAccount.active = false;
     }
@@ -63,8 +63,6 @@ module.exports = async (interaction) => {
 
   playerObj.riotAccountList.push(riotAccountObj);
 
-  //the line below might not be needed
-  playerList.push(playerObj);
   writeToFile(dataObj, "data.json");
 
   await interaction.reply({
