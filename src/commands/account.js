@@ -249,60 +249,8 @@ module.exports = {
         break;
       }
       case "delete": {
-        let deleteAccountType = interaction.options.get("type").value;
-
-        switch (deleteAccountType) {
-          case "riot":
-            let riotAccountEmbedList = [];
-            const deleteRiotAccountRow = new ActionRowBuilder();
-
-            for (let riotAccountObj of playerObj.riotAccountList) {
-              //go through each riot account to make an embed and button
-              let riotAccountEmbed = new EmbedBuilder()
-                .setColor(0xec4245)
-                .setTitle(riotAccountObj.riotId)
-                .addFields([
-                  {
-                    name: "Region:",
-                    value: riotAccountObj.region,
-                    inline: true,
-                  },
-                  {
-                    name: "Rank:",
-                    value: riotAccountObj.rank,
-                    inline: true,
-                  },
-                  {
-                    name: "Active:",
-                    value: riotAccountObj.active.toString(),
-                    inline: true,
-                  },
-                ]);
-
-              riotAccountEmbedList.push(riotAccountEmbed);
-
-              deleteRiotAccountRow.addComponents(
-                new ButtonBuilder()
-                  .setLabel(`DELETE: ${riotAccountObj.riotId}`)
-                  .setCustomId(
-                    `delete-riot-${riotAccountObj.riotId}-${interaction.id}`
-                  )
-                  .setStyle(ButtonStyle.Danger)
-              );
-            }
-
-            await interaction.reply({
-              embeds: riotAccountEmbedList,
-              components: [deleteRiotAccountRow],
-              fetchReply: true,
-            });
-
-            break;
-
-          case "steam":
-            break;
-        }
-
+        const deleteAccount = require("../sub-commands/account/delete");
+        deleteAccount(interaction);
         break;
       }
     }
