@@ -16,7 +16,6 @@ export const data = (client) => {
 
     const dataFile = fs.readFileSync(dataFilePath, "utf-8");
     const dataObj = JSON.parse(dataFile);
-    console.log(dataObj);
     const playerList = dataObj.playerList;
 
     let userId = interaction.user.id;
