@@ -54,6 +54,12 @@ for (const file of commandFiles) {
   }
 }
 
+// ==========================import handlers======================
+
+let eventHandler: any = await import("./handlers/eventHandler.js");
+eventHandler = eventHandler.data;
+eventHandler(client);
+
 client.login(TOKEN);
 
 let commandHandler: any = await import("./handlers/commandHandler.js");
