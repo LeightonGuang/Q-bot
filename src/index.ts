@@ -11,6 +11,10 @@ import fs from "fs";
 import path from "node:path";
 import { Client, Collection, GatewayIntentBits } from "discord.js";
 import { config } from "dotenv";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+dotenv.config({ path: "../public/.env" });
 
 const client: any = new Client({
   intents: [
@@ -31,14 +35,15 @@ console.log("LOG: \t" + ".env loaded");
 //dynamically import all commands from commands folder
 client.commands = new Collection();
 
-const commandsPath = path.join(__dirname, "commands");
+const commandsPath = dirname(fileURLToPath(import.meta.url)) + "/commands";
 const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file) => file.endsWith(".js"));
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
-  const command = require(filePath);
+  let command: any = await import(filePath);
+  command = command.data;
   // Set a new item in the Collection with the key as the command name and the value as the exported module
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command);
@@ -49,7 +54,10 @@ for (const file of commandFiles) {
   }
 }
 
-let commandHandler = require("./handlers/commandHandler");
+client.login(TOKEN);
+
+let commandHandler: any = await import("./handlers/commandHandler.js");
+commandHandler = commandHandler.data;
 commandHandler(client);
 
 //announce the bot is going offline
