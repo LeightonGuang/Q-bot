@@ -1,12 +1,20 @@
 import fs from "node:fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-module.exports = (client) => {
+export const data = (client) => {
   client.on("interactionCreate", async (interaction) => {
     console.log("FILE: \t" + "commandHandler.js");
 
     const { guild } = interaction;
 
-    const dataFile = fs.readFileSync("data.json", "utf-8");
+    const curretFilePath = fileURLToPath(import.meta.url);
+    const dataFilePath = path.resolve(
+      path.dirname(curretFilePath),
+      "../../public/data.json"
+    );
+
+    const dataFile = fs.readFileSync(dataFilePath, "utf-8");
     const dataObj = JSON.parse(dataFile);
     console.log(dataObj);
     const playerList = dataObj.playerList;
@@ -34,8 +42,6 @@ module.exports = (client) => {
 
     if (guildId === "1065216119641755668") {
       //if guild is Qs
-
-      //console.log("command: /" + interaction.commandName);
       let mod = interaction.guild.roles.cache.find(
         (role) => role.name === "mod"
       );
