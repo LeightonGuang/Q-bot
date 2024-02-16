@@ -1,12 +1,5 @@
-const {
-  SlashCommandBuilder,
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} = require("discord.js");
-const fs = require("fs");
-const writeToFile = require("../utils/writeToFile");
+import { SlashCommandBuilder } from "discord.js";
+import fs from "fs";
 
 module.exports = {
   data: new SlashCommandBuilder()
