@@ -27,9 +27,9 @@ for (let GUILD_ID of GUILD_ID_LIST) {
 
   // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
   for (const file of commandFiles) {
-    const command: any = await import(`./commands/${file}`);
+    let command: any = await import(`./commands/${file}`);
+    command = command.data;
     console.log("| ✅ | " + file);
-    console.log(command);
     commands.push(command.data.toJSON());
   }
 
