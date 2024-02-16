@@ -1,5 +1,5 @@
 *.env
 data.json
-test/
+public/
 screenshot.png
 node_modules
