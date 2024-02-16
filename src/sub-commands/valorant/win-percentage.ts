@@ -7,9 +7,9 @@ import { registered } from "../../utils/registered.js";
 import { profileUrl } from "../../utils/profileUrl.js";
 
 export const subCommand = async (interaction) => {
-  const curretFilePath = fileURLToPath(import.meta.url);
+  const currentFilePath = fileURLToPath(import.meta.url);
   const dataFilePath = path.resolve(
-    path.dirname(curretFilePath),
+    path.dirname(currentFilePath),
     "../../../public/data.json"
   );
 
@@ -28,10 +28,10 @@ export const subCommand = async (interaction) => {
 
   await interaction.reply("Loading info...");
 
-  let userObj = dataObj.playerList.find((obj) => obj.id === userId);
-  let accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
-  let riotId = accountObj.riotId;
-  let trackerProfileUrl = profileUrl(riotId);
+  const userObj = dataObj.playerList.find((obj) => obj.id === userId);
+  const accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
+  const riotId = accountObj.riotId;
+  const trackerProfileUrl = profileUrl(riotId);
 
   const browser = await (puppeteer as any).launch({ headless: true });
 
@@ -70,7 +70,7 @@ export const subCommand = async (interaction) => {
   let winPercentage: any = (winNum / (winNum + loseNum)) * 100;
   winPercentage = winPercentage.toFixed(1);
 
-  let winPercentageEmbed = new EmbedBuilder()
+  const winPercentageEmbed = new EmbedBuilder()
     .setColor(0xffffff)
     .setTitle(riotId)
     .setURL(trackerProfileUrl)

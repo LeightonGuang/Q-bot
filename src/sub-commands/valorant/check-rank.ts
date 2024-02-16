@@ -7,9 +7,9 @@ import { registered } from "../../utils/registered.js";
 import { profileUrl } from "../../utils/profileUrl.js";
 
 export const subCommand = async (interaction) => {
-  const curretFilePath = fileURLToPath(import.meta.url);
+  const currentFilePath = fileURLToPath(import.meta.url);
   const dataFilePath = path.resolve(
-    path.dirname(curretFilePath),
+    path.dirname(currentFilePath),
     "../../../public/data.json"
   );
 
