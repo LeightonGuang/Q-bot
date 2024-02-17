@@ -4,6 +4,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 export const handler = async (interaction) => {
+  console.log("FILE: \t" + "selectAccountButtonHandler.js");
+
   if (!interaction.isButton()) return;
 
   //select-type-[id/name]
@@ -58,7 +60,7 @@ export const handler = async (interaction) => {
       }
     }
 
-    writeToFile(dataObj, "data.json");
+    writeToFile(dataObj);
     interaction.message.delete(replyMsgId);
     interaction.reply({
       content: `The account **${uniqueIdentifier}** is now selected!`,
@@ -73,6 +75,6 @@ export const handler = async (interaction) => {
       }
     }
 
-    writeToFile(dataObj, "data.json");
+    writeToFile(dataObj);
   }
 };
