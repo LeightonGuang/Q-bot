@@ -9,7 +9,6 @@ export const subCommand = async (interaction) => {
     path.dirname(currentFilePath),
     "../../../public/data.json"
   );
-
   const dataFile = fs.readFileSync(dataFilePath, "utf-8");
   const dataObj = JSON.parse(dataFile);
   let playerList = dataObj.playerList;
