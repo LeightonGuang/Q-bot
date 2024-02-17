@@ -11,16 +11,36 @@ export const subCommand = async (interaction) => {
     "../../../public/data.json"
   );
   const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-  const playerList = dataObj.playerList;
 
-  const rank = interaction.options.get("rank")?.value;
-  const riotId = interaction.options.get("riot-id")?.value;
-  const region = interaction.options.get("region")?.value;
+  type RiotAccountObj = {
+    riotId: string;
+    region: string;
+    rank: string;
+    active: boolean;
+  };
+
+  type PlayerObj = {
+    id: number;
+    tag: string;
+    riotAccountList: RiotAccountObj[];
+  };
+
+  type DataObject = {
+    playerList: PlayerObj[];
+  };
+
+  const dataObj: DataObject = JSON.parse(dataFile);
+
+  const playerList: PlayerObj[] = dataObj.playerList;
+
+  const rank: string = interaction.options.get("rank")?.value;
+  const riotId: string = interaction.options.get("riot-id")?.value;
+  const region: string = interaction.options.get("region")?.value;
 
   if (rank || riotId || region) {
-    const memberId = interaction.member.id;
-    const playerObj = playerList.find((obj) => obj.id === memberId);
+    const memberId: number = interaction.member.id;
+
+    const playerObj: PlayerObj = playerList.find((obj) => obj.id === memberId);
     const riotAccount = playerObj.riotAccountList.find(
       (obj) => obj.active === true
     );
