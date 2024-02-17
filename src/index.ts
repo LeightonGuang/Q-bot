@@ -66,6 +66,11 @@ let commandHandler: any = await import("./handlers/commandHandler.js");
 commandHandler = commandHandler.data;
 commandHandler(client);
 
+let buttonHandler: any = await import(
+  "./handlers/buttonHandler/buttonHandler.js"
+);
+buttonHandler = buttonHandler.handler(client);
+
 //announce the bot is going offline
 process.on("SIGINT", async () => {
   const annoucmentChannel = await client.channels.fetch("1077779475175059506");
