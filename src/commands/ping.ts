@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
 
-module.exports = {
+export const data = {
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("ping the bot to check online status"),

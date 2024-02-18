@@ -27,12 +27,12 @@ for (let GUILD_ID of GUILD_ID_LIST) {
 
   // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
   for (const file of commandFiles) {
-    const command = await import(`./commands/${file}`);
+    let command: any = await import(`./commands/${file}`);
+    command = command.data;
     console.log("| ✅ | " + file);
     commands.push(command.data.toJSON());
   }
 
-  console.log(commands);
   // Construct and prepare an instance of the REST module
   const rest = new REST({ version: "10" }).setToken(TOKEN);
 
@@ -44,7 +44,7 @@ for (let GUILD_ID of GUILD_ID_LIST) {
       );
 
       // The put method is used to fully refresh all commands in the guild with the current set
-      const data = await rest.put(
+      const data: any = await rest.put(
         Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
         { body: commands }
       );

@@ -1,7 +1,9 @@
 import { SlashCommandBuilder } from "discord.js";
-import fs from "fs";
+import fs from "node:fs";
+import { fileURLToPath } from "url";
+import path from "path";
 
-module.exports = {
+export const data = {
   data: new SlashCommandBuilder()
     .setName("account")
     .setDescription("Setup and manage your accounts")
@@ -27,7 +29,7 @@ module.exports = {
         .addStringOption((option) =>
           option
             .setName("riot-id")
-            .setDescription("Add your Riot ID")
+            .setDescription("Add your Riot ID (example: name#NA1)")
             .setRequired(true)
         )
         .addStringOption((option) =>
@@ -72,19 +74,21 @@ module.exports = {
         .addStringOption((option) =>
           option
             .setName("account-name")
-            .setDescription("Add your steam friend code")
+            .setDescription("Add your steam account name (Example: YourName)")
             .setRequired(true)
         )
         .addStringOption((option) =>
           option
             .setName("friend-code")
-            .setDescription("Add your steam friend code")
+            .setDescription("Add your steam friend code (numbers only)")
             .setRequired(true)
         )
         .addStringOption((option) =>
           option
             .setName("steam-profile-url")
-            .setDescription("Add your Riot ID")
+            .setDescription(
+              "Add your steam profile url (Starts with https://steamcommunity.com/id/)"
+            )
             .setRequired(true)
         )
     )
@@ -188,8 +192,13 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    let dataFile = fs.readFileSync("data.json");
-    let dataObj = JSON.parse(dataFile);
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const dataFilePath = path.resolve(
+      path.dirname(currentFilePath),
+      "../../public/data.json"
+    );
+    const dataFile = fs.readFileSync(dataFilePath, "utf-8");
+    const dataObj = JSON.parse(dataFile);
     let playerList = dataObj.playerList;
 
     let playerId = interaction.member.id;
@@ -214,36 +223,42 @@ module.exports = {
 
     switch (subCommand) {
       case "add-riot-account": {
-        const addRiotAccount = require("../sub-commands/account/add-riot-account");
-        addRiotAccount(interaction);
+        const addRiotAccount = await import(
+          "../sub-commands/account/add-riot-account.js"
+        );
+        addRiotAccount.subCommand(interaction);
         break;
       }
       case "add-steam-account": {
-        const addSteamAccount = require("../sub-commands/account/add-steam-account");
-        addSteamAccount(interaction);
+        const addSteamAccount = await import(
+          "../sub-commands/account/add-steam-account.js"
+        );
+        addSteamAccount.subCommand(interaction);
         break;
       }
       case "edit-riot-account": {
-        const editRiotAccount = require("../sub-commands/account/edit-riot-account");
-        editRiotAccount(interaction);
+        const editRiotAccount = await import(
+          "../sub-commands/account/edit-riot-account.js"
+        );
+        editRiotAccount.subCommand(interaction);
         break;
       }
       case "edit-steam-account": {
         break;
       }
       case "list-all": {
-        const listAll = require("../sub-commands/account/list-all");
-        listAll(interaction);
+        const listAll = await import("../sub-commands/account/list-all.js");
+        listAll.subCommand(interaction);
         break;
       }
       case "select": {
-        const select = require("../sub-commands/account/select");
-        select(interaction);
+        const select = await import("../sub-commands/account/select.js");
+        select.subCommand(interaction);
         break;
       }
       case "delete": {
-        const deleteAccount = require("../sub-commands/account/delete");
-        deleteAccount(interaction);
+        const deleteAccount = await import("../sub-commands/account/delete.js");
+        deleteAccount.subCommand(interaction);
         break;
       }
     }

@@ -1,4 +1,5 @@
 *.env
+dist/
 data.json
 public/
 screenshot.png
