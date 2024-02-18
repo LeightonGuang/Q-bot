@@ -10,6 +10,11 @@ export const handler = async (client) => {
       );
       selectAccountButtonHandler.handler(interaction);
 
+      let deleteAccountButtonHandler: any = await import(
+        "./account/deleteAccountButtonHandler.js"
+      );
+      deleteAccountButtonHandler.handler(interaction);
+
       //always keep this last
       // let queueButtonHandler = require("./queueButtonHandler");
       // queueButtonHandler(interaction);
