@@ -14,7 +14,6 @@ export const handler = async (interaction) => {
 
   const accountType: string = splittedArray[1];
   const riotId: string = splittedArray[2];
-  console.log("uniqueIdentifier:\t" + riotId);
   const replyMsgId: string = splittedArray[3];
 
   const currentFilePath = fileURLToPath(import.meta.url);
