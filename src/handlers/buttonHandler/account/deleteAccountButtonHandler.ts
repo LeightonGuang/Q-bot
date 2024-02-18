@@ -66,7 +66,6 @@ export const handler = async (interaction) => {
         }
 
         writeToFile(dataObj);
-        // dataObj.playerList = playerList;
         interaction.message.delete(replyMsgId);
         const deleteEmbed = new EmbedBuilder()
           .setColor(0xffff00)
@@ -77,13 +76,20 @@ export const handler = async (interaction) => {
       }
     }
   } else if (accountType === "steam") {
-    // for (let steamAccountObj of playerObj.steamAccountList) {
-    //   if (steamAccountObj.account === uniqueIdentifier) {
-    //     steamAccountObj.active = true;
-    //   } else if (steamAccountObj.account === uniqueIdentifier) {
-    //     steamAccountObj.active = false;
-    //   }
-    // }
-    // writeToFile(dataObj);
+    for (let steamAccountObj of playerObj.steamAccountList) {
+      if (steamAccountObj.accountName === riotId) {
+        playerObj.steamAccountList = playerObj.steamAccountList.filter(
+          (account) => account !== steamAccountObj
+        );
+        writeToFile(dataObj);
+        interaction.message.delete(replyMsgId);
+        const deleteEmbed = new EmbedBuilder()
+          .setColor(0xffff00)
+          .setTitle("Steam Account")
+          .setDescription(`Account **${riotId}** has been deleted.`);
+        interaction.channel.send({ embeds: [deleteEmbed] });
+        break;
+      }
+    }
   }
 };
