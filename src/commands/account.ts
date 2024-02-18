@@ -29,7 +29,7 @@ export const data = {
         .addStringOption((option) =>
           option
             .setName("riot-id")
-            .setDescription("Add your Riot ID")
+            .setDescription("Add your Riot ID (example: name#NA1)")
             .setRequired(true)
         )
         .addStringOption((option) =>
@@ -74,19 +74,21 @@ export const data = {
         .addStringOption((option) =>
           option
             .setName("account-name")
-            .setDescription("Add your steam friend code")
+            .setDescription("Add your steam account name (Example: YourName)")
             .setRequired(true)
         )
         .addStringOption((option) =>
           option
             .setName("friend-code")
-            .setDescription("Add your steam friend code")
+            .setDescription("Add your steam friend code (numbers only)")
             .setRequired(true)
         )
         .addStringOption((option) =>
           option
             .setName("steam-profile-url")
-            .setDescription("Add your Riot ID")
+            .setDescription(
+              "Add your steam profile url (Starts with https://steamcommunity.com/id/)"
+            )
             .setRequired(true)
         )
     )
@@ -193,7 +195,7 @@ export const data = {
     const currentFilePath = fileURLToPath(import.meta.url);
     const dataFilePath = path.resolve(
       path.dirname(currentFilePath),
-      "../../../public/data.json"
+      "../../public/data.json"
     );
     const dataFile = fs.readFileSync(dataFilePath, "utf-8");
     const dataObj = JSON.parse(dataFile);
