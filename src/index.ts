@@ -28,7 +28,7 @@ console.log("LOG: \t" + "new client created");
 
 config();
 
-const TOKEN = process.env.TOKEN;
+const TOKEN: string = process.env.TOKEN;
 console.log("LOG: \t" + ".env loaded");
 
 //===========================================================
@@ -70,6 +70,11 @@ let buttonHandler: any = await import(
   "./handlers/buttonHandler/buttonHandler.js"
 );
 buttonHandler = buttonHandler.handler(client);
+
+let stringSelectMenuBuilder: any = await import(
+  "./handlers/stringSelectMenuHandler/help/stringSelectMenuHandler.js"
+);
+stringSelectMenuBuilder = stringSelectMenuBuilder.handler(client);
 
 //announce the bot is going offline
 process.on("SIGINT", async () => {
