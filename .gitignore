@@ -1,5 +1,6 @@
 *.env
 dist/
 data.json
+public/
 screenshot.png
 node_modules

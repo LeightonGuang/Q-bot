@@ -1,10 +1,8 @@
 //ONLY DEPLOY WHEN COMMAND IS WORKING OR DONE
-
-import { REST, Routes } from "discord.js";
-import { config } from "dotenv";
-import fs from "node:fs";
-import dotenv from "dotenv";
-dotenv.config({ path: "../public/.env" });
+const { REST, Routes } = require("discord.js");
+const { config } = require("dotenv");
+const fs = require("node:fs");
+require("dotenv").config({ path: "../public/.env" });
 
 config();
 
@@ -32,6 +30,7 @@ for (let GUILD_ID of GUILD_ID_LIST) {
     commands.push(command.data.toJSON());
   }
 
+  console.log(commands);
   // Construct and prepare an instance of the REST module
   const rest = new REST({ version: "10" }).setToken(TOKEN);
 
@@ -49,7 +48,7 @@ for (let GUILD_ID of GUILD_ID_LIST) {
       );
 
       console.log(
-        `Successfully reloaded ${typeof data} application (/) commands.`
+        `Successfully reloaded ${data.length} application (/) commands.`
       );
     } catch (error) {
       // And of course, make sure you catch and log any errors!
