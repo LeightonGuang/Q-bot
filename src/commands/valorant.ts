@@ -1,8 +1,4 @@
 import { SlashCommandBuilder } from "discord.js";
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-
-(puppeteer as any).use(StealthPlugin());
 
 export const data = {
   data: new SlashCommandBuilder()
@@ -84,23 +80,9 @@ export const data = {
   async execute(interaction) {
     console.log("FILE:\t" + "valorant.js");
 
-    let subCommand = interaction.options.getSubcommand();
+    const subCommand: string = interaction.options.getSubcommand();
 
     switch (subCommand) {
-      case "ongoing-events": {
-        const ongoingEvents = await import(
-          "../sub-commands/valorant/ongoing-events.js"
-        );
-        ongoingEvents.subCommand(interaction);
-        break;
-      }
-      case "upcoming-events": {
-        const upcomingEvents = await import(
-          "../sub-commands/valorant/upcoming-events.js"
-        );
-        upcomingEvents.subCommand(interaction);
-        break;
-      }
       case "check-rank": {
         const checkRank = await import(
           "../sub-commands/valorant/check-rank.js"
