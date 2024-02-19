@@ -8,12 +8,12 @@ export const subCommand = async (interaction) => {
   const playerId: number = interaction.member.id;
   const playerTag: string = interaction.member.user.tag;
 
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
+  const currentFilePath: string = fileURLToPath(import.meta.url);
+  const dataFilePath: string = path.resolve(
     path.dirname(currentFilePath),
     "../../../public/data.json"
   );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
+  const dataFile: string = fs.readFileSync(dataFilePath, "utf-8");
   type RiotAccountObj = {
     riotId: string;
     region: string;
@@ -21,10 +21,18 @@ export const subCommand = async (interaction) => {
     active: boolean;
   };
 
+  type SteamAccountObj = {
+    accountName: string;
+    friendCode: number;
+    steamProfileUrl: string;
+    active: boolean;
+  };
+
   type PlayerObj = {
     id: number;
     tag: string;
     riotAccountList: RiotAccountObj[];
+    steamAccountList: SteamAccountObj[];
   };
 
   type DataObject = {
@@ -33,8 +41,8 @@ export const subCommand = async (interaction) => {
 
   const dataObj: DataObject = JSON.parse(dataFile);
   const playerList: PlayerObj[] = dataObj.playerList;
-  const playerObj: PlayerObj = playerList.find((obj) => obj.id === playerId);
-  const [name, tag] = riotId.split("#");
+  let playerObj: PlayerObj = playerList.find((obj) => obj.id === playerId);
+  const [name, tag]: string[] = riotId.split("#");
 
   if (!tag) {
     interaction.reply({
@@ -53,11 +61,26 @@ export const subCommand = async (interaction) => {
     return;
   }
 
-  let region = interaction.options.get("region").value;
-  let rank = interaction.options.get("rank").value;
+  // create player object if not exist
+  if (!playerObj) {
+    playerObj = {
+      id: playerId,
+      tag: playerTag,
+      riotAccountList: [],
+      steamAccountList: [],
+    };
 
-  let riotAccountList = playerObj.riotAccountList;
-  let riotIdDuplicate = riotAccountList.find((obj) => obj.riotId === riotId);
+    playerList.push(playerObj);
+    writeToFile(dataObj);
+  }
+
+  const region: string = interaction.options.get("region").value;
+  const rank: string = interaction.options.get("rank").value;
+
+  const riotAccountList: RiotAccountObj[] = playerObj.riotAccountList;
+  const riotIdDuplicate: RiotAccountObj = riotAccountList.find(
+    (obj) => obj.riotId === riotId
+  );
 
   if (riotIdDuplicate) {
     // check for duplicate riot id
