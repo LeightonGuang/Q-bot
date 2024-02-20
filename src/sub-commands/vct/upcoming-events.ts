@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
-import { fetchEvents } from "../../utils/valorant/fetchEvents.js";
-import { sendEmbed } from "../../utils/valorant/sendEmbed.js";
+import { fetchEvents } from "../../utils/vct/fetchEvents.js";
+import { sendEmbed } from "../../utils/vct/sendEmbed.js";
 
 export const subCommand = async (interaction) => {
   const year: number = new Date().getFullYear();
@@ -22,5 +22,6 @@ export const subCommand = async (interaction) => {
   });
 
   const upcomingEventList: object[] = await fetchEvents(interaction);
+  console.log("LOG: \t" + upcomingEventList);
   await sendEmbed(interaction, upcomingEventList);
 };
