@@ -61,14 +61,18 @@ export const subCommand = async (interaction) => {
               type LiveMatchObj = {
                 matchPageUrl: string;
                 team1: string;
+                team1Point: string;
                 team2: string;
+                team2Point: string;
                 series: string;
               };
 
               const liveMatchObj: LiveMatchObj = {
                 matchPageUrl: $(day).attr("href"),
                 team1: "",
+                team1Point: "",
                 team2: "",
+                team2Point: "",
                 series: $(day)
                   .find("div.match-item-event-series")
                   .text()
@@ -84,9 +88,19 @@ export const subCommand = async (interaction) => {
                       .find("div.text-of")
                       .text()
                       .trim();
+
+                    liveMatchObj["team1Point"] = $(team)
+                      .find("div.match-item-vs-team-score")
+                      .text()
+                      .trim();
                   } else if (i === 1) {
                     liveMatchObj["team2"] = $(team)
                       .find("div.text-of")
+                      .text()
+                      .trim();
+
+                    liveMatchObj["team2Point"] = $(team)
+                      .find("div.match-item-vs-team-score")
                       .text()
                       .trim();
                   }
@@ -96,7 +110,21 @@ export const subCommand = async (interaction) => {
                 .setColor(0xff0000)
                 .setTitle(`${liveMatchObj.team1} vs ${liveMatchObj.team2}`)
                 .setURL(vlrUrl + liveMatchObj.matchPageUrl)
-                .setDescription(liveMatchObj.series);
+                .setDescription(liveMatchObj.series)
+                .addFields(
+                  {
+                    name: liveMatchObj.team1,
+                    value: liveMatchObj.team1Point,
+                    inline: true,
+                  },
+                  { name: "\u200B", value: ":", inline: true },
+                  {
+                    name: liveMatchObj.team2,
+                    value: liveMatchObj.team2Point,
+                    inline: true,
+                  }
+                )
+                .setTimestamp();
 
               liveMatchEmbedList.push(liveMatchEmbed);
             }
@@ -106,6 +134,18 @@ export const subCommand = async (interaction) => {
       console.error(error);
     }
   }
+
+  if (liveMatchEmbedList.length === 1) {
+    const errorEmbed = new EmbedBuilder()
+      .setColor(0xff4553)
+      .setTitle("There are no live matches right now");
+
+    interaction.reply({
+      embeds: [errorEmbed],
+    });
+    return;
+  }
+
   await interaction.reply({
     embeds: liveMatchEmbedList,
   });
