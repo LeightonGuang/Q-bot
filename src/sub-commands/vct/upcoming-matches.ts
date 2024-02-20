@@ -38,6 +38,18 @@ export const subCommand = async (interaction) => {
     "ongoing"
   );
 
+  if (upcomingEventList.length === 0) {
+    const errorEmbed = new EmbedBuilder()
+      .setColor(0x9464f5)
+      .setTitle("There are no upcoming matches");
+
+    await interaction.editReply({
+      embeds: [errorEmbed],
+      components: [],
+    });
+    return;
+  }
+
   const upcomingEventOptions = upcomingEventList.map((event) => {
     return new StringSelectMenuOptionBuilder()
       .setLabel(event.eventName)
