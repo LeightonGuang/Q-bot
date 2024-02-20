@@ -2,11 +2,19 @@
 import axios from "axios";
 import cheerio from "cheerio";
 
-export const fetchEvents = async (interaction) => {
+export const fetchEvents = async (interaction, status?: string) => {
   const year: number = new Date().getFullYear();
   const vlr_url: string = "https://vlr.gg";
 
-  const eventList: object[] = [];
+  type EventObject = {
+    eventName: string;
+    eventLogoUrl: string;
+    eventPageUrl: string;
+    startDate: string;
+    endDate: string;
+  };
+
+  const eventList: EventObject[] = [];
 
   const { data } = await axios.get(vlr_url + "/vct-" + year);
   const $ = cheerio.load(data);
@@ -22,13 +30,13 @@ export const fetchEvents = async (interaction) => {
         .find("span.event-item-desc-item-status")
         .text();
 
-      const checkEventStatus: string = interaction.options
-        .getSubcommand()
-        .split("-")[0];
+      if (!status) {
+        status = interaction.options.getSubcommand().split("-")[0];
+      }
 
-      console.log("checkEventStatus: " + checkEventStatus);
+      // console.log("checkEventStatus: " + status);
 
-      if (eventStatus === checkEventStatus) {
+      if (status === eventStatus) {
         //only get Events
         const eventTitle: string = $(eventBox)
           .find("div.event-item-title")
@@ -75,8 +83,6 @@ export const fetchEvents = async (interaction) => {
           eventPageUrl: eventUrl,
           startDate: startDate,
           endDate: endDate,
-          teamList: [],
-          upcomingMatchList: [],
         };
 
         eventList.push(newEventObj);
