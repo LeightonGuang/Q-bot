@@ -5,15 +5,16 @@ export const fetchEvents = async (interaction, status?: string) => {
   const year: number = new Date().getFullYear();
   const vlr_url: string = "https://vlr.gg";
 
-  type EventObject = {
+  type EventObj = {
     eventName: string;
     eventLogoUrl: string;
     eventPageUrl: string;
     startDate: string;
     endDate: string;
+    status: string;
   };
 
-  const eventList: EventObject[] = [];
+  const eventList: EventObj[] = [];
 
   const { data } = await axios.get(vlr_url + "/vct-" + year);
   const $ = cheerio.load(data);
@@ -76,15 +77,16 @@ export const fetchEvents = async (interaction, status?: string) => {
         let eventImgUrl = $(eventBox).find("img").attr("src");
         eventImgUrl = "https:" + eventImgUrl;
 
-        let newEventObj = {
+        let eventObj: EventObj = {
           eventName: eventTitle,
           eventLogoUrl: eventImgUrl,
           eventPageUrl: eventUrl,
           startDate: startDate,
           endDate: endDate,
+          status: eventStatus,
         };
 
-        eventList.push(newEventObj);
+        eventList.push(eventObj);
       }
     });
   return eventList;
