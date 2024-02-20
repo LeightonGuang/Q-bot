@@ -57,14 +57,12 @@ for (const file of commandFiles) {
 // ==========================import handlers======================
 
 let eventHandler: any = await import("./handlers/eventHandler.js");
-eventHandler = eventHandler.data;
-eventHandler(client);
+eventHandler = eventHandler.data(client);
 
 client.login(TOKEN);
 
 let commandHandler: any = await import("./handlers/commandHandler.js");
-commandHandler = commandHandler.data;
-commandHandler(client);
+commandHandler = commandHandler.data(client);
 
 let buttonHandler: any = await import(
   "./handlers/buttonHandler/buttonHandler.js"
@@ -75,6 +73,11 @@ let stringSelectMenuBuilder: any = await import(
   "./handlers/stringSelectMenuHandler/help/stringSelectMenuHandler.js"
 );
 stringSelectMenuBuilder = stringSelectMenuBuilder.handler(client);
+
+let eventStringSelectHandler: any = await import(
+  "./handlers/stringSelectMenuHandler/vct/eventStringSelectHandler.js"
+);
+eventStringSelectHandler = eventStringSelectHandler.handler(client);
 
 //announce the bot is going offline
 process.on("SIGINT", async () => {
