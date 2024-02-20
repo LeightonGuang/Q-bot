@@ -10,8 +10,9 @@ export const data = {
   data: new SlashCommandBuilder()
     .setName("help")
     .setDescription("list of all commands"),
+
   async execute(interaction) {
-    const helpEmbed = new EmbedBuilder()
+    const helpEmbed: EmbedBuilder = new EmbedBuilder()
       .setColor(0xffffff)
       .setAuthor({ name: "Q bot" })
       .setTitle("/help")
@@ -41,34 +42,36 @@ export const data = {
       fetchReply: true,
     });
 
-    const helpSelectMenu = new ActionRowBuilder().setComponents(
-      new StringSelectMenuBuilder()
-        .setPlaceholder("sub-commands")
-        .setCustomId(`help-${replyObj.id}`)
-        .addOptions(
-          new StringSelectMenuOptionBuilder()
-            .setLabel("/help")
-            .setDescription(
-              "All the commands that are available to use in the server"
-            )
-            .setValue("help"),
-          new StringSelectMenuOptionBuilder()
-            .setLabel("/account")
-            .setDescription("Sub commands that is used to manage your account")
-            .setValue("account"),
-          new StringSelectMenuOptionBuilder()
-            .setLabel("/valorant")
-            .setDescription("Sub commands that are valorant related")
-            .setValue("valorant"),
-          new StringSelectMenuOptionBuilder()
-            .setLabel("/private-vc")
-            .setDescription("Sub commands that creates private vc")
-            .setValue("private-vc")
-        )
-    );
+    const helpSelectMenu: ActionRowBuilder =
+      new ActionRowBuilder().setComponents(
+        new StringSelectMenuBuilder()
+          .setPlaceholder("sub-commands")
+          .setCustomId(`help-${replyObj.id}`)
+          .addOptions(
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/help")
+              .setDescription(
+                "All the commands that are available to use in the server"
+              )
+              .setValue("help"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/account")
+              .setDescription(
+                "Sub commands that is used to manage your account"
+              )
+              .setValue("account"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/valorant")
+              .setDescription("Sub commands that are valorant related")
+              .setValue("valorant"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/private-vc")
+              .setDescription("Sub commands that creates private vc")
+              .setValue("private-vc")
+          )
+      );
 
     interaction.editReply({ components: [helpSelectMenu.toJSON()] });
-
     console.log("LOG: \t embed help list");
   },
 };
