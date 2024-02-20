@@ -25,11 +25,9 @@ export const handler = async (client) => {
       series: string;
     };
 
-    // const matchObjList: MatchObj[] = [];
-
     await axios.get(eventPageUrl).then((response) => {
-      const html = response.data;
-      const $ = cheerio.load(html);
+      const html: string = response.data;
+      const $: cheerio.Root = cheerio.load(html);
 
       const headerElement: any = $("div.event-header");
 
