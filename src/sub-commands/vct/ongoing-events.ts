@@ -21,6 +21,19 @@ export const subCommand = async (interaction) => {
     fetchReply: true,
   });
 
-  const ongoingEventEmbedList: object[] = await fetchEvents(interaction);
-  await sendEmbed(interaction, ongoingEventEmbedList);
+  const ongoingEventList: object[] = await fetchEvents(interaction);
+
+  if (ongoingEventList.length === 0) {
+    const errorEmbed = new EmbedBuilder()
+      .setColor(0xff4553)
+      .setTitle("There are no oncoming events");
+
+    await interaction.editReply({
+      embeds: [errorEmbed],
+      components: [],
+    });
+    return;
+  }
+
+  await sendEmbed(interaction, ongoingEventList);
 };
