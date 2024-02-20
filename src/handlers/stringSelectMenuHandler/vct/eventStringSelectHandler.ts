@@ -15,17 +15,27 @@ export const handler = async (client) => {
     eventPageUrl = eventPageUrl.replace(/\/event\//, "/event/matches/");
 
     const embedList: EmbedBuilder[] = [];
-    const matchObjList: object[] = [];
+
+    type MatchObj = {
+      matchPageUrl: string;
+      team1: string;
+      team2: string;
+      date: string;
+      time: string;
+      series: string;
+    };
+
+    // const matchObjList: MatchObj[] = [];
 
     await axios.get(eventPageUrl).then((response) => {
       const html = response.data;
       const $ = cheerio.load(html);
 
-      const header: any = $("div.event-header");
+      const headerElement: any = $("div.event-header");
 
-      const eventLogoUrl: string = header.find("img").attr("src");
-      const eventname: string = header.find("h1").text().trim();
-      const eventDescription: string = header.find("h2").text().trim();
+      const eventLogoUrl: string = headerElement.find("img").attr("src");
+      const eventname: string = headerElement.find("h1").text().trim();
+      const eventDescription: string = headerElement.find("h2").text().trim();
 
       const headerEmbed: EmbedBuilder = new EmbedBuilder()
         .setTitle(eventname + " Upcoming Matches")
@@ -36,26 +46,51 @@ export const handler = async (client) => {
       embedList.push(headerEmbed);
 
       $("div.wf-card")
-        .find("a")
+        .find("a.wf-module-item")
         .each((i, day) => {
-          if (i === 0) return;
+          const matchStatus = $(day).find("div.ml-status").text();
 
-          const matchObj: object = {
+          if (matchStatus !== "Upcoming") return;
+
+          const matchObj: MatchObj = {
+            matchPageUrl: "",
             team1: "",
             team2: "",
             date: "",
             time: "",
-            score: "",
-            matchStatus: "",
+            series: "",
           };
 
-          $(day).find("div.ml-status");
-          const matchStatus = $("div.ml-status").text();
+          $(day)
+            .find("div.match-item-vs")
+            .find("div.match-item-vs-team")
+            .each((i, team) => {
+              if (i === 0) {
+                matchObj["team1"] = $(team).find("div.text-of").text().trim();
+              } else if (i === 1) {
+                matchObj["team2"] = $(team).find("div.text-of").text().trim();
+              }
+            });
 
-          if (matchStatus !== "Upcoming") return;
+          if (matchObj["team1"] === "TBD" && matchObj["team2"] === "TBD")
+            return;
 
-          let team = $(day).find("match-item-vs-team-name").text();
-          console.log("team1: " + team);
+          matchObj.matchPageUrl = $(day).attr("href");
+
+          matchObj.series = $(day)
+            .find("div.match-item-event-series")
+            .text()
+            .trim();
+
+          console.log(matchObj);
+
+          const matchEmbed: EmbedBuilder = new EmbedBuilder()
+            .setColor(0x9464f5)
+            .setTitle(`${matchObj.team1} vs ${matchObj.team2}`)
+            .setURL("https://vlr.gg" + matchObj.matchPageUrl)
+            .setDescription(matchObj.series);
+
+          embedList.push(matchEmbed);
         });
     });
 
