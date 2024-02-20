@@ -6,16 +6,6 @@ export const data = {
     .setDescription("Commands for Valorant related stuff")
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("ongoing-events")
-        .setDescription("Ongoing Valorant Champions Tour events.")
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("upcoming-events")
-        .setDescription("Upcoming Valorant Champions Tour events.")
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
         .setName("check-rank")
         .setDescription("Shows your current rank and peak rank")
         .addUserOption((option) =>
