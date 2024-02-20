@@ -22,6 +22,18 @@ export const subCommand = async (interaction) => {
   });
 
   const upcomingEventList: object[] = await fetchEvents(interaction);
-  console.log("LOG: \t" + upcomingEventList);
+
+  if (upcomingEventList.length === 0) {
+    const errorEmbed = new EmbedBuilder()
+      .setColor(0xff4553)
+      .setTitle("There are no upcoming events");
+
+    await interaction.editReply({
+      embeds: [errorEmbed],
+      components: [],
+    });
+    return;
+  }
+
   await sendEmbed(interaction, upcomingEventList);
 };
