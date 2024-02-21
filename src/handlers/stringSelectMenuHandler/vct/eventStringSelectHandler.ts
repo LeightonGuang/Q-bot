@@ -8,6 +8,7 @@ export const handler = async (client) => {
     if (!interaction.isStringSelectMenu()) return;
     const [selectMenuType, replyId] = interaction.customId.split("-");
 
+    const replyMessage: any = await interaction.channel.messages.fetch(replyId);
     //if it is not a event select menu then end this code file
     if (selectMenuType !== "upcomingEventSelect") return;
 
@@ -24,7 +25,7 @@ export const handler = async (client) => {
       console.error(error);
     }
 
-    const embedList: EmbedBuilder[] = [];
+    let matchEmbedList: EmbedBuilder[] = [];
 
     type MatchObj = {
       matchPageUrl: string;
@@ -39,6 +40,8 @@ export const handler = async (client) => {
       matchList: MatchObj[];
     };
 
+    const groupedMatchList: GroupedMatchObj[] = [];
+
     await axios.get(eventPageUrl).then((response) => {
       const html: string = response.data;
       const $: cheerio.Root = cheerio.load(html);
@@ -50,14 +53,17 @@ export const handler = async (client) => {
       const eventDescription: string = headerElement.find("h2").text().trim();
 
       const headerEmbed: EmbedBuilder = new EmbedBuilder()
+        .setColor(0x9464f5)
         .setTitle(eventname + " Upcoming Matches")
         .setURL(eventPageUrl)
         .setDescription(eventDescription)
         .setThumbnail("https:" + eventLogoUrl);
 
-      embedList.push(headerEmbed);
-
-      const groupedMatchList: GroupedMatchObj[] = [];
+      // delete select menu
+      replyMessage.edit({
+        embeds: [headerEmbed],
+        components: [],
+      });
 
       // get all the dates
       $("div.wf-label.mod-large").each((i, date) => {
@@ -100,6 +106,7 @@ export const handler = async (client) => {
                 }
               });
 
+            if (matchObj.team1 === "TBD" && matchObj.team2 === "TBD") return;
             matchList.push(matchObj);
           });
         console.log(groupedMatchObj);
@@ -108,11 +115,24 @@ export const handler = async (client) => {
       // console.log(groupedMatchList);
     });
 
-    // delete select menu
-    const replyMessage: any = await interaction.channel.messages.fetch(replyId);
-    replyMessage.edit({
-      embeds: embedList,
-      components: [],
+    groupedMatchList.forEach((groupedMatchObj: GroupedMatchObj) => {
+      const { date, matchList } = groupedMatchObj;
+      matchList.forEach((matchObj: MatchObj) => {
+        const { matchPageUrl, time, team1, team2, series } = matchObj;
+        const matchEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0x9464f5)
+          .setTitle(`${team1} vs ${team2}`)
+          .setURL("https://vlr.gg" + matchPageUrl)
+          .setDescription(`Time: ${time}\nSeries: ${series}`);
+
+        matchEmbedList.push(matchEmbed);
+        if (matchEmbedList.length === 10) {
+          interaction.channel.send({ embeds: matchEmbedList });
+          matchEmbedList = [];
+        }
+      });
     });
+
+    interaction.channel.send({ embeds: matchEmbedList });
   });
 };
