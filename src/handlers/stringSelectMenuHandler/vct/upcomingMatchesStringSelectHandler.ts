@@ -67,13 +67,16 @@ export const handler = async (client) => {
 
       // get all the dates
       $("div.wf-label.mod-large").each((i, date) => {
+        let filteredDate: any = $(date).text().trim();
+        filteredDate = filteredDate.replace(/\n\t+/g, "");
+        filteredDate = filteredDate.split(" ");
+        if (filteredDate.length === 5) filteredDate.pop();
+        filteredDate = filteredDate.join(" ");
         groupedMatchList.push({
-          date: $(date).text().trim(),
+          date: filteredDate,
           matchList: [],
         } as GroupedMatchObj);
       });
-
-      console.log(groupedMatchList);
 
       // get all the matches in each date
       $("div.wf-card").each((i, groupOfGames) => {
@@ -106,24 +109,24 @@ export const handler = async (client) => {
                 }
               });
 
+            // don't push if both teams are TBD
             if (matchObj.team1 === "TBD" && matchObj.team2 === "TBD") return;
             matchList.push(matchObj);
           });
         console.log(groupedMatchObj);
       });
-
-      // console.log(groupedMatchList);
     });
 
     groupedMatchList.forEach((groupedMatchObj: GroupedMatchObj) => {
-      const { date, matchList } = groupedMatchObj;
+      let { date, matchList } = groupedMatchObj;
+
       matchList.forEach((matchObj: MatchObj) => {
         const { matchPageUrl, time, team1, team2, series } = matchObj;
         const matchEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0x9464f5)
           .setTitle(`${team1} vs ${team2}`)
           .setURL("https://vlr.gg" + matchPageUrl)
-          .setDescription(`Time: ${time}\nSeries: ${series}`);
+          .setDescription(`Time: ${time}\nDate: ${date}\nSeries: ${series}`);
 
         matchEmbedList.push(matchEmbed);
         if (matchEmbedList.length === 10) {
