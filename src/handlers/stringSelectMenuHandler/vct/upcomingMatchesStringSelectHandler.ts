@@ -87,6 +87,9 @@ export const handler = async (client) => {
         $(groupOfGames)
           .find(".match-item")
           .each((j, match) => {
+            const status = $(match).find("div.ml-status").text().trim();
+            if (status !== "Upcoming") return;
+
             const matchObj: MatchObj = {
               matchPageUrl: $(match).attr("href"),
               time: $(match).find("div.match-item-time").text().trim(),
@@ -113,20 +116,29 @@ export const handler = async (client) => {
             if (matchObj.team1 === "TBD" && matchObj.team2 === "TBD") return;
             matchList.push(matchObj);
           });
-        console.log(groupedMatchObj);
       });
     });
 
     groupedMatchList.forEach((groupedMatchObj: GroupedMatchObj) => {
-      let { date, matchList } = groupedMatchObj;
+      let { date, matchList }: any = groupedMatchObj;
+
+      let unixDate: Date | number = new Date(date);
+      unixDate = unixDate.getTime() / 1000;
 
       matchList.forEach((matchObj: MatchObj) => {
         const { matchPageUrl, time, team1, team2, series } = matchObj;
+
+        let dateTime: string | Date = date + " " + time;
+        dateTime = new Date(dateTime);
+        const unixTimestamp = dateTime.getTime() / 1000;
+
         const matchEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0x9464f5)
           .setTitle(`${team1} vs ${team2}`)
           .setURL("https://vlr.gg" + matchPageUrl)
-          .setDescription(`Time: ${time}\nDate: ${date}\nSeries: ${series}`);
+          .setDescription(
+            `<t:${unixDate}:d> <t:${unixTimestamp}:t>\nSeries: ${series}`
+          );
 
         matchEmbedList.push(matchEmbed);
         if (matchEmbedList.length === 10) {
