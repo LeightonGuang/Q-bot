@@ -74,10 +74,11 @@ let stringSelectMenuBuilder: any = await import(
 );
 stringSelectMenuBuilder = stringSelectMenuBuilder.handler(client);
 
-let eventStringSelectHandler: any = await import(
-  "./handlers/stringSelectMenuHandler/vct/eventStringSelectHandler.js"
+let upcomingMatchesStringSelectHandler: any = await import(
+  "./handlers/stringSelectMenuHandler/vct/upcomingMatchesStringSelectHandler.js"
 );
-eventStringSelectHandler = eventStringSelectHandler.handler(client);
+upcomingMatchesStringSelectHandler =
+  upcomingMatchesStringSelectHandler.handler(client);
 
 //announce the bot is going offline
 process.on("SIGINT", async () => {
