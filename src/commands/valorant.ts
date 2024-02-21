@@ -53,12 +53,12 @@ export const data = {
             .setName("map")
             .setDescription("default is all maps")
             .setChoices(
-              { name: "Bind", value: "bind" },
-              { name: "Haven", value: "haven" },
-              { name: "Split", value: "split" },
               { name: "Ascent", value: "ascent" },
+              { name: "Bind", value: "bind" },
               { name: "Breeze", value: "breeze" },
+              { name: "Icebox", value: "icebox" },
               { name: "Lotus", value: "lotus" },
+              { name: "Split", value: "split" },
               { name: "Sunset", value: "sunset" }
             )
         )
