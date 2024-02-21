@@ -12,17 +12,31 @@ export const handler = async (client) => {
     if (selectMenuType !== "upcomingEventSelect") return;
 
     let eventPageUrl: string = interaction.values[0];
-    eventPageUrl = eventPageUrl.replace(/\/event\//, "/event/matches/");
+
+    try {
+      const { data }: any = await axios.get(eventPageUrl);
+      const $: cheerio.Root = cheerio.load(data);
+
+      const matchesLink: any = $("a.wf-nav-item").eq(1);
+
+      eventPageUrl = "https://vlr.gg" + matchesLink.attr("href");
+    } catch (error) {
+      console.error(error);
+    }
 
     const embedList: EmbedBuilder[] = [];
 
     type MatchObj = {
       matchPageUrl: string;
+      time: string;
       team1: string;
       team2: string;
-      date: string;
-      time: string;
       series: string;
+    };
+
+    type GroupedMatchObj = {
+      date: string;
+      matchList: MatchObj[];
     };
 
     await axios.get(eventPageUrl).then((response) => {
@@ -43,53 +57,55 @@ export const handler = async (client) => {
 
       embedList.push(headerEmbed);
 
-      $("div.wf-card")
-        .find("a.wf-module-item")
-        .each((i, day) => {
-          const matchStatus = $(day).find("div.ml-status").text();
+      const groupedMatchList: GroupedMatchObj[] = [];
 
-          if (matchStatus !== "Upcoming") return;
+      // get all the dates
+      $("div.wf-label.mod-large").each((i, date) => {
+        groupedMatchList.push({
+          date: $(date).text().trim(),
+          matchList: [],
+        } as GroupedMatchObj);
+      });
 
-          const matchObj: MatchObj = {
-            matchPageUrl: "",
-            team1: "",
-            team2: "",
-            date: "",
-            time: "",
-            series: "",
-          };
+      console.log(groupedMatchList);
 
-          $(day)
-            .find("div.match-item-vs")
-            .find("div.match-item-vs-team")
-            .each((i, team) => {
-              if (i === 0) {
-                matchObj["team1"] = $(team).find("div.text-of").text().trim();
-              } else if (i === 1) {
-                matchObj["team2"] = $(team).find("div.text-of").text().trim();
-              }
-            });
+      // get all the matches in each date
+      $("div.wf-card").each((i, groupOfGames) => {
+        if (i === 0) return;
+        let groupedMatchObj = groupedMatchList[i - 1];
+        let matchList = groupedMatchObj.matchList;
 
-          if (matchObj["team1"] === "TBD" && matchObj["team2"] === "TBD")
-            return;
+        $(groupOfGames)
+          .find(".match-item")
+          .each((j, match) => {
+            const matchObj: MatchObj = {
+              matchPageUrl: $(match).attr("href"),
+              time: $(match).find("div.match-item-time").text().trim(),
+              team1: "",
+              team2: "",
+              series: $(match)
+                .find("div.match-item-event-series")
+                .text()
+                .trim(),
+            };
 
-          matchObj.matchPageUrl = $(day).attr("href");
+            $(match)
+              .find("div.match-item-vs")
+              .find("div.match-item-vs-team")
+              .each((k, team) => {
+                if (k === 0) {
+                  matchObj.team1 = $(team).find("div.text-of").text().trim();
+                } else if (k === 1) {
+                  matchObj.team2 = $(team).find("div.text-of").text().trim();
+                }
+              });
 
-          matchObj.series = $(day)
-            .find("div.match-item-event-series")
-            .text()
-            .trim();
+            matchList.push(matchObj);
+          });
+        console.log(groupedMatchObj);
+      });
 
-          console.log(matchObj);
-
-          const matchEmbed: EmbedBuilder = new EmbedBuilder()
-            .setColor(0x9464f5)
-            .setTitle(`${matchObj.team1} vs ${matchObj.team2}`)
-            .setURL("https://vlr.gg" + matchObj.matchPageUrl)
-            .setDescription(matchObj.series);
-
-          embedList.push(matchEmbed);
-        });
+      // console.log(groupedMatchList);
     });
 
     // delete select menu
