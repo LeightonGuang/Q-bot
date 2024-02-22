@@ -108,7 +108,7 @@ export const subCommand = async (interaction) => {
 
               const liveMatchEmbed = new EmbedBuilder()
                 .setColor(0xff0000)
-                .setTitle(`${liveMatchObj.team1} vs ${liveMatchObj.team2}`)
+                .setTitle(`🔴 ${liveMatchObj.team1} vs ${liveMatchObj.team2}`)
                 .setURL(vlrUrl + liveMatchObj.matchPageUrl)
                 .setDescription(liveMatchObj.series)
                 .addFields(
