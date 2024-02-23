@@ -86,7 +86,7 @@ process.on("SIGINT", async () => {
 
   await annoucmentChannel.messages.edit(
     "1210496026918789130",
-    "Bot is offline!"
+    "Bot is offline"
   );
   console.log("\nLOG: \t" + "Bot is offline");
 
