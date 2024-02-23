@@ -17,7 +17,7 @@ export const handler = async (client) => {
           .setAuthor({ name: "Q bot" })
           .setTitle("/help")
           .setDescription(
-            "All the commands that are available to use in the server"
+            "All commands that are available to use in the server"
           )
           .addFields(
             { name: "/help", value: "THIS" },
@@ -51,7 +51,7 @@ export const handler = async (client) => {
           .setColor(0xffff00)
           .setAuthor({ name: "Q bot" })
           .setTitle("/account ***sub-command***")
-          .setDescription("List of all sub commands available for /account")
+          .setDescription("List of all sub commands available for `/account`")
           .addFields(
             {
               name: "***add-riot-account***",
@@ -94,7 +94,7 @@ export const handler = async (client) => {
           .setColor(0xff4553)
           .setAuthor({ name: "Q bot" })
           .setTitle("/valorant ***sub-command***")
-          .setDescription("List of all sub commands availble for /valorant")
+          .setDescription("List of all sub commands availble for `/valorant`")
           .addFields(
             {
               name: "***check-rank***",
@@ -107,14 +107,6 @@ export const handler = async (client) => {
             {
               name: "***win-percentage***",
               value: "Shows your current act rank win percentage",
-            },
-            {
-              name: "***upcoming-events***",
-              value: "Shows upcoming Valorant Champions Tour events",
-            },
-            {
-              name: "***ongoing-events***",
-              value: "Shows ongoing Valorant Champions Tour events",
             },
             {
               name: "***map-win-percentage***",
@@ -130,12 +122,39 @@ export const handler = async (client) => {
         await interaction.deferUpdate();
         break;
 
+      case "vct": {
+        const vctEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0x9464f5)
+          .setAuthor({ name: "VCT" })
+          .setTitle("/vct ***sub-command***")
+          .setDescription("List of all sub commands availble for `/vct`")
+          .addFields(
+            {
+              name: "***live-matches***",
+              value: "Show VCT matches that are live right now",
+            },
+            {
+              name: "***upcoming-matches***",
+              value: "Show upcoming VCT matches",
+            },
+            { name: "***ongoing-events***", value: "Show ongoing VCT events" },
+            { name: "***upcoming-events***", value: "Show upcoming VCT events" }
+          );
+
+        interaction.message.edit({ embeds: [vctEmbed] });
+        console.log(
+          "LOG:\t" + "changed the /help command embed to valorantEmbed"
+        );
+        await interaction.deferUpdate();
+        break;
+      }
+
       case "private-vc":
         const privateVcEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0x7dd181)
           .setAuthor({ name: "Q bot" })
           .setTitle("/private-vc ***sub-command***")
-          .setDescription("List of all sub commands availble for /valorant")
+          .setDescription("List of all sub commands availble for `/valorant`")
           .addFields(
             { name: "***duo***", value: "Select a duo to private vc with" },
             { name: "***trio***", value: "Select 2 trios to private vc with" },

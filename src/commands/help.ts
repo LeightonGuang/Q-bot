@@ -50,23 +50,23 @@ export const data = {
           .addOptions(
             new StringSelectMenuOptionBuilder()
               .setLabel("/help")
-              .setDescription(
-                "All the commands that are available to use in the server"
-              )
+              .setDescription("All commands available for Q bot")
               .setValue("help"),
             new StringSelectMenuOptionBuilder()
               .setLabel("/account")
-              .setDescription(
-                "Sub commands that is used to manage your account"
-              )
+              .setDescription("Account related sub commands")
               .setValue("account"),
             new StringSelectMenuOptionBuilder()
               .setLabel("/valorant")
-              .setDescription("Sub commands that are valorant related")
+              .setDescription("Valorant related sub commands")
               .setValue("valorant"),
             new StringSelectMenuOptionBuilder()
+              .setLabel("/vct")
+              .setDescription("Valorant Champions Tour related sub commands")
+              .setValue("vct"),
+            new StringSelectMenuOptionBuilder()
               .setLabel("/private-vc")
-              .setDescription("Sub commands that creates private vc")
+              .setDescription("Private vc related sub commands")
               .setValue("private-vc")
           )
       );
