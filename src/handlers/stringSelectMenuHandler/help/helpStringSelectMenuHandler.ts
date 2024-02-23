@@ -142,9 +142,7 @@ export const handler = async (client) => {
           );
 
         interaction.message.edit({ embeds: [vctEmbed] });
-        console.log(
-          "LOG:\t" + "changed the /help command embed to valorantEmbed"
-        );
+        console.log("LOG:\t" + "changed the /help command embed to vctEmbed");
         await interaction.deferUpdate();
         break;
       }
