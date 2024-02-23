@@ -82,9 +82,12 @@ upcomingMatchesStringSelectHandler =
 
 //announce the bot is going offline
 process.on("SIGINT", async () => {
-  const annoucmentChannel = await client.channels.fetch("1077779475175059506");
+  const annoucmentChannel = await client.channels.fetch("1210495684575498271");
 
-  await annoucmentChannel.send("Bot is offline");
+  await annoucmentChannel.messages.edit(
+    "1210496026918789130",
+    "Bot is offline!"
+  );
   console.log("\nLOG: \t" + "Bot is offline");
 
   client.destroy();

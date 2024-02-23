@@ -2,10 +2,13 @@ import { ActivityType } from "discord.js";
 
 export const data = (client) => {
   client.on("ready", async () => {
-    const annoucmentChannel = await client.channels.fetch(
-      "1077779475175059506"
+    const annoucmentChannel: any = await client.channels.fetch(
+      "1210495684575498271"
     );
-    annoucmentChannel.send("Bot is online!");
+    await annoucmentChannel.messages.edit(
+      "1210496026918789130",
+      "Bot is online!"
+    );
 
     console.log(`
   =================================
