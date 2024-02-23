@@ -25,7 +25,7 @@ manage Valorant accounts you've added, create private voice channels in the serv
 ### Sub Commands
 
 | Commands      | Sub Commands         | Options                             | Actions                                                          |
-| ------------- | -------------------- | ----------------------------------- | ---------------------------------------------------------------- | --- |
+| ------------- | -------------------- | ----------------------------------- | ---------------------------------------------------------------- |
 | `/account`    | `select`             | /                                   | Select one of your accounts                                      |
 | `/account`    | `list-all`           | /                                   | List all accounts added to Q bot                                 |
 | `/account`    | `add-riot-account`   | /                                   | Add riot account with riot id, rank and region                   |
@@ -37,7 +37,7 @@ manage Valorant accounts you've added, create private voice channels in the serv
 | `/valorant`   | `win-percentage`     | `player`                            | Get total wins, loses and win percentage                         |
 | `/valorant`   | `map-win-percentage` | `player`                            | Get map win percentage of each map                               |
 | `/vct`        | `live-matches`       | /                                   | Get live VCT matches                                             |
-| `/vct`        | `upcoming-matches`   | /                                   | Get upcoming VCT matches                                         |     |
+| `/vct`        | `upcoming-matches`   | /                                   | Get upcoming VCT matches                                         |
 | `/vct`        | `ongoing-events`     | /                                   | Get ongoing VCT events                                           |
 | `/vct`        | `upcoming-events`    | /                                   | Get upcoming VCT events                                          |
 | `/private-vc` | `duo` (only in Qs)   | `duo`                               | Get in a private voice channel with a duo                        |
