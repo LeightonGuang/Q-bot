@@ -18,13 +18,14 @@ manage Valorant accounts you've added, create private voice channels in the serv
 | `/ping`                    | Ping to check bot's online status                |
 | `/credit`                  | Shoutout to the people that contributed          |
 | `/account [sub-command]`   | Manage accounts added to Q bot                   |
-| `/valorant [sub-command]`  | Check Valorant stats and VCT related info        |
+| `/valorant [sub-command]`  | Check player's Valorant stats                    |
+| `/vct [sub-command]`       | Check VCT related info                           |
 | `private-vc [sub-command]` | Create private voice channel (only in Qs server) |
 
 ### Sub Commands
 
 | Commands      | Sub Commands         | Options                             | Actions                                                          |
-| ------------- | -------------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| ------------- | -------------------- | ----------------------------------- | ---------------------------------------------------------------- | --- |
 | `/account`    | `select`             | /                                   | Select one of your accounts                                      |
 | `/account`    | `list-all`           | /                                   | List all accounts added to Q bot                                 |
 | `/account`    | `add-riot-account`   | /                                   | Add riot account with riot id, rank and region                   |
@@ -35,12 +36,14 @@ manage Valorant accounts you've added, create private voice channels in the serv
 | `/valorant`   | `last-game-stats`    | `player`                            | Get stats from last game of a player                             |
 | `/valorant`   | `win-percentage`     | `player`                            | Get total wins, loses and win percentage                         |
 | `/valorant`   | `map-win-percentage` | `player`                            | Get map win percentage of each map                               |
-| `/valorant`   | `upcoming-events`    | /                                   | Get upcoming Valorant Champions Tour events                      |
-| `/valorant`   | `ongoing-events`     | /                                   | Get ongoing Valorant Champions Tour events                       |
+| `/vct`        | `live-matches`       | /                                   | Get live VCT matches                                             |
+| `/vct`        | `upcoming-matches`   | /                                   | Get upcoming VCT matches                                         |     |
+| `/vct`        | `ongoing-events`     | /                                   | Get ongoing VCT events                                           |
+| `/vct`        | `upcoming-events`    | /                                   | Get upcoming VCT events                                          |
 | `/private-vc` | `duo` (only in Qs)   | `duo`                               | Get in a private voice channel with a duo                        |
 | `/private-vc` | `trio` (only in Qs)  | `trio1` `trio2`                     | Get in a private voice channel with 2 other players              |
 | `/private-vc` | `quad` (only in Qs)  | `quad1` `quad2` `quad3`             | Get in a private voice channel with 3 other players              |
-| `/private-vc` | `stack` (only in Qs) | `stack1` `stack2` `stack3` `stack4` | Get in a private voice channel with 2 other players              |
+| `/private-vc` | `stack` (only in Qs) | `stack1` `stack2` `stack3` `stack4` | Get in a private voice channel with 4 other players              |
 
 #### Screenshots
 
