@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "migrate": "knex migrate:latest  --knexfile knexfile.cjs",
+    "migrate": "knex migrate:latest  --knexfile ./src/knexfile.cjs",
     "migrate:down": "knex migrate:down",
     "migrate:rollback": "knex migrate:rollback",
     "seed": "knex seed:run"
