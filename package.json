@@ -6,11 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "migrate": "knex migrate:latest  --knexfile ./src/knexfile.cjs",
-    "migrate:down": "knex migrate:down",
-    "migrate:rollback": "knex migrate:rollback",
-    "seed": "knex seed:run"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -27,12 +23,9 @@
     "cheerio": "^1.0.0-rc.12",
     "discord.js": "^14.14.1",
     "dotenv": "^16.0.3",
-    "knex": "^3.1.0",
-    "mysql2": "^3.9.1",
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "uuidv4": "^6.2.13"
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.35",
