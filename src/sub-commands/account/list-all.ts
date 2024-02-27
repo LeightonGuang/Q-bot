@@ -8,8 +8,6 @@ export const subCommand = async (interaction) => {
 
   try {
     const { data } = await axios.get(apiUrl + playerId);
-    console.log(data);
-
     const accountEmbedList: EmbedBuilder[] = [];
 
     //embed indicating riot accounts
