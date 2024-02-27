@@ -1,22 +1,89 @@
 import { EmbedBuilder } from "discord.js";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import path from "path";
+import axios from "axios";
 
 export const subCommand = async (interaction) => {
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../public/data.json"
-  );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-  let playerList = dataObj.playerList;
+  // let playerList = dataObj.playerList;
+  const apiUrl: string = "http://localhost:8080/api/accounts/";
+  const playerId: number = interaction.member.id;
 
-  let playerId = interaction.member.id;
-  let playerObj = playerList.find((obj) => obj.id === playerId);
+  try {
+    const { data } = await axios.get(apiUrl + playerId);
+    console.log(data);
 
-  if (!playerObj) {
+    const accountEmbedList: EmbedBuilder[] = [];
+
+    //embed indicating riot accounts
+    const riotHeaderEmbed: EmbedBuilder = new EmbedBuilder()
+      .setColor(0xff4553)
+      .setTitle("Your riot account(s)");
+
+    accountEmbedList.push(riotHeaderEmbed);
+
+    if (data.riotAccountList.length === 0) {
+      const noRiotAccountEmbed: EmbedBuilder = new EmbedBuilder()
+        .setColor(0xff4553)
+        .setTitle("No riot accounts found");
+      accountEmbedList.push(noRiotAccountEmbed);
+    } else if (data.riotAccountList.length !== 0) {
+      for (let riotAccountObj of data.riotAccountList) {
+        const riotAccountEmbed: EmbedBuilder = new EmbedBuilder()
+          .setTitle(riotAccountObj.riot_id)
+          .addFields([
+            { name: "Region:", value: riotAccountObj.region, inline: true },
+            { name: "Rank:", value: riotAccountObj.rank, inline: true },
+            {
+              name: "Active:",
+              value: riotAccountObj.active.toString(),
+              inline: true,
+            },
+          ]);
+
+        if (riotAccountObj.active) {
+          riotAccountEmbed.setColor(0x3ba55b);
+        } else if (!riotAccountObj.active) {
+          riotAccountEmbed.setColor(0xec4245);
+        }
+        accountEmbedList.push(riotAccountEmbed);
+      }
+    }
+
+    //embed indicating steam accounts
+    const steamHeaderEmbed: EmbedBuilder = new EmbedBuilder()
+      .setColor(0x2a475e)
+      .setTitle("Your steam account(s)");
+
+    accountEmbedList.push(steamHeaderEmbed);
+
+    if (data.steamAccountList.length === 0) {
+      const noSteamAccountEmbed: EmbedBuilder = new EmbedBuilder()
+        .setColor(0x2a475e)
+        .setTitle("No steam accounts found");
+      accountEmbedList.push(noSteamAccountEmbed);
+    } else if (data.steamAccountList.length > 0) {
+      for (let steamAccountObj of data.steamAccountList) {
+        const steamAccountEmbed: EmbedBuilder = new EmbedBuilder()
+          .setTitle(steamAccountObj.account_name)
+          .setFields({
+            name: "LINK:",
+            value: `[profile](${steamAccountObj.steam_profile_url})`,
+          });
+
+        if (steamAccountObj.active) {
+          steamAccountEmbed.setColor(0x3ba55b);
+        } else if (!steamAccountObj.active) {
+          steamAccountEmbed.setColor(0x2a475e);
+        }
+
+        accountEmbedList.push(steamAccountEmbed);
+      }
+    }
+
+    await interaction.reply({
+      embeds: accountEmbedList,
+      ephemeral: true,
+    });
+  } catch (error) {
+    console.error(error);
     const alertEmbed = new EmbedBuilder()
       .setColor(0xff4553)
       .setTitle("Error")
@@ -27,79 +94,4 @@ export const subCommand = async (interaction) => {
     await interaction.reply({ embeds: [alertEmbed], ephemeral: true });
     return;
   }
-
-  let accountEmbedList = [];
-
-  //embed indicating steam accounts
-  let riotHeaderEmbed = new EmbedBuilder()
-    .setColor(0xff4553)
-    .setTitle("Your riot account(s)");
-
-  accountEmbedList.push(riotHeaderEmbed);
-
-  if (playerObj.riotAccountList.length === 0) {
-    let noRiotAccountEmbed = new EmbedBuilder()
-      .setColor(0xff4553)
-      .setTitle("No riot accounts found");
-    accountEmbedList.push(noRiotAccountEmbed);
-  } else if (playerObj.riotAccountList.length > 0) {
-    for (let riotAccountObj of playerObj.riotAccountList) {
-      let riotAccountEmbed = new EmbedBuilder()
-        .setTitle(riotAccountObj.riotId)
-        .addFields([
-          { name: "Region:", value: riotAccountObj.region, inline: true },
-          { name: "Rank:", value: riotAccountObj.rank, inline: true },
-          {
-            name: "Active:",
-            value: riotAccountObj.active.toString(),
-            inline: true,
-          },
-        ]);
-
-      if (riotAccountObj.active === true) {
-        riotAccountEmbed.setColor(0x3ba55b);
-      } else if (riotAccountObj.active === false) {
-        riotAccountEmbed.setColor(0xec4245);
-      }
-
-      //console.log(JSON.stringify(riotAccountEmbed));
-      accountEmbedList.push(riotAccountEmbed);
-    }
-  }
-
-  //embed indicating steam accounts
-  let steamHeaderEmbed = new EmbedBuilder()
-    .setColor(0x2a475e)
-    .setTitle("Your steam account(s)");
-
-  accountEmbedList.push(steamHeaderEmbed);
-
-  if (playerObj.steamAccountList.length === 0) {
-    let noSteamAccountEmbed = new EmbedBuilder()
-      .setColor(0x2a475e)
-      .setTitle("No steam accounts found");
-    accountEmbedList.push(noSteamAccountEmbed);
-  } else if (playerObj.steamAccountList.length > 0) {
-    for (let steamAccountObj of playerObj.steamAccountList) {
-      let steamAccountEmbed = new EmbedBuilder()
-        .setTitle(steamAccountObj.accountName)
-        .setFields({
-          name: "LINK:",
-          value: `[profile](${steamAccountObj.steamProfileUrl})`,
-        });
-
-      if (steamAccountObj.active === true) {
-        steamAccountEmbed.setColor(0x3ba55b);
-      } else if (steamAccountObj.active === false) {
-        steamAccountEmbed.setColor(0x2a475e);
-      }
-
-      accountEmbedList.push(steamAccountEmbed);
-    }
-  }
-
-  await interaction.reply({
-    embeds: accountEmbedList,
-    ephemeral: true,
-  });
 };
