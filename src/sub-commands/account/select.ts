@@ -4,126 +4,127 @@ import {
   ButtonBuilder,
   ButtonStyle,
 } from "discord.js";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import path from "path";
+import axios from "axios";
 
 export const subCommand = async (interaction) => {
-  const selectAcountType = interaction.options.get("type").value;
-
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../public/data.json"
-  );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-  const playerList = dataObj.playerList;
-
-  const playerId = interaction.member.id;
-  const playerObj = playerList.find((obj) => obj.id === playerId);
+  const selectAcountType: string = interaction.options.get("type").value;
+  const playerId: string = interaction.member.id;
 
   //list all riot accounts with a button for each account for user
   switch (selectAcountType) {
     case "riot":
-      let riotAccountEmbedList = [];
-      const selectRiotAccountRow = new ActionRowBuilder();
+      try {
+        const { data } = await axios.get(
+          "http://localhost:8080/api/accounts/riot/get/" + playerId
+        );
 
-      for (let riotAccountObj of playerObj.riotAccountList) {
-        let selectButtonStyle, embedColour;
+        let riotAccountEmbedList = [];
+        const selectRiotAccountRow = new ActionRowBuilder();
 
-        //check if if its an active account change colour of embed and button
-        if (riotAccountObj.active) {
-          embedColour = 0x3ba55b;
-          selectButtonStyle = ButtonStyle.Success;
-        } else {
-          embedColour = 0xec4245;
-          selectButtonStyle = ButtonStyle.Danger;
+        for (let riotAccountObj of data) {
+          let selectButtonStyle, embedColour;
+
+          //check if if its an active account change colour of embed and button
+          if (riotAccountObj.active) {
+            embedColour = 0x3ba55b;
+            selectButtonStyle = ButtonStyle.Success;
+          } else {
+            embedColour = 0xec4245;
+            selectButtonStyle = ButtonStyle.Danger;
+          }
+
+          let riotAccountEmbed = new EmbedBuilder()
+            .setColor(embedColour)
+            .setTitle(riotAccountObj.riot_id)
+            .addFields([
+              {
+                name: "Region:",
+                value: riotAccountObj.region,
+                inline: true,
+              },
+              {
+                name: "Rank:",
+                value: riotAccountObj.rank,
+                inline: true,
+              },
+              {
+                name: "Active:",
+                value: riotAccountObj.active.toString(),
+                inline: true,
+              },
+            ]);
+
+          riotAccountEmbedList.push(riotAccountEmbed);
+
+          selectRiotAccountRow.addComponents(
+            new ButtonBuilder()
+              .setLabel(riotAccountObj.riot_id)
+              .setCustomId(
+                `select-riot-${interaction.member.id}-${riotAccountObj.riot_id}-${interaction.id}`
+              )
+              .setStyle(selectButtonStyle)
+          );
         }
 
-        let riotAccountEmbed = new EmbedBuilder()
-          .setColor(embedColour)
-          .setTitle(riotAccountObj.riotId)
-          .addFields([
-            {
-              name: "Region:",
-              value: riotAccountObj.region,
-              inline: true,
-            },
-            {
-              name: "Rank:",
-              value: riotAccountObj.rank,
-              inline: true,
-            },
-            {
-              name: "Active:",
-              value: riotAccountObj.active.toString(),
-              inline: true,
-            },
-          ]);
+        await interaction.reply({
+          embeds: riotAccountEmbedList,
+          components: [selectRiotAccountRow],
+          fetchReply: true,
+        });
 
-        //console.log(JSON.stringify(riotAccountEmbed));
-
-        riotAccountEmbedList.push(riotAccountEmbed);
-
-        selectRiotAccountRow.addComponents(
-          new ButtonBuilder()
-            .setLabel(riotAccountObj.riotId)
-            .setCustomId(
-              `select-riot-${interaction.member.id}-${riotAccountObj.riotId}-${interaction.id}`
-            )
-            .setStyle(selectButtonStyle)
-        );
+        break;
+      } catch (error) {
+        console.error(error);
       }
-
-      await interaction.reply({
-        embeds: riotAccountEmbedList,
-        fetchReply: true,
-      });
-
-      interaction.editReply({ components: [selectRiotAccountRow] });
-      break;
 
     case "steam":
-      let steamAccountEmbedList = [];
-      const selectSteamAccountRow = new ActionRowBuilder();
+      try {
+        const { data } = await axios.get(
+          "http://localhost:8080/api/accounts/steam/get/" + playerId
+        );
 
-      for (let steamAccountObj of playerObj.steamAccountList) {
-        let selectButtonStyle, embedColour;
-        //check if if its an active account change colour of embed and button
-        if (steamAccountObj.active) {
-          embedColour = 0x3ba55b;
-          selectButtonStyle = ButtonStyle.Success;
-        } else {
-          embedColour = 0xec4245;
-          selectButtonStyle = ButtonStyle.Danger;
+        let steamAccountEmbedList = [];
+        const selectSteamAccountRow = new ActionRowBuilder();
+
+        for (let steamAccountObj of data) {
+          let selectButtonStyle, embedColour;
+          //check if if its an active account change colour of embed and button
+          if (steamAccountObj.active) {
+            embedColour = 0x3ba55b;
+            selectButtonStyle = ButtonStyle.Success;
+          } else {
+            embedColour = 0xec4245;
+            selectButtonStyle = ButtonStyle.Danger;
+          }
+
+          let steamAccountEmbed = new EmbedBuilder()
+            .setColor(embedColour)
+            .setTitle(steamAccountObj.account_name)
+            .setURL(steamAccountObj.steam_profile_url)
+            .addFields({
+              name: "Friend Code:",
+              value: steamAccountObj.friendCode,
+            });
+
+          steamAccountEmbedList.push(steamAccountEmbed);
+
+          selectSteamAccountRow.addComponents(
+            new ButtonBuilder()
+              .setLabel(steamAccountObj.account_name)
+              .setCustomId(`select-steam-${steamAccountObj.account_name}`)
+              .setStyle(selectButtonStyle)
+          );
         }
 
-        let steamAccountEmbed = new EmbedBuilder()
-          .setColor(embedColour)
-          .setTitle(steamAccountObj.accountname)
-          .setURL(steamAccountObj.steamProfileUrl)
-          .addFields({
-            name: "Friend Code:",
-            value: steamAccountObj.friendCode,
-          });
-
-        steamAccountEmbedList.push(steamAccountEmbed);
-
-        selectSteamAccountRow.addComponents(
-          new ButtonBuilder()
-            .setLabel(steamAccountObj.accountName)
-            .setCustomId(`select-steam-${steamAccountObj.accountName}`)
-            .setStyle(selectButtonStyle)
-        );
+        await interaction.reply({
+          embeds: steamAccountEmbedList,
+          components: [selectSteamAccountRow],
+          fetchReply: true,
+          ephemeral: false,
+        });
+        break;
+      } catch (error) {
+        console.error(error);
       }
-
-      await interaction.reply({
-        embeds: steamAccountEmbedList,
-        components: [selectSteamAccountRow],
-        fetchReply: true,
-        ephemeral: false,
-      });
-      break;
   }
 };
