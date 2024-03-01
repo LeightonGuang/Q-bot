@@ -43,7 +43,7 @@ export const handler = async (interaction) => {
       try {
         await axios.patch("http://localhost:8080/api/accounts/riot/select", {
           discord_id: interaction.member.id,
-          selectedRiotOrSteamId: selectedRiotOrSteamId,
+          riot_id: selectedRiotOrSteamId,
         });
 
         await interaction.message.delete(replyMsgId);
@@ -63,7 +63,7 @@ export const handler = async (interaction) => {
           "http://localhost:8080/api/accounts/steam/select",
           {
             discord_id: interaction.member.id,
-            selectedRiotOrSteamId: selectedRiotOrSteamId,
+            steam_id: selectedRiotOrSteamId,
           }
         );
 
