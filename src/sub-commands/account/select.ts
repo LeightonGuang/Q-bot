@@ -18,11 +18,11 @@ export const subCommand = async (interaction) => {
           "http://localhost:8080/api/accounts/riot/get/" + playerId
         );
 
-        let riotAccountEmbedList = [];
-        const selectRiotAccountRow = new ActionRowBuilder();
+        const riotAccountEmbedList: EmbedBuilder[] = [];
+        const selectRiotAccountRow: ActionRowBuilder = new ActionRowBuilder();
 
         for (let riotAccountObj of data) {
-          let selectButtonStyle, embedColour;
+          let selectButtonStyle: ButtonStyle, embedColour: number;
 
           //check if if its an active account change colour of embed and button
           if (riotAccountObj.active) {
@@ -33,7 +33,7 @@ export const subCommand = async (interaction) => {
             selectButtonStyle = ButtonStyle.Danger;
           }
 
-          let riotAccountEmbed = new EmbedBuilder()
+          const riotAccountEmbed: EmbedBuilder = new EmbedBuilder()
             .setColor(embedColour)
             .setTitle(riotAccountObj.riot_id)
             .addFields([
@@ -83,11 +83,11 @@ export const subCommand = async (interaction) => {
           "http://localhost:8080/api/accounts/steam/get/" + playerId
         );
 
-        let steamAccountEmbedList = [];
-        const selectSteamAccountRow = new ActionRowBuilder();
+        const steamAccountEmbedList: EmbedBuilder[] = [];
+        const selectSteamAccountRow: ActionRowBuilder = new ActionRowBuilder();
 
         for (let steamAccountObj of data) {
-          let selectButtonStyle, embedColour;
+          let selectButtonStyle: ButtonStyle, embedColour: number;
           //check if if its an active account change colour of embed and button
           if (steamAccountObj.active) {
             embedColour = 0x3ba55b;
@@ -97,13 +97,13 @@ export const subCommand = async (interaction) => {
             selectButtonStyle = ButtonStyle.Danger;
           }
 
-          let steamAccountEmbed = new EmbedBuilder()
+          const steamAccountEmbed: EmbedBuilder = new EmbedBuilder()
             .setColor(embedColour)
             .setTitle(steamAccountObj.account_name)
             .setURL(steamAccountObj.steam_profile_url)
             .addFields({
               name: "Friend Code:",
-              value: steamAccountObj.friendCode,
+              value: steamAccountObj.friend_code.toString(),
             });
 
           steamAccountEmbedList.push(steamAccountEmbed);
@@ -111,7 +111,9 @@ export const subCommand = async (interaction) => {
           selectSteamAccountRow.addComponents(
             new ButtonBuilder()
               .setLabel(steamAccountObj.account_name)
-              .setCustomId(`select-steam-${steamAccountObj.account_name}`)
+              .setCustomId(
+                `select-steam-${interaction.member.id}-${steamAccountObj.steam_id}-${interaction.id}`
+              )
               .setStyle(selectButtonStyle)
           );
         }
