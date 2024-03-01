@@ -1,7 +1,4 @@
-import fs from "fs";
-import { writeToFile } from "../../../utils/writeToFile.js";
-import { fileURLToPath } from "url";
-import path from "path";
+import axios from "axios";
 
 export const handler = async (interaction) => {
   console.log("FILE: \t" + "selectAccountButtonHandler.js");
@@ -26,55 +23,36 @@ export const handler = async (interaction) => {
    *
    */
 
-  const accountType = splittedArray[1];
-  const userId = splittedArray[2];
-  const uniqueIdentifier = splittedArray[3];
-  const replyMsgId = splittedArray[4];
-  //console.log("replyMsgId:\t" + replyMsgId);
-
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../../public/data.json"
-  );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-  const playerList = dataObj.playerList;
-
-  const playerObj = playerList.find((obj) => obj.id === userId);
+  const accountType: string = splittedArray[1];
+  const userId: string = splittedArray[2];
+  const selectedAccountIdOrName: string = splittedArray[3];
+  const replyMsgId: string = splittedArray[4];
 
   //only the account owner can select their account
   if (interaction.member.id !== userId) {
-    interaction.reply({ content: "This is not your account", ephemeral: true });
+    await interaction.reply({
+      content: "This is not your account",
+      ephemeral: true,
+    });
     console.log("LOG: \t" + "This is not your account");
     return;
   }
 
   if (accountType === "riot") {
-    //go through riotAccountList to change which account to be active
-    for (let riotAccountObj of playerObj.riotAccountList) {
-      if (riotAccountObj.riotId === uniqueIdentifier) {
-        riotAccountObj.active = true;
-      } else if (riotAccountObj.riotId !== uniqueIdentifier) {
-        riotAccountObj.active = false;
-      }
-    }
+    try {
+      await axios.patch("http://localhost:8080/api/accounts/riot/select", {
+        discord_id: interaction.member.id,
+        selectedAccountIdOrName: selectedAccountIdOrName,
+      });
 
-    writeToFile(dataObj);
-    interaction.message.delete(replyMsgId);
-    interaction.reply({
-      content: `The account **${uniqueIdentifier}** is now selected!`,
-      ephemeral: true,
-    });
+      await interaction.message.delete(replyMsgId);
+      await interaction.reply({
+        content: `The account **${selectedAccountIdOrName}** is now selected!`,
+        ephemeral: true,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   } else if (accountType === "steam") {
-    for (let steamAccountObj of playerObj.steamAccountList) {
-      if (steamAccountObj.account === uniqueIdentifier) {
-        steamAccountObj.active = true;
-      } else if (steamAccountObj.account === uniqueIdentifier) {
-        steamAccountObj.active = false;
-      }
-    }
-
-    writeToFile(dataObj);
   }
 };
