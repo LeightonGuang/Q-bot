@@ -25,7 +25,7 @@ export const handler = async (interaction) => {
 
   const accountType: string = splittedArray[1];
   const userId: string = splittedArray[2];
-  const selectedAccountIdOrName: string = splittedArray[3];
+  const selectedRiotOrSteamId: string = splittedArray[3];
   const replyMsgId: string = splittedArray[4];
 
   //only the account owner can select their account
@@ -38,21 +38,44 @@ export const handler = async (interaction) => {
     return;
   }
 
-  if (accountType === "riot") {
-    try {
-      await axios.patch("http://localhost:8080/api/accounts/riot/select", {
-        discord_id: interaction.member.id,
-        selectedAccountIdOrName: selectedAccountIdOrName,
-      });
+  switch (accountType) {
+    case "riot": {
+      try {
+        await axios.patch("http://localhost:8080/api/accounts/riot/select", {
+          discord_id: interaction.member.id,
+          selectedRiotOrSteamId: selectedRiotOrSteamId,
+        });
 
-      await interaction.message.delete(replyMsgId);
-      await interaction.reply({
-        content: `The account **${selectedAccountIdOrName}** is now selected!`,
-        ephemeral: true,
-      });
-    } catch (error) {
-      console.error(error);
+        await interaction.message.delete(replyMsgId);
+        await interaction.reply({
+          content: `The account **${selectedRiotOrSteamId}** is now selected!`,
+          ephemeral: true,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+      break;
     }
-  } else if (accountType === "steam") {
+
+    case "steam": {
+      try {
+        const { data } = await axios.patch(
+          "http://localhost:8080/api/accounts/steam/select",
+          {
+            discord_id: interaction.member.id,
+            selectedRiotOrSteamId: selectedRiotOrSteamId,
+          }
+        );
+
+        await interaction.message.delete(replyMsgId);
+        await interaction.reply({
+          content: `The account **${data[0].account_name}** is now selected!`,
+          ephemeral: true,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+      break;
+    }
   }
 };
