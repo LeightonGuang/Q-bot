@@ -1,8 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import fs from "fs";
-import { writeToFile } from "../../../utils/writeToFile.js";
-import { fileURLToPath } from "url";
-import path from "path";
+import axios from "axios";
 
 export const handler = async (interaction) => {
   console.log("FILE: \t" + "deleteAccountHandler.js");
@@ -13,83 +10,52 @@ export const handler = async (interaction) => {
   if (splittedArray[0] !== "delete") return;
 
   const accountType: string = splittedArray[1];
-  const riotId: string = splittedArray[2];
-  const replyMsgId: string = splittedArray[3];
+  const userId: string = splittedArray[2];
+  const selectedRiotOrSteamId: string = splittedArray[3];
+  const replyMsgId: string = splittedArray[4];
 
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../../public/data.json"
-  );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-
-  type RiotAccountObj = {
-    riotId: string;
-    region: string;
-    rank: string;
-    active: boolean;
-  };
-
-  type SteamAccountObj = {
-    accountName: string;
-    friendCode: number;
-    steamProfileUrl: string;
-    active: boolean;
-  };
-
-  type PlayerObj = {
-    id: number;
-    tag: string;
-    riotAccountList: RiotAccountObj[];
-    steamAccountList: SteamAccountObj[];
-  };
-
-  type DataObject = {
-    playerList: PlayerObj[];
-  };
-
-  const dataObj: DataObject = JSON.parse(dataFile);
-  const playerList: PlayerObj[] = dataObj.playerList;
   const playerId: number = interaction.member.id;
-  let playerObj: PlayerObj = playerList.find((obj) => obj.id === playerId);
 
-  if (accountType === "riot") {
-    //go through riotAccountList to change which account to be active
-    for (let riotAccountObj of playerObj.riotAccountList) {
-      if (riotAccountObj.riotId === riotId) {
-        playerObj.riotAccountList = playerObj.riotAccountList.filter(
-          (account) => account !== riotAccountObj
+  //only the account owner can select their account
+  if (interaction.member.id !== userId) {
+    await interaction.reply({
+      content: "This is not your account",
+      ephemeral: true,
+    });
+    console.log("LOG: \t" + "This is not your account");
+    return;
+  }
+
+  switch (accountType) {
+    case "riot": {
+      await axios.delete("http://localhost:8080/api/accounts/riot/delete", {
+        data: {
+          discord_id: playerId,
+          riot_id: selectedRiotOrSteamId,
+        },
+      });
+
+      interaction.message.delete(replyMsgId);
+      const deleteEmbed = new EmbedBuilder()
+        .setColor(0xffff00)
+        .setTitle("Valorant Account")
+        .setDescription(
+          `Account **${selectedRiotOrSteamId}** has been deleted.`
         );
-
-        if (playerObj.riotAccountList.length !== 0) {
-          playerObj.riotAccountList[0].active = true;
-        }
-
-        writeToFile(dataObj);
-        interaction.message.delete(replyMsgId);
-        const deleteEmbed = new EmbedBuilder()
-          .setColor(0xffff00)
-          .setTitle("Valorant Account")
-          .setDescription(`Account **${riotId}** has been deleted.`);
-        interaction.channel.send({ embeds: [deleteEmbed] });
-        break;
-      }
+      interaction.channel.send({ embeds: [deleteEmbed] });
+      break;
     }
-  } else if (accountType === "steam") {
-    for (let steamAccountObj of playerObj.steamAccountList) {
-      if (steamAccountObj.accountName === riotId) {
-        playerObj.steamAccountList = playerObj.steamAccountList.filter(
-          (account) => account !== steamAccountObj
+
+    case "steam": {
+      interaction.message.delete(replyMsgId);
+      const deleteEmbed = new EmbedBuilder()
+        .setColor(0xffff00)
+        .setTitle("Steam Account")
+        .setDescription(
+          `Account **${selectedRiotOrSteamId}** has been deleted.`
         );
-        writeToFile(dataObj);
-        interaction.message.delete(replyMsgId);
-        const deleteEmbed = new EmbedBuilder()
-          .setColor(0xffff00)
-          .setTitle("Steam Account")
-          .setDescription(`Account **${riotId}** has been deleted.`);
-        interaction.channel.send({ embeds: [deleteEmbed] });
-        break;
-      }
+      interaction.channel.send({ embeds: [deleteEmbed] });
+      break;
     }
   }
 };

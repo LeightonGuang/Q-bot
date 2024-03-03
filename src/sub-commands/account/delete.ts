@@ -4,55 +4,21 @@ import {
   ButtonBuilder,
   ButtonStyle,
 } from "discord.js";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import path from "path";
+import axios from "axios";
+
+import { RiotAccount } from "../../types/RiotAccount.js";
+import { SteamAccount } from "../../types/SteamAccount.js";
 
 export const subCommand = async (interaction) => {
-  let deleteAccountType: string = interaction.options.get("type").value;
-
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../public/data.json"
-  );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-
-  type RiotAccountObj = {
-    riotId: string;
-    region: string;
-    rank: string;
-    active: boolean;
-  };
-
-  type SteamAccountObj = {
-    accountName: string;
-    friendCode: number;
-    steamProfileUrl: string;
-    active: boolean;
-  };
-
-  type PlayerObj = {
-    id: number;
-    tag: string;
-    riotAccountList: RiotAccountObj[];
-    steamAccountList: SteamAccountObj[];
-  };
-
-  type DataObject = {
-    playerList: PlayerObj[];
-  };
-
-  const dataObj: DataObject = JSON.parse(dataFile);
-
-  const playerList: PlayerObj[] = dataObj.playerList;
-
+  const deleteAccountType: string = interaction.options.get("type").value;
   const playerId: number = interaction.member.id;
-  const playerObj: PlayerObj = playerList.find((obj) => obj.id === playerId);
 
   switch (deleteAccountType) {
-    case "riot":
-      if (playerObj.riotAccountList.length === 0) {
+    case "riot": {
+      const { data }: { data: RiotAccount[] } = await axios.get(
+        "http://localhost:8080/api/accounts/riot/get/" + playerId
+      );
+      if (data.length === 0) {
         const errorEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xff4553)
           .setTitle("Error")
@@ -68,25 +34,25 @@ export const subCommand = async (interaction) => {
       const riotAccountEmbedList: EmbedBuilder[] = [];
       const deleteRiotAccountRow: ActionRowBuilder = new ActionRowBuilder();
 
-      for (let riotAccountObj of playerObj.riotAccountList) {
+      for (let riotAccount of data) {
         //go through each riot account to make an embed and button
         const riotAccountEmbed = new EmbedBuilder()
           .setColor(0xec4245)
-          .setTitle(riotAccountObj.riotId)
+          .setTitle(riotAccount.riot_id)
           .addFields([
             {
               name: "Region:",
-              value: riotAccountObj.region,
+              value: riotAccount.region,
               inline: true,
             },
             {
               name: "Rank:",
-              value: riotAccountObj.rank,
+              value: riotAccount.rank,
               inline: true,
             },
             {
               name: "Active:",
-              value: riotAccountObj.active.toString(),
+              value: riotAccount.active.toString(),
               inline: true,
             },
           ]);
@@ -95,9 +61,9 @@ export const subCommand = async (interaction) => {
 
         deleteRiotAccountRow.addComponents(
           new ButtonBuilder()
-            .setLabel(`DELETE: ${riotAccountObj.riotId}`)
+            .setLabel(`DELETE: ${riotAccount.riot_id}`)
             .setCustomId(
-              `delete-riot-${riotAccountObj.riotId}-${interaction.id}`
+              `delete-riot-${interaction.member.id}-${riotAccount.riot_id}-${interaction.id}`
             )
             .setStyle(ButtonStyle.Danger)
         );
@@ -108,11 +74,15 @@ export const subCommand = async (interaction) => {
         components: [deleteRiotAccountRow],
         fetchReply: true,
       });
-
       break;
+    }
 
-    case "steam":
-      if (playerObj.steamAccountList.length === 0) {
+    case "steam": {
+      const { data }: { data: SteamAccount[] } = await axios.get(
+        "http://localhost:8080/api/accounts/steam/get/" + playerId
+      );
+
+      if (data.length === 0) {
         const errorEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xff4553)
           .setTitle("Error")
@@ -128,24 +98,24 @@ export const subCommand = async (interaction) => {
       const steamAccountEmbedList: EmbedBuilder[] = [];
       const deleteSteamAccountRow: ActionRowBuilder = new ActionRowBuilder();
 
-      for (let steamAccountObj of playerObj.steamAccountList) {
+      for (let steamAccount of data) {
         const steamAccountEmbed = new EmbedBuilder()
           .setColor(0xec4245)
-          .setTitle(steamAccountObj.accountName)
+          .setTitle(steamAccount.account_name)
           .addFields([
             {
               name: "Steam Profile Url:",
-              value: steamAccountObj.steamProfileUrl,
+              value: steamAccount.steam_profile_url,
               inline: true,
             },
             {
               name: "Friend Code:",
-              value: steamAccountObj.friendCode.toString(),
+              value: steamAccount.friend_code.toString(),
               inline: true,
             },
             {
               name: "Active:",
-              value: steamAccountObj.active.toString(),
+              value: steamAccount.active.toString(),
               inline: true,
             },
           ]);
@@ -154,9 +124,9 @@ export const subCommand = async (interaction) => {
 
         deleteSteamAccountRow.addComponents(
           new ButtonBuilder()
-            .setLabel(`DELETE: ${steamAccountObj.accountName}`)
+            .setLabel(`DELETE: ${steamAccount.account_name}`)
             .setCustomId(
-              `delete-steam-${steamAccountObj.accountName}-${interaction.id}`
+              `delete-steam-${interaction.member.id}-${steamAccount.steam_id}-${interaction.id}`
             )
             .setStyle(ButtonStyle.Danger)
         );
@@ -169,5 +139,6 @@ export const subCommand = async (interaction) => {
       });
 
       break;
+    }
   }
 };
