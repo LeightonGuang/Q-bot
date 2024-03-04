@@ -1,5 +1,8 @@
 import { EmbedBuilder } from "discord.js";
 import axios from "axios";
+import { RiotAccount } from "../../types/RiotAccount.js";
+import { SteamAccount } from "../../types/SteamAccount.js";
+import { profileUrl } from "../../utils/profileUrl.js";
 
 export const subCommand = async (interaction) => {
   // let playerList = dataObj.playerList;
@@ -7,7 +10,14 @@ export const subCommand = async (interaction) => {
   const playerId: number = interaction.member.id;
 
   try {
-    const { data } = await axios.get(apiUrl + playerId);
+    const {
+      data,
+    }: {
+      data: {
+        riotAccountList: RiotAccount[];
+        steamAccountList: SteamAccount[];
+      };
+    } = await axios.get(apiUrl + playerId);
     const accountEmbedList: EmbedBuilder[] = [];
 
     //embed indicating riot accounts
@@ -26,6 +36,7 @@ export const subCommand = async (interaction) => {
       for (let riotAccountObj of data.riotAccountList) {
         const riotAccountEmbed: EmbedBuilder = new EmbedBuilder()
           .setTitle(riotAccountObj.riot_id)
+          .setURL(profileUrl(riotAccountObj.riot_id))
           .addFields([
             { name: "Region:", value: riotAccountObj.region, inline: true },
             { name: "Rank:", value: riotAccountObj.rank, inline: true },
@@ -61,9 +72,10 @@ export const subCommand = async (interaction) => {
       for (let steamAccountObj of data.steamAccountList) {
         const steamAccountEmbed: EmbedBuilder = new EmbedBuilder()
           .setTitle(steamAccountObj.account_name)
+          .setURL(steamAccountObj.steam_profile_url)
           .setFields({
-            name: "LINK:",
-            value: `[profile](${steamAccountObj.steam_profile_url})`,
+            name: "Friend Code:",
+            value: `${steamAccountObj.friend_code}`,
           });
 
         if (steamAccountObj.active) {
