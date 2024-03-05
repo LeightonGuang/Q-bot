@@ -4,5 +4,5 @@ export type RiotAccount = {
   riot_id: string;
   region: string;
   rank: string;
-  active: boolean;
+  active: boolean | number;
 };
