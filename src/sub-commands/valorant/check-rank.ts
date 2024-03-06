@@ -1,41 +1,40 @@
 import { EmbedBuilder } from "discord.js";
-import fs from "node:fs";
 import puppeteer from "puppeteer-extra";
-import path from "path";
-import { fileURLToPath } from "url";
-import { registered } from "../../utils/registered.js";
-import { profileUrl } from "../../utils/profileUrl.js";
+import axios from "axios";
+import { registered } from "../../utils/valorant/registered.js";
+import { profileUrl } from "../../utils/valorant/profileUrl.js";
+import { RiotAccount } from "../../types/RiotAccount.js";
 
 export const subCommand = async (interaction) => {
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../public/data.json"
-  );
-
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-  const rankEmbedList = [];
+  const rankEmbedList: EmbedBuilder[] = [];
 
   const { channel } = interaction;
 
-  let userId = interaction.options.getMember("player");
+  let selectedDiscordId: string = interaction.options.getMember("player");
 
   //if the command is for the user's self
-  if (userId === null) {
-    userId = interaction.user.id;
-  } else {
-    userId = userId.id;
+  if (selectedDiscordId === null) {
+    selectedDiscordId = interaction.user.id;
   }
 
-  if (!registered(interaction, dataObj.playerList, userId)) return;
+  if (!registered(interaction, selectedDiscordId)) return;
 
-  const userObj = dataObj.playerList.find((obj) => obj.id === userId);
-  const accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
-  const riotId = accountObj.riotId;
-  const trackerProfileUrl = profileUrl(riotId);
+  let riotId: string;
 
-  const statEmbedHeader = new EmbedBuilder()
+  try {
+    const { data: userData }: { data: RiotAccount[] } = await axios.get(
+      "http://localhost:8080/api/valorant/active/get/" + selectedDiscordId
+    );
+    console.log(userData);
+    const activeRiotAccount: RiotAccount = userData[0];
+    riotId = activeRiotAccount.riot_id;
+  } catch (error) {
+    console.error(error);
+  }
+
+  const trackerProfileUrl: string = profileUrl(riotId);
+
+  const statEmbedHeader: EmbedBuilder = new EmbedBuilder()
     .setTitle("Riot ID: " + riotId)
     .setURL(trackerProfileUrl);
 
@@ -43,27 +42,28 @@ export const subCommand = async (interaction) => {
 
   await interaction.reply({ content: "Loading info..." });
 
-  function getRankColour(rank) {
-    if (rank === "Iron") {
-      return 0x3c3c3c;
-    } else if (rank === "Bronze") {
-      return 0xa5855e;
-    } else if (rank === "Silver") {
-      return 0xcdd3d1;
-    } else if (rank === "Gold") {
-      return 0xebca52;
-    } else if (rank === "Platinum") {
-      return 0x49a6b7;
-    } else if (rank === "Diamond") {
-      return 0xd681e9;
-    } else if (rank === "Ascendant") {
-      return 0x58a861;
-    } else if (rank === "Immortal") {
-      return 0xb13138;
-    } else if (rank === "Radiant") {
-      return 0xf5f4df;
-    } else {
-      return 0x000000;
+  function getRankColour(rank: string) {
+    switch (rank) {
+      case "Iron":
+        return 0x3c3c3c;
+      case "Bronze":
+        return 0xa5855e;
+      case "Silver":
+        return 0xcdd3d1;
+      case "Gold":
+        return 0xebca52;
+      case "Platinum":
+        return 0x49a6b7;
+      case "Diamond":
+        return 0xd681e9;
+      case "Ascendant":
+        return 0x58a861;
+      case "Immortal":
+        return 0xb13138;
+      case "Radiant":
+        return 0xf5f4df;
+      default:
+        return 0x000000;
     }
   }
 
