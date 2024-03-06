@@ -24,7 +24,7 @@ export const subCommand = async (interaction) => {
     userId = userId.id;
   }
 
-  if (!registered(interaction, dataObj.playerList, userId)) return;
+  if (!registered(interaction, userId)) return;
 
   await interaction.reply("Loading info...");
 
