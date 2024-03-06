@@ -8,7 +8,7 @@ import { RiotAccount } from "../../types/RiotAccount.js";
 export const subCommand = async (interaction) => {
   const rankEmbedList: EmbedBuilder[] = [];
 
-  const { channel } = interaction;
+  const { channel }: { channel: any } = interaction;
 
   let selectedDiscordId: string = interaction.options.getMember("player");
 
@@ -25,7 +25,6 @@ export const subCommand = async (interaction) => {
     const { data: userData }: { data: RiotAccount[] } = await axios.get(
       "http://localhost:8080/api/valorant/active/get/" + selectedDiscordId
     );
-    console.log(userData);
     const activeRiotAccount: RiotAccount = userData[0];
     riotId = activeRiotAccount.riot_id;
   } catch (error) {
@@ -33,14 +32,6 @@ export const subCommand = async (interaction) => {
   }
 
   const trackerProfileUrl: string = profileUrl(riotId);
-
-  const statEmbedHeader: EmbedBuilder = new EmbedBuilder()
-    .setTitle("Riot ID: " + riotId)
-    .setURL(trackerProfileUrl);
-
-  rankEmbedList.push(statEmbedHeader);
-
-  await interaction.reply({ content: "Loading info..." });
 
   function getRankColour(rank: string) {
     switch (rank) {
@@ -67,24 +58,27 @@ export const subCommand = async (interaction) => {
     }
   }
 
-  const browser = await (puppeteer as any).launch({
+  await interaction.reply({ content: "Loading info..." });
+
+  const browser: any = await (puppeteer as any).launch({
     //headless: false,
     //args: ['--disable-setuid-sandbox', '--disable-extensions']
   });
-  const page = await browser.newPage();
+  const page: any = await browser.newPage();
   await page.goto(trackerProfileUrl);
 
   await page.screenshot({ path: "screenshot.png", fullPage: true });
   console.log("LOG: \t" + "screenshot");
 
-  const currentRankImgElement = await page.$(
+  const currentRankImgElement: any = await page.$(
     "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div > div > div > div > div > div.rating-entry__rank-icon > img"
   );
-  const currentRankNameElement = await page.$(
+  const currentRankNameElement: any = await page.$(
     "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div > div > div > div > div > div.rating-entry__rank-info > div.value"
   );
+  const userAvatarImgElement: any = await page.$("img.user-avatar__image");
 
-  let currentRankImgUrl, currentRankName;
+  let currentRankImgUrl, currentRankName, userAvatarImgUrl;
 
   if (!currentRankImgElement) {
     let errorEmbed = new EmbedBuilder()
@@ -112,11 +106,27 @@ export const subCommand = async (interaction) => {
     );
   }
 
+  if (currentRankName) {
+    userAvatarImgUrl = await page.evaluate(
+      (element) => element.src,
+      userAvatarImgElement
+    );
+  }
+  const statEmbedHeader: EmbedBuilder = new EmbedBuilder()
+    .setAuthor({
+      name: riotId,
+      iconURL: userAvatarImgUrl,
+    })
+    .setTitle("tracker.gg")
+    .setURL(trackerProfileUrl);
+
+  rankEmbedList.push(statEmbedHeader);
+
   let currentRankEmbedColour = currentRankName.trim().split(" ");
   currentRankEmbedColour = currentRankEmbedColour[0];
   currentRankEmbedColour = getRankColour(currentRankEmbedColour);
 
-  let currentRankEmbed = new EmbedBuilder()
+  const currentRankEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(currentRankEmbedColour)
     .setAuthor({ name: "Current Rank:" })
     .setTitle(currentRankName)
@@ -126,10 +136,10 @@ export const subCommand = async (interaction) => {
   interaction.editReply({ content: "", embeds: rankEmbedList });
   console.log("LOG: \t" + "sending current rank embed");
 
-  const peakRankImgElement = await page.$(
+  const peakRankImgElement: any = await page.$(
     "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div.rating-summary__content.rating-summary__content--secondary > div > div > div > div > div.rating-entry__rank-icon > img"
   );
-  const peakRankNameElement = await page.$(
+  const peakRankNameElement: any = await page.$(
     "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div.rating-summary__content.rating-summary__content--secondary > div > div > div > div > div.rating-entry__rank-info > div.value"
   );
 
@@ -153,7 +163,7 @@ export const subCommand = async (interaction) => {
   peakRankEmbedColour = peakRankEmbedColour[0];
   peakRankEmbedColour = getRankColour(peakRankEmbedColour);
 
-  let peakRankEmbed = new EmbedBuilder()
+  const peakRankEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(peakRankEmbedColour)
     .setAuthor({ name: "Peak Rank: " })
     .setTitle(peakRankName)
