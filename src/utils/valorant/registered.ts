@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function registered(interaction: any, discordId: string) {
   const playerRegistered: boolean = await axios.get(
-    "http://localhost:8080/" + discordId
+    "http://localhost:8080/api/accounts/registered/" + discordId
   );
   if (playerRegistered) {
     return true;
