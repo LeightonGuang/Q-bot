@@ -6,7 +6,7 @@ import { profileUrl } from "../../utils/valorant/profileUrl.js";
 
 export const subCommand = async (interaction) => {
   // let playerList = dataObj.playerList;
-  const apiUrl: string = "http://localhost:8080/api/accounts/";
+  const apiUrl: string = "http://localhost:8080/api/account/";
   const playerId: number = interaction.member.id;
 
   try {

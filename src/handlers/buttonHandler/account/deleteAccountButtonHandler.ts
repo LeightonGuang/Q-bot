@@ -28,7 +28,7 @@ export const handler = async (interaction) => {
 
   switch (accountType) {
     case "riot": {
-      await axios.delete("http://localhost:8080/api/accounts/riot/delete", {
+      await axios.delete("http://localhost:8080/api/account/riot/delete", {
         data: {
           discord_id: playerId,
           riot_id: selectedRiotOrSteamId,

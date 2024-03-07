@@ -15,7 +15,7 @@ export const subCommand = async (interaction) => {
     case "riot":
       try {
         const { data } = await axios.get(
-          "http://localhost:8080/api/accounts/riot/get/" + playerId
+          "http://localhost:8080/api/account/riot/get/" + playerId
         );
 
         const riotAccountEmbedList: EmbedBuilder[] = [];
@@ -80,7 +80,7 @@ export const subCommand = async (interaction) => {
     case "steam":
       try {
         const { data } = await axios.get(
-          "http://localhost:8080/api/accounts/steam/get/" + playerId
+          "http://localhost:8080/api/account/steam/get/" + playerId
         );
 
         const steamAccountEmbedList: EmbedBuilder[] = [];

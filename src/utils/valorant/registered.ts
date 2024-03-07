@@ -4,12 +4,12 @@ import { RiotAccount } from "../../types/RiotAccount.js";
 export async function registered(interaction: any, discordId: string) {
   try {
     const playerRegistered: boolean = await axios.get(
-      "http://localhost:8080/api/accounts/registered/" + discordId
+      "http://localhost:8080/api/account/registered/" + discordId
     );
     if (playerRegistered) {
       try {
         const riotAccountList: RiotAccount[] = await axios.get(
-          "http://localhost:8080/api/accounts/riot/get/" + discordId
+          "http://localhost:8080/api/account/riot/get/" + discordId
         );
 
         if (riotAccountList.length === 0) {

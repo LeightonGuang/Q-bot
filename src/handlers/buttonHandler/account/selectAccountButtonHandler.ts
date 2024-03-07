@@ -41,7 +41,7 @@ export const handler = async (interaction) => {
   switch (accountType) {
     case "riot": {
       try {
-        await axios.patch("http://localhost:8080/api/accounts/riot/select", {
+        await axios.patch("http://localhost:8080/api/account/riot/select", {
           discord_id: interaction.member.id,
           riot_id: selectedRiotOrSteamId,
         });
@@ -60,7 +60,7 @@ export const handler = async (interaction) => {
     case "steam": {
       try {
         const { data } = await axios.patch(
-          "http://localhost:8080/api/accounts/steam/select",
+          "http://localhost:8080/api/account/steam/select",
           {
             discord_id: interaction.member.id,
             steam_id: selectedRiotOrSteamId,

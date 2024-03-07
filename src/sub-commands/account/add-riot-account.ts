@@ -30,14 +30,14 @@ export const subCommand = async (interaction) => {
   try {
     console.log("check if user exist");
     const { data: userExist } = await axios.get(
-      "http://localhost:8080/api/accounts/user_exist/" + discordId
+      "http://localhost:8080/api/account/user_exist/" + discordId
     );
 
     if (!userExist) {
       console.log("if user not exist");
       try {
         // create new account
-        await axios.post("http://localhost:8080/api/accounts", {
+        await axios.post("http://localhost:8080/api/account", {
           discord_id: discordId,
           tag: userTag,
         });
@@ -54,7 +54,7 @@ export const subCommand = async (interaction) => {
   try {
     console.log("check for duplicate riot id");
     const { data: isDuplicateRiotId }: { data: boolean } = await axios.get(
-      "http://localhost:8080/api/accounts/riot/is_duplicate",
+      "http://localhost:8080/api/account/riot/is_duplicate",
       {
         data: { discord_id: discordId, riot_id: riotId },
       }
@@ -75,7 +75,7 @@ export const subCommand = async (interaction) => {
   // add new riot account
   try {
     console.log("add new riot account");
-    await axios.post("http://localhost:8080/api/accounts/riot/add", {
+    await axios.post("http://localhost:8080/api/account/riot/add", {
       discord_id: discordId,
       riot_id: riotId,
       region: region,

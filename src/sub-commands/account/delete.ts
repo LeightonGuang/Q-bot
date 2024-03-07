@@ -16,7 +16,7 @@ export const subCommand = async (interaction) => {
   switch (deleteAccountType) {
     case "riot": {
       const { data }: { data: RiotAccount[] } = await axios.get(
-        "http://localhost:8080/api/accounts/riot/get/" + playerId
+        "http://localhost:8080/api/account/riot/get/" + playerId
       );
       if (data.length === 0) {
         const errorEmbed: EmbedBuilder = new EmbedBuilder()
@@ -79,7 +79,7 @@ export const subCommand = async (interaction) => {
 
     case "steam": {
       const { data }: { data: SteamAccount[] } = await axios.get(
-        "http://localhost:8080/api/accounts/steam/get/" + playerId
+        "http://localhost:8080/api/account/steam/get/" + playerId
       );
 
       if (data.length === 0) {
