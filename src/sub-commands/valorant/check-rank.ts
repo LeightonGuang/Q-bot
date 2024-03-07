@@ -25,6 +25,14 @@ export const subCommand = async (interaction) => {
     const { data: userData }: { data: RiotAccount[] } = await axios.get(
       "http://localhost:8080/api/valorant/active/get/" + selectedDiscordId
     );
+
+    if (userData.length === 0) {
+      interaction.reply({
+        content: "The selected account does not exist.",
+        ephemeral: true,
+      });
+      return;
+    }
     const activeRiotAccount: RiotAccount = userData[0];
     riotId = activeRiotAccount.riot_id;
   } catch (error) {
