@@ -202,11 +202,25 @@ export const subCommand = async (interaction) => {
         return "Im" + tier;
       case "Radiant":
         return "R" + tier;
+      case "Unranked":
+        return "Unranked";
     }
   }
 
   if (convertedRank(currentRankName) !== activeRiotAccount.rank) {
     // update rank with api
+    try {
+      await axios.patch("http://localhost:8080/api/valorant/active/update", {
+        discord_id: selectedDiscordId,
+        rank: convertedRank(currentRankName),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    rankEmbedList[0] = rankEmbedList[0].setDescription("Rank Updated!");
+    await interaction.editReply({ embeds: rankEmbedList });
+    console.log("LOG: \t" + "rank updated");
   }
 
   await browser.close();
