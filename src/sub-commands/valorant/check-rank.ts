@@ -19,7 +19,7 @@ export const subCommand = async (interaction) => {
 
   if (!registered(interaction, selectedDiscordId)) return;
 
-  let riotId: string;
+  let activeRiotAccount: RiotAccount;
 
   try {
     const { data: userData }: { data: RiotAccount[] } = await axios.get(
@@ -33,38 +33,12 @@ export const subCommand = async (interaction) => {
       });
       return;
     }
-    const activeRiotAccount: RiotAccount = userData[0];
-    riotId = activeRiotAccount.riot_id;
+    activeRiotAccount = userData[0];
   } catch (error) {
     console.error(error);
   }
 
-  const trackerProfileUrl: string = profileUrl(riotId);
-
-  function getRankColour(rank: string) {
-    switch (rank) {
-      case "Iron":
-        return 0x3c3c3c;
-      case "Bronze":
-        return 0xa5855e;
-      case "Silver":
-        return 0xcdd3d1;
-      case "Gold":
-        return 0xebca52;
-      case "Platinum":
-        return 0x49a6b7;
-      case "Diamond":
-        return 0xd681e9;
-      case "Ascendant":
-        return 0x58a861;
-      case "Immortal":
-        return 0xb13138;
-      case "Radiant":
-        return 0xf5f4df;
-      default:
-        return 0x000000;
-    }
-  }
+  const trackerProfileUrl: string = profileUrl(activeRiotAccount.riot_id);
 
   await interaction.reply({ content: "Loading info..." });
 
@@ -122,13 +96,38 @@ export const subCommand = async (interaction) => {
   }
   const statEmbedHeader: EmbedBuilder = new EmbedBuilder()
     .setAuthor({
-      name: riotId,
+      name: activeRiotAccount.riot_id,
       iconURL: userAvatarImgUrl,
     })
     .setTitle("tracker.gg")
     .setURL(trackerProfileUrl);
 
   rankEmbedList.push(statEmbedHeader);
+
+  function getRankColour(rank: string) {
+    switch (rank) {
+      case "Iron":
+        return 0x3c3c3c;
+      case "Bronze":
+        return 0xa5855e;
+      case "Silver":
+        return 0xcdd3d1;
+      case "Gold":
+        return 0xebca52;
+      case "Platinum":
+        return 0x49a6b7;
+      case "Diamond":
+        return 0xd681e9;
+      case "Ascendant":
+        return 0x58a861;
+      case "Immortal":
+        return 0xb13138;
+      case "Radiant":
+        return 0xf5f4df;
+      default:
+        return 0x000000;
+    }
+  }
 
   let currentRankEmbedColour = currentRankName.trim().split(" ");
   currentRankEmbedColour = currentRankEmbedColour[0];
@@ -180,6 +179,35 @@ export const subCommand = async (interaction) => {
   rankEmbedList.push(peakRankEmbed);
   interaction.editReply({ embeds: rankEmbedList });
   console.log("LOG: \t" + "sending peak rank embed");
+
+  function convertedRank(rank: string) {
+    let [rankName, tier]: string[] = rank.split(" ");
+
+    switch (rankName) {
+      case "Iron":
+        return "i" + tier;
+      case "Bronze":
+        return "b" + tier;
+      case "Silver":
+        return "s" + tier;
+      case "Gold":
+        return "g" + tier;
+      case "Platinum":
+        return "p" + tier;
+      case "Diamond":
+        return "d" + tier;
+      case "Ascendant":
+        return "a" + tier;
+      case "Immortal":
+        return "i" + tier;
+      case "Radiant":
+        return "r" + tier;
+    }
+  }
+
+  if (convertedRank(currentRankName) !== activeRiotAccount.rank) {
+    // update rank with api
+  }
 
   await browser.close();
 };
