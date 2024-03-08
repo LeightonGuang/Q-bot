@@ -185,23 +185,23 @@ export const subCommand = async (interaction) => {
 
     switch (rankName) {
       case "Iron":
-        return "i" + tier;
+        return "I" + tier;
       case "Bronze":
-        return "b" + tier;
+        return "B" + tier;
       case "Silver":
-        return "s" + tier;
+        return "S" + tier;
       case "Gold":
-        return "g" + tier;
+        return "G" + tier;
       case "Platinum":
-        return "p" + tier;
+        return "P" + tier;
       case "Diamond":
-        return "d" + tier;
+        return "D" + tier;
       case "Ascendant":
-        return "a" + tier;
+        return "A" + tier;
       case "Immortal":
-        return "i" + tier;
+        return "Im" + tier;
       case "Radiant":
-        return "r" + tier;
+        return "R" + tier;
     }
   }
 
