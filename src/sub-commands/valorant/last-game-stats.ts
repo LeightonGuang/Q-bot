@@ -1,43 +1,54 @@
 import { EmbedBuilder } from "discord.js";
-import fs from "fs";
 import puppeteer from "puppeteer-extra";
-import path from "path";
-import { fileURLToPath } from "url";
+import axios from "axios";
 import { registered } from "../../utils/valorant/registered.js";
 import { profileUrl } from "../../utils/valorant/profileUrl.js";
+import { RiotAccount } from "../../types/RiotAccount.js";
 
 export const subCommand = async (interaction) => {
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../public/data.json"
-  );
-
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-
   const { channel } = interaction;
 
-  let userId = interaction.options.getMember("player");
+  let selectedDiscordId: any = interaction.options.getMember("player");
 
-  if (userId === null) {
-    userId = interaction.user.id;
+  if (selectedDiscordId === null) {
+    selectedDiscordId = interaction.user.id;
   } else {
-    userId = userId.id;
+    selectedDiscordId = selectedDiscordId.id;
   }
 
-  if (!registered(interaction, userId)) return;
+  if (!registered(interaction, selectedDiscordId)) return;
+
+  let riotId: string;
+
+  try {
+    const { data: userData }: { data: RiotAccount[] } = await axios.get(
+      "http://localhost:8080/api/valorant/active/get/" + selectedDiscordId
+    );
+
+    if (userData.length === 0) {
+      interaction.reply({
+        content: "The selected account does not exist.",
+        ephemeral: true,
+      });
+      return;
+    }
+    const activeRiotAccount: RiotAccount = userData[0];
+    riotId = activeRiotAccount.riot_id;
+  } catch (error) {
+    console.error(error);
+  }
 
   await interaction.reply("Loading info...");
 
-  const userObj = dataObj.playerList.find((obj) => obj.id === userId);
-  const accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
-  const riotId = accountObj.riotId;
-  const trackerProfileUrl = profileUrl(riotId);
+  const trackerProfileUrl: string = profileUrl(riotId);
 
-  const browser = await (puppeteer as any).launch({ headless: true });
+  const browser: any = await (puppeteer as any).launch({
+    userDataDir: "./user_data",
+    product: "chrome",
+    headless: false,
+  });
 
-  const page = await browser.newPage();
+  const page: any = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
   await page.goto(trackerProfileUrl);
   await page.waitForSelector(".vmr");
@@ -49,7 +60,7 @@ export const subCommand = async (interaction) => {
 
   await page.waitForSelector(".st-content__item .trn-ign .trn-ign__username");
 
-  const matchInfo = await page.evaluate(() => {
+  const matchInfo: any = await page.evaluate(() => {
     const mapName = document.querySelector(
       ".vm-header-info > div.trn-match-drawer__header-block > div.trn-match-drawer__header-value"
     ).textContent;
@@ -62,20 +73,20 @@ export const subCommand = async (interaction) => {
   //console.log(matchInfo);
 
   //allPlayerInfo is a list of object with player stats
-  const allPlayerInfo = await page.evaluate(() => {
+  const allPlayerInfo: any = await page.evaluate(() => {
     //playerInfo is list of players' stats container
-    const playerInfo = Array.from(
+    const playerInfo: any = Array.from(
       document.querySelectorAll(".vm-table .st-content__item")
     );
 
     //allPlayerStats is a list full of numbers stats in order
-    const allPlayerStats = Array.from(
+    const allPlayerStats: any = Array.from(
       document.querySelectorAll(".scoreboard .st-content__item")
     )
       .flatMap((item) => Array.from(item.querySelectorAll(".value")))
       .map((element) => element.textContent);
 
-    const stats = playerInfo.map((player, playerNum) => ({
+    const stats: string[] = playerInfo.map((player, playerNum) => ({
       riotName: player
         .querySelector(".st-content__item .trn-ign .trn-ign__username")
         .textContent.trim(),
@@ -110,18 +121,18 @@ export const subCommand = async (interaction) => {
 
   //console.log(allPlayerInfo);
 
-  const teamAEmbedList = [];
+  const teamAEmbedList: EmbedBuilder[] = [];
   // add team A embed
-  const teamAEmbed = new EmbedBuilder()
+  const teamAEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0x49c6b8)
     .setTitle("Team A")
     .setDescription(`Map Points: ${matchInfo[1]}`);
 
   teamAEmbedList.push(teamAEmbed);
 
-  const teamBEmbedList = [];
+  const teamBEmbedList: EmbedBuilder[] = [];
   // add team B embed
-  const teamBEmbed = new EmbedBuilder()
+  const teamBEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0xb95564)
     .setTitle("Team B")
     .setDescription(`Map Points: ${matchInfo[2]}`);
@@ -129,9 +140,9 @@ export const subCommand = async (interaction) => {
   teamBEmbedList.push(teamBEmbed);
 
   for (let i = 0; i < 10; i++) {
-    const playerObj = allPlayerInfo[i];
+    const playerObj: any = allPlayerInfo[i];
 
-    const playerEmbed = new EmbedBuilder()
+    const playerEmbed: EmbedBuilder = new EmbedBuilder()
       .setAuthor({
         name: playerObj.riotName + playerObj.riotId,
         iconURL: playerObj.agentIconUrl,
@@ -158,7 +169,7 @@ export const subCommand = async (interaction) => {
     }
   }
 
-  const MatchInfoEmbed = new EmbedBuilder()
+  const MatchInfoEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0xffffff)
     .setTitle(matchInfo[0])
     .setURL(trackerProfileUrl)
