@@ -186,7 +186,8 @@ export const data = {
             .setRequired(true)
             .setChoices(
               { name: "Riot", value: "riot" },
-              { name: "Steam", value: "steam" }
+              { name: "Steam", value: "steam" },
+              { name: "Q account", value: "account" }
             )
         )
     ),
