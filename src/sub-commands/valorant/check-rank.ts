@@ -27,7 +27,7 @@ export const subCommand = async (interaction) => {
     );
 
     if (userData.length === 0) {
-      interaction.reply({
+      await interaction.reply({
         content: "The selected account does not exist.",
         ephemeral: true,
       });
@@ -140,7 +140,7 @@ export const subCommand = async (interaction) => {
     .setThumbnail(currentRankImgUrl);
 
   rankEmbedList.push(currentRankEmbed);
-  interaction.editReply({ content: "", embeds: rankEmbedList });
+  await interaction.editReply({ content: "", embeds: rankEmbedList });
   console.log("LOG: \t" + "sending current rank embed");
 
   const peakRankImgElement: any = await page.$(
@@ -177,7 +177,7 @@ export const subCommand = async (interaction) => {
     .setThumbnail(peakRankImgUrl);
 
   rankEmbedList.push(peakRankEmbed);
-  interaction.editReply({ embeds: rankEmbedList });
+  await interaction.editReply({ embeds: rankEmbedList });
   console.log("LOG: \t" + "sending peak rank embed");
 
   function convertedRank(rank: string) {
@@ -201,7 +201,7 @@ export const subCommand = async (interaction) => {
       case "Immortal":
         return "Im" + tier;
       case "Radiant":
-        return "R" + tier;
+        return "R";
       case "Unranked":
         return "Unranked";
     }
@@ -214,13 +214,13 @@ export const subCommand = async (interaction) => {
         discord_id: selectedDiscordId,
         rank: convertedRank(currentRankName),
       });
+
+      rankEmbedList[0] = rankEmbedList[0].setDescription("Rank Updated");
+      await interaction.editReply({ embeds: rankEmbedList });
+      console.log("LOG: \t" + "rank updated");
     } catch (error) {
       console.error(error);
     }
-
-    rankEmbedList[0] = rankEmbedList[0].setDescription("Rank Updated!");
-    await interaction.editReply({ embeds: rankEmbedList });
-    console.log("LOG: \t" + "rank updated");
   }
 
   await browser.close();
