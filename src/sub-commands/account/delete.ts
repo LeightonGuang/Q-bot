@@ -140,5 +140,19 @@ export const subCommand = async (interaction) => {
 
       break;
     }
+
+    case "account": {
+      //delete all accounts from database
+
+      await axios.delete(
+        "http://localhost:8080/api/account/delete/" + interaction.member.id
+      );
+
+      await interaction.reply({
+        content: "All accounts have been deleted!",
+        ephemeral: true,
+      });
+      break;
+    }
   }
 };
