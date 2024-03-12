@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import axios from "axios";
 import { RiotAccount } from "../../types/RiotAccount.js";
 import { SteamAccount } from "../../types/SteamAccount.js";
-import { profileUrl } from "../../utils/valorant/profileUrl.js";
+import profileUrl from "../../utils/valorant/profileUrl.js";
 
 export const subCommand = async (interaction) => {
   // let playerList = dataObj.playerList;
