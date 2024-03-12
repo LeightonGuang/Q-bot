@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import puppeteer from "puppeteer-extra";
 import axios from "axios";
 import { registered } from "../../utils/valorant/registered.js";
-import { profileUrl } from "../../utils/valorant/profileUrl.js";
+import profileUrl from "../../utils/valorant/profileUrl.js";
 import { RiotAccount } from "../../types/RiotAccount.js";
 
 export const subCommand = async (interaction) => {

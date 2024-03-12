@@ -4,7 +4,7 @@ import puppeteer from "puppeteer-extra";
 import path from "path";
 import { fileURLToPath } from "url";
 import { registered } from "../../utils/valorant/registered.js";
-import { profileUrl } from "../../utils/valorant/profileUrl.js";
+import profileUrl from "../../utils/valorant/profileUrl.js";
 
 export const subCommand = async (interaction) => {
   const currentFilePath = fileURLToPath(import.meta.url);
