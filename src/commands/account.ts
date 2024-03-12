@@ -1,7 +1,4 @@
 import { SlashCommandBuilder } from "discord.js";
-import fs from "node:fs";
-import { fileURLToPath } from "url";
-import path from "path";
 
 export const data = {
   data: new SlashCommandBuilder()
@@ -193,34 +190,7 @@ export const data = {
     ),
 
   async execute(interaction) {
-    const currentFilePath = fileURLToPath(import.meta.url);
-    const dataFilePath = path.resolve(
-      path.dirname(currentFilePath),
-      "../../public/data.json"
-    );
-    const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-    const dataObj = JSON.parse(dataFile);
-    let playerList = dataObj.playerList;
-
-    let playerId = interaction.member.id;
-    let playerTag = interaction.member.user.tag;
-
-    let playerObj = playerList.find((obj) => obj.id === playerId);
-
-    //add discord id and tag if player is not found in playerList
-    if (!playerObj) {
-      //if no player info in playerList create a new obj
-      console.log("LOG: \t" + "player is not in playerList");
-
-      playerObj = {
-        id: playerId,
-        tag: playerTag,
-        riotAccountList: [],
-        steamAccountList: [],
-      };
-    }
-
-    let subCommand = interaction.options.getSubcommand();
+    const subCommand: string = interaction.options.getSubcommand();
 
     switch (subCommand) {
       case "add-riot-account": {
