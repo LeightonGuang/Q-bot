@@ -32,7 +32,7 @@ export const subCommand = async (interaction) => {
       });
       return;
     }
-    const activeRiotAccount: RiotAccount = userData[0];
+    activeRiotAccount = userData[0];
   } catch (error) {
     console.error(error);
   }
