@@ -1,39 +1,38 @@
 import { EmbedBuilder } from "discord.js";
-import fs from "fs";
 import puppeteer from "puppeteer-extra";
-import path from "path";
-import { fileURLToPath } from "url";
+import axios from "axios";
 import { registered } from "../../utils/valorant/registered.js";
 import profileUrl from "../../utils/valorant/profileUrl.js";
+import { RiotAccount } from "../../types/RiotAccount.js";
 
 export const subCommand = async (interaction) => {
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../public/data.json"
-  );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-  let userId = interaction.options.getMember("player");
+  let selectedDiscordId: string = interaction.options.getMember("player");
 
   const { channel } = interaction;
 
   //if the command is left empty
-  if (userId === null) {
-    userId = interaction.user.id;
-  } else {
-    userId = userId.id;
+  if (selectedDiscordId === null) {
+    selectedDiscordId = interaction.user.id;
   }
 
-  if (!registered(interaction, userId)) return;
+  if (!registered(interaction, selectedDiscordId)) return;
 
-  const userObj = dataObj.playerList.find((obj) => obj.id === userId);
-  const accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
-  const riotId = accountObj.riotId;
-  const trackerProfileUrl = profileUrl(riotId);
+  let activeRiotAccount: RiotAccount;
+
+  try {
+    const { data: userData }: { data: RiotAccount[] } = await axios.get(
+      "http://localhost:8080/api/valorant/active/get/" + selectedDiscordId
+    );
+
+    activeRiotAccount = userData[0];
+  } catch (error) {
+    console.error(error);
+  }
+
+  const trackerProfileUrl = profileUrl(activeRiotAccount.riot_id);
 
   const embedHeader = new EmbedBuilder()
-    .setTitle(riotId)
+    .setTitle(activeRiotAccount.riot_id)
     .setURL(trackerProfileUrl)
     .setDescription("Past 10 matches history");
 

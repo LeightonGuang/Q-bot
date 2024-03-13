@@ -1,41 +1,39 @@
 import { EmbedBuilder } from "discord.js";
-import fs from "fs";
 import puppeteer from "puppeteer-extra";
-import path from "path";
-import { fileURLToPath } from "url";
+import axios from "axios";
 import { registered } from "../../utils/valorant/registered.js";
 import profileUrl from "../../utils/valorant/profileUrl.js";
+import { RiotAccount } from "../../types/RiotAccount.js";
 
 export const subCommand = async (interaction) => {
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const dataFilePath = path.resolve(
-    path.dirname(currentFilePath),
-    "../../../public/data.json"
-  );
-  const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-  const dataObj = JSON.parse(dataFile);
-
-  const chosenMap = interaction.options.getString("map");
-  let userId = interaction.options.getMember("player");
+  const chosenMap: string = interaction.options.getString("map");
+  let selectedDiscordId: string = interaction.options.getMember("player");
 
   //if the command is left empty
-  if (userId === null) {
-    userId = interaction.user.id;
-  } else {
-    userId = userId.id;
+  if (selectedDiscordId === null) {
+    selectedDiscordId = interaction.user.id;
   }
 
-  if (!registered(interaction, userId)) return;
+  if (!registered(interaction, selectedDiscordId)) return;
 
-  const userObj = dataObj.playerList.find((obj) => obj.id === userId);
-  const accountObj = userObj.riotAccountList.find((obj) => obj.active === true);
-  const riotId = accountObj.riotId;
-  const trackerProfileMapsUrl = profileUrl(riotId) + "/maps";
+  let activeRiotAccount: RiotAccount;
+
+  try {
+    const { data: userData }: { data: RiotAccount[] } = await axios.get(
+      "http://localhost:8080/api/valorant/active/get/" + selectedDiscordId
+    );
+
+    activeRiotAccount = userData[0];
+  } catch (error) {
+    console.error(error);
+  }
+
+  const trackerProfileMapsUrl = profileUrl(activeRiotAccount.riot_id) + "/maps";
 
   const embedList = [];
 
   const embedHeader = new EmbedBuilder()
-    .setTitle(riotId)
+    .setTitle(activeRiotAccount.riot_id)
     .setURL(trackerProfileMapsUrl)
     .setDescription("Map Win %");
 
