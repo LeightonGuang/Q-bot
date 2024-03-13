@@ -18,7 +18,7 @@ export const subCommand = async (interaction) => {
 
   if (!registered(interaction, selectedDiscordId)) return;
 
-  let riotId: string;
+  let activeRiotAccount: RiotAccount;
 
   try {
     const { data: userData }: { data: RiotAccount[] } = await axios.get(
@@ -33,14 +33,13 @@ export const subCommand = async (interaction) => {
       return;
     }
     const activeRiotAccount: RiotAccount = userData[0];
-    riotId = activeRiotAccount.riot_id;
   } catch (error) {
     console.error(error);
   }
 
   await interaction.reply("Loading info...");
 
-  const trackerProfileUrl: string = profileUrl(riotId);
+  const trackerProfileUrl: string = profileUrl(activeRiotAccount.riot_id);
 
   const browser: any = await (puppeteer as any).launch({
     userDataDir: "./user_data",
