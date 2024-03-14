@@ -89,6 +89,12 @@ export const data = {
             .setRequired(true)
         )
     )
+    // check qoin balance
+    .addSubcommand((addSubcommand) =>
+      addSubcommand
+        .setName("check-balance")
+        .setDescription("Check your qoin balance")
+    )
     //edit member's riot account
     .addSubcommand((addSubcommand) =>
       addSubcommand
@@ -205,6 +211,13 @@ export const data = {
           "../sub-commands/account/add-steam-account.js"
         );
         addSteamAccount.subCommand(interaction);
+        break;
+      }
+      case "check-balance": {
+        const checkBalance = await import(
+          "../sub-commands/account/check-balance.js"
+        );
+        checkBalance.subCommand(interaction);
         break;
       }
       case "edit-riot-account": {
