@@ -58,7 +58,8 @@ export const subCommand = async (interaction) => {
   const bet: number = interaction.options.get("qoins").value;
   let hasRefunded: boolean = false;
   let isJackpot: boolean = false;
-  let winnings: number = 0;
+  let jackpotAmount: number = 0;
+  let refundAmount: number = 0;
   const maxRefund: number = 10;
 
   const slotRandomNumberList = () => {
@@ -129,7 +130,7 @@ export const subCommand = async (interaction) => {
 
     line1Embed.setColor(0x00ff00);
 
-    winnings += emojiToValue[slotOneArray[spinArray[0][0]]] * 2;
+    jackpotAmount += emojiToValue[slotOneArray[spinArray[0][0]]] * 2;
     isJackpot = true;
   } else if (
     // if there are a pair next to each other, has not been refunded and is not a jackpot
@@ -142,10 +143,10 @@ export const subCommand = async (interaction) => {
 
     if (bet > maxRefund) {
       // you get your 10 qoins back
-      winnings += maxRefund;
+      refundAmount += maxRefund;
     } else if (bet <= maxRefund) {
       // you get back your bet
-      winnings += bet;
+      refundAmount += bet;
     }
 
     hasRefunded = true;
@@ -187,7 +188,7 @@ export const subCommand = async (interaction) => {
 
     line2Embed.setColor(0x00ff00);
 
-    winnings += emojiToValue[slotOneArray[spinArray[1][0]]] * 3;
+    jackpotAmount += emojiToValue[slotOneArray[spinArray[1][0]]] * 3;
     isJackpot = true;
   } else if (
     // if there are a pair next to each other
@@ -200,10 +201,10 @@ export const subCommand = async (interaction) => {
 
     if (bet > maxRefund) {
       // you get your 10 qoins back
-      winnings += maxRefund;
+      refundAmount += maxRefund;
     } else if (bet <= maxRefund) {
       // you get back your bet
-      winnings += bet;
+      refundAmount += bet;
     }
 
     hasRefunded = true;
@@ -245,7 +246,7 @@ export const subCommand = async (interaction) => {
 
     line3Embed.setColor(0x00ff00);
 
-    winnings += emojiToValue[slotOneArray[spinArray[2][0]]] * 1;
+    jackpotAmount += emojiToValue[slotOneArray[spinArray[2][0]]] * 1;
     isJackpot = true;
   } else if (
     // if there are a pair next to each other
@@ -258,20 +259,25 @@ export const subCommand = async (interaction) => {
 
     if (bet > maxRefund) {
       // you get your 10 qoins back
-      winnings += maxRefund;
+      refundAmount += maxRefund;
     } else if (bet <= maxRefund) {
       // you get back your bet
-      winnings += bet;
+      refundAmount += bet;
     }
 
     hasRefunded = true;
   }
   slotEmbedList.push(line3Embed);
 
+  if (isJackpot) {
+    jackpotAmount += bet;
+    refundAmount = 0;
+  }
+
   try {
     await axios.post("http://localhost:8080/api/account/balance/edit", {
       discord_id: interaction.member.id,
-      balance: "+" + winnings,
+      balance: "+" + jackpotAmount + refundAmount,
     });
   } catch (error) {
     console.error(error);
@@ -287,7 +293,15 @@ export const subCommand = async (interaction) => {
     .setColor(0xffd700)
     .addFields(
       { name: "You bet:", value: `${bet.toString()}`, inline: true },
-      { name: "Winnings:", value: `${winnings.toString()}`, inline: true },
+      {
+        name: "Winnings:",
+        value: `${
+          jackpotAmount !== 0
+            ? jackpotAmount.toString()
+            : refundAmount.toString()
+        }`,
+        inline: true,
+      },
       { name: "Balance:", value: accountBalance, inline: true }
     );
 
