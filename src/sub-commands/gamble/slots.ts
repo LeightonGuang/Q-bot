@@ -1,8 +1,8 @@
-import { Embed, EmbedBuilder } from "discord.js";
+import { EmbedBuilder } from "discord.js";
+import axios from "axios";
+import { Balance } from "../../types/Balance.js";
 
 export const subCommand = async (interaction) => {
-  const bet: number = interaction.options.get("qoins").value;
-
   const slotOneArray: string[] = [
     "💎",
     "⭐️",
@@ -55,6 +55,9 @@ export const subCommand = async (interaction) => {
     "🍒": 5,
   };
 
+  const bet: number = interaction.options.get("qoins").value;
+  let hasRefunded: boolean = false;
+  let isJackpot: boolean = false;
   let winnings: number = 0;
   const maxRefund: number = 10;
 
@@ -78,10 +81,21 @@ export const subCommand = async (interaction) => {
     ];
   };
 
+  try {
+    await axios.post("http://localhost:8080/api/account/balance/edit", {
+      discord_id: interaction.member.id,
+      balance: "-" + bet,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
   const spinArray: number[][] = slotRandomNumberList();
   console.log(spinArray);
 
   const slotEmbedList = [];
+
+  // winning line 1
   const line1Embed = new EmbedBuilder().setColor(0xff0000).addFields(
     {
       name: "\u200B",
@@ -101,7 +115,7 @@ export const subCommand = async (interaction) => {
   );
 
   if (
-    // jackpot
+    // jackpot on line 1
     slotOneArray[spinArray[0][0]] === slotTwoArray[spinArray[0][1]] &&
     slotOneArray[spinArray[0][0]] === slotThreeArray[spinArray[0][2]] &&
     slotTwoArray[spinArray[0][1]] === slotThreeArray[spinArray[0][2]]
@@ -112,13 +126,17 @@ export const subCommand = async (interaction) => {
         slotTwoArray[spinArray[0][1]] +
         slotThreeArray[spinArray[0][2]]
     );
+
     line1Embed.setColor(0x00ff00);
 
     winnings += emojiToValue[slotOneArray[spinArray[0][0]]] * 2;
+    isJackpot = true;
   } else if (
-    // if there are a pair next to each other
-    slotOneArray[spinArray[0][0]] === slotTwoArray[spinArray[0][1]] ||
-    slotTwoArray[spinArray[0][1]] === slotThreeArray[spinArray[0][2]]
+    // if there are a pair next to each other, has not been refunded and is not a jackpot
+    (slotOneArray[spinArray[0][0]] === slotTwoArray[spinArray[0][1]] ||
+      slotTwoArray[spinArray[0][1]] === slotThreeArray[spinArray[0][2]]) &&
+    !hasRefunded &&
+    !isJackpot
   ) {
     line1Embed.setColor(0xffff00);
 
@@ -129,10 +147,13 @@ export const subCommand = async (interaction) => {
       // you get back your bet
       winnings += bet;
     }
+
+    hasRefunded = true;
   }
 
   slotEmbedList.push(line1Embed);
 
+  // winning line 2
   const line2Embed = new EmbedBuilder().setColor(0xff0000).addFields(
     {
       name: "\u200B",
@@ -152,6 +173,7 @@ export const subCommand = async (interaction) => {
   );
 
   if (
+    // jackpot on line 2
     slotOneArray[spinArray[1][0]] === slotTwoArray[spinArray[1][1]] &&
     slotOneArray[spinArray[1][0]] === slotThreeArray[spinArray[1][2]] &&
     slotTwoArray[spinArray[1][1]] === slotThreeArray[spinArray[1][2]]
@@ -162,13 +184,17 @@ export const subCommand = async (interaction) => {
         slotTwoArray[spinArray[1][1]] +
         slotThreeArray[spinArray[1][2]]
     );
+
     line2Embed.setColor(0x00ff00);
 
     winnings += emojiToValue[slotOneArray[spinArray[1][0]]] * 3;
+    isJackpot = true;
   } else if (
     // if there are a pair next to each other
-    slotOneArray[spinArray[1][0]] === slotTwoArray[spinArray[1][1]] ||
-    slotTwoArray[spinArray[1][1]] === slotThreeArray[spinArray[1][2]]
+    (slotOneArray[spinArray[1][0]] === slotTwoArray[spinArray[1][1]] ||
+      slotTwoArray[spinArray[1][1]] === slotThreeArray[spinArray[1][2]]) &&
+    !hasRefunded &&
+    !isJackpot
   ) {
     line2Embed.setColor(0xffff00);
 
@@ -179,10 +205,13 @@ export const subCommand = async (interaction) => {
       // you get back your bet
       winnings += bet;
     }
+
+    hasRefunded = true;
   }
 
   slotEmbedList.push(line2Embed);
 
+  // winning line 3
   const line3Embed = new EmbedBuilder().setColor(0xff0000).addFields(
     {
       name: "\u200B",
@@ -202,6 +231,7 @@ export const subCommand = async (interaction) => {
   );
 
   if (
+    // jackpot on line 3
     slotOneArray[spinArray[2][0]] === slotTwoArray[spinArray[2][1]] &&
     slotOneArray[spinArray[2][0]] === slotThreeArray[spinArray[2][2]] &&
     slotTwoArray[spinArray[2][1]] === slotThreeArray[spinArray[2][2]]
@@ -212,13 +242,17 @@ export const subCommand = async (interaction) => {
         slotTwoArray[spinArray[2][1]] +
         slotThreeArray[spinArray[2][2]]
     );
+
     line3Embed.setColor(0x00ff00);
 
     winnings += emojiToValue[slotOneArray[spinArray[2][0]]] * 1;
+    isJackpot = true;
   } else if (
     // if there are a pair next to each other
-    slotOneArray[spinArray[2][0]] === slotTwoArray[spinArray[2][1]] ||
-    slotTwoArray[spinArray[2][1]] === slotThreeArray[spinArray[2][2]]
+    (slotOneArray[spinArray[2][0]] === slotTwoArray[spinArray[2][1]] ||
+      slotTwoArray[spinArray[2][1]] === slotThreeArray[spinArray[2][2]]) &&
+    !hasRefunded &&
+    !isJackpot
   ) {
     line3Embed.setColor(0xffff00);
 
@@ -229,16 +263,32 @@ export const subCommand = async (interaction) => {
       // you get back your bet
       winnings += bet;
     }
+
+    hasRefunded = true;
+  }
+  slotEmbedList.push(line3Embed);
+
+  try {
+    await axios.post("http://localhost:8080/api/account/balance/edit", {
+      discord_id: interaction.member.id,
+      balance: "+" + winnings,
+    });
+  } catch (error) {
+    console.error(error);
   }
 
-  slotEmbedList.push(line3Embed);
+  const { data }: { data: Balance[] } = await axios.get(
+    "http://localhost:8080/api/account/balance/get/" + interaction.member.id
+  );
+
+  const accountBalance: string = data[0].balance.toString();
 
   const balanceEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0xffd700)
     .addFields(
-      { name: "Your bet:", value: `${bet.toString()}`, inline: true },
+      { name: "You bet:", value: `${bet.toString()}`, inline: true },
       { name: "Winnings:", value: `${winnings.toString()}`, inline: true },
-      { name: "Balance:", value: `1000`, inline: true }
+      { name: "Balance:", value: accountBalance, inline: true }
     );
 
   slotEmbedList.push(balanceEmbed);
