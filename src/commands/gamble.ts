@@ -16,34 +16,56 @@ export const data: any = {
             .setDescription("Qoins to gamble")
             .setRequired(true)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("collect-daily-qoins")
+        .setDescription("Check in daily to collect your daily qoins")
     ),
 
   async execute(interaction) {
-    const bet: number = interaction.options.get("qoins").value;
+    const subCommand: string = interaction.options.getSubcommand();
 
-    // check if user has enough qoins
-    try {
-      const { data }: { data: Balance[] } = await axios.get(
-        "http://localhost:8080/api/account/balance/get/" + interaction.member.id
-      );
-      if (data[0].balance < bet) {
-        await interaction.reply({
-          content: `You placed a ${bet} Qoin bet, but you only have ${data[0].balance} Qoins`,
-          ephemeral: true,
-        });
-        return;
-      } else if (data[0].balance === 0) {
-        await interaction.reply({
-          content: "You don't have 0 Qoins in your account",
-          ephemeral: true,
-        });
-        return;
+    if (subCommand !== "collect-daily-qoins") {
+      const bet: number = interaction.options.get("qoins").value;
+
+      // check if user has enough qoins
+      try {
+        const { data }: { data: Balance[] } = await axios.get(
+          "http://localhost:8080/api/account/balance/get/" +
+            interaction.member.id
+        );
+        if (data[0].balance < bet) {
+          await interaction.reply({
+            content: `You placed a ${bet} Qoin bet, but you only have ${data[0].balance} Qoins`,
+            ephemeral: true,
+          });
+          return;
+        } else if (data[0].balance === 0) {
+          await interaction.reply({
+            content: "You don't have 0 Qoins in your account",
+            ephemeral: true,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
 
-    const slot = await import("../sub-commands/gamble/slots.js");
-    slot.subCommand(interaction);
+    switch (subCommand) {
+      case "collect-daily-qoins": {
+        const collectDailyQoins = await import(
+          "../sub-commands/gamble/collect-daily-qoins.js"
+        );
+        collectDailyQoins.subCommand(interaction);
+        break;
+      }
+      case "slots": {
+        const slots = await import("../sub-commands/gamble/slots.js");
+        slots.subCommand(interaction);
+        break;
+      }
+    }
   },
 };
