@@ -1,8 +1,7 @@
 import axios from "axios";
-import { RiotAccount } from "../../types/RiotAccount.js";
 
 export const subCommand = async (interaction) => {
-  const discordId: number = interaction.member.id;
+  const discordId: string = interaction.member.id;
   const userTag: string = interaction.member.user.tag;
   const riotId: string = interaction.options.get("riot-id").value;
   const region: string = interaction.options.get("region").value;
