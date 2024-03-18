@@ -1,4 +1,9 @@
-import { EmbedBuilder } from "discord.js";
+import {
+  EmbedBuilder,
+  ButtonBuilder,
+  ActionRowBuilder,
+  ButtonStyle,
+} from "discord.js";
 import { fetchEvents } from "../../utils/vct/fetchEvents.js";
 import { OngoingEvent } from "../../types/OngoingEvent.js";
 import { LiveMatchObj } from "../../types/LiveMatchObj.js";
@@ -8,8 +13,9 @@ import cheerio from "cheerio";
 export const subCommand = async (interaction) => {
   console.log("FILE: live-matches.js");
 
-  interaction.reply({
+  const replyObj = await interaction.reply({
     content: "Fetching live matches...",
+    fetchReply: true,
   });
 
   const vlrUrl: string = "https://vlr.gg";
@@ -18,12 +24,6 @@ export const subCommand = async (interaction) => {
   const mapUrlList: string[] = [];
   const groupedMapPointList: string[][] = [];
   const liveMatchEmbedList: EmbedBuilder[] = [];
-
-  const liveMatchEmbedHeader: EmbedBuilder = new EmbedBuilder()
-    .setColor(0x9464f5)
-    .setTitle("Live VCT matches right now");
-
-  liveMatchEmbedList.push(liveMatchEmbedHeader);
 
   const ongoingEventList: OngoingEvent[] = await fetchEvents(
     interaction,
@@ -35,7 +35,7 @@ export const subCommand = async (interaction) => {
       .setColor(0xff4553)
       .setTitle("There are no ongoing events right now");
 
-    interaction.reply({
+    await interaction.reply({
       embeds: [errorEmbed],
     });
     return;
@@ -189,7 +189,7 @@ export const subCommand = async (interaction) => {
     liveMatchEmbedList.push(liveMapPointEmbed);
   });
 
-  if (liveMatchEmbedList.length === 1) {
+  if (liveMatchEmbedList.length === 0) {
     const errorEmbed = new EmbedBuilder()
       .setColor(0xff4553)
       .setTitle("There are no live matches right now");
@@ -200,8 +200,17 @@ export const subCommand = async (interaction) => {
     return;
   }
 
+  const refreshRow: ActionRowBuilder = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("Refresh")
+      .setCustomId(`vct-refresh-${replyObj.id}`)
+      .setStyle(ButtonStyle.Primary)
+  );
+
   await interaction.editReply({
     content: "",
     embeds: liveMatchEmbedList,
+    components: [refreshRow],
+    fetchReply: true,
   });
 };
