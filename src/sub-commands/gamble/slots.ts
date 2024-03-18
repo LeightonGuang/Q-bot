@@ -292,7 +292,7 @@ export const subCommand = async (interaction) => {
   const balanceEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0xffd700)
     .addFields(
-      { name: "You bet:", value: `${bet.toString()}`, inline: true },
+      { name: "Your bet:", value: `${bet.toString()}`, inline: true },
       {
         name: "Winnings:",
         value: `${
@@ -309,6 +309,6 @@ export const subCommand = async (interaction) => {
 
   await interaction.reply({
     embeds: slotEmbedList,
-    ephemeral: true,
+    ephemeral: false,
   });
 };
