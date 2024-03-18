@@ -17,6 +17,11 @@ export const handler = async (client) => {
       );
       deleteAccountButtonHandler.handler(interaction);
 
+      const liveMatchRefreshButtonhandler: any = await import(
+        "./vct/liveMatchRefreshButtonhandler.js"
+      );
+      liveMatchRefreshButtonhandler.handler(interaction);
+
       //always keep this last
       // let queueButtonHandler = require("./queueButtonHandler");
       // queueButtonHandler(interaction);
