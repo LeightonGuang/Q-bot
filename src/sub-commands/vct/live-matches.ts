@@ -3,6 +3,7 @@ import {
   ButtonBuilder,
   ActionRowBuilder,
   ButtonStyle,
+  Embed,
 } from "discord.js";
 import { fetchEvents } from "../../utils/vct/fetchEvents.js";
 import { OngoingEvent } from "../../types/OngoingEvent.js";
@@ -11,9 +12,9 @@ import axios from "axios";
 import cheerio from "cheerio";
 
 export const subCommand = async (interaction) => {
-  console.log("FILE: live-matches.js");
+  console.log("FILE:\t" + "live-matches.js");
 
-  const replyObj = await interaction.reply({
+  const replyObj: any = await interaction.reply({
     content: "Fetching live matches...",
     fetchReply: true,
   });
@@ -31,11 +32,12 @@ export const subCommand = async (interaction) => {
   );
 
   if (ongoingEventList.length === 0) {
-    const errorEmbed = new EmbedBuilder()
+    const errorEmbed: EmbedBuilder = new EmbedBuilder()
       .setColor(0xff4553)
       .setTitle("There are no ongoing events right now");
 
-    await interaction.reply({
+    await interaction.editReply({
+      content: "",
       embeds: [errorEmbed],
     });
     return;
@@ -105,9 +107,21 @@ export const subCommand = async (interaction) => {
     }
   }
 
+  if (liveMatchList.length === 0) {
+    const errorEmbed: EmbedBuilder = new EmbedBuilder()
+      .setColor(0xff4553)
+      .setTitle("There are no live matches right now");
+
+    await interaction.editReply({
+      content: "",
+      embeds: [errorEmbed],
+    });
+    return;
+  }
+
   // get all map points from match page
   try {
-    const response = await axios.get(liveMatchList[0].matchPageUrl);
+    const response: any = await axios.get(liveMatchList[0].matchPageUrl);
     const html: string = response.data;
     const $: cheerio.Root = cheerio.load(html);
 
@@ -133,9 +147,11 @@ export const subCommand = async (interaction) => {
       mapPointList.push($(el).text());
     });
 
-    for (let i = 0; i < mapNameList.length; i += 2) {
+    for (let i = 0; i < mapPointList.length; i += 2) {
       groupedMapPointList.push([mapPointList[i], mapPointList[i + 1]]);
     }
+
+    console.log(mapPointList);
   } catch (error) {
     console.error(error);
   }
@@ -144,22 +160,25 @@ export const subCommand = async (interaction) => {
     .setColor(0xff0000)
     .setTitle(`🔴 ${liveMatchList[0].team1} vs ${liveMatchList[0].team2}`)
     .setURL(liveMatchList[0].matchPageUrl)
-    .setDescription(liveMatchList[0].series)
-    .addFields(
-      {
-        name: liveMatchList[0].team1,
-        value: liveMatchList[0].team1Point,
-        inline: true,
-      },
-      { name: "\u200B", value: ":", inline: true },
-      {
-        name: liveMatchList[0].team2,
-        value: liveMatchList[0].team2Point,
-        inline: true,
-      }
-    )
-    .setTimestamp();
-
+    .setDescription(
+      "Series: " +
+        liveMatchList[0].series +
+        "\n" +
+        `Match:\t${liveMatchList[0].team1Point} - ${liveMatchList[0].team2Point}`
+    );
+  // .addFields(
+  //   {
+  //     name: liveMatchList[0].team1,
+  //     value: liveMatchList[0].team1Point,
+  //     inline: true,
+  //   },
+  //   { name: "\u200B", value: ":", inline: true },
+  //   {
+  //     name: liveMatchList[0].team2,
+  //     value: liveMatchList[0].team2Point,
+  //     inline: true,
+  //   }
+  // )
   liveMatchEmbedList.push(liveMatchPointEmbed);
 
   groupedMapPointList.forEach((mapPoints, i) => {
@@ -168,37 +187,27 @@ export const subCommand = async (interaction) => {
 
     const liveMapPointEmbed: EmbedBuilder = new EmbedBuilder()
       .setColor(0xff0000)
-      .addFields(
-        {
-          name: mapName,
-          value: mapPoints[0],
-          inline: true,
-        },
-        {
-          name: "\u200B",
-          value: ":",
-          inline: true,
-        },
-        {
-          name: "\u200B",
-          value: mapPoints[1],
-          inline: true,
-        }
-      );
+      .setDescription(`${mapName}:\n${mapPoints[0]} - ${mapPoints[1]}`);
+    // .addFields(
+    //   {
+    //     name: mapName,
+    //     value: mapPoints[0],
+    //     inline: true,
+    //   },
+    //   {
+    //     name: "\u200B",
+    //     value: ":",
+    //     inline: true,
+    //   },
+    //   {
+    //     name: "\u200B",
+    //     value: mapPoints[1],
+    //     inline: true,
+    //   }
+    // );
 
     liveMatchEmbedList.push(liveMapPointEmbed);
   });
-
-  if (liveMatchEmbedList.length === 0) {
-    const errorEmbed = new EmbedBuilder()
-      .setColor(0xff4553)
-      .setTitle("There are no live matches right now");
-
-    await interaction.reply({
-      embeds: [errorEmbed],
-    });
-    return;
-  }
 
   const refreshRow: ActionRowBuilder = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
