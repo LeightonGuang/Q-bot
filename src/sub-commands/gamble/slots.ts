@@ -42,7 +42,7 @@ export const subCommand = async (interaction) => {
     "🍋",
   ];
 
-  const emojiToValue = {
+  const emojiToValue: Record<string, number> = {
     "💎": 1000,
     "⭐️": 500,
     "7️⃣": 250,
@@ -63,9 +63,9 @@ export const subCommand = async (interaction) => {
   const maxRefund: number = 10;
 
   const slotRandomNumberList = () => {
-    const slot1 = Math.floor(Math.random() * 10);
-    const slot2 = Math.floor(Math.random() * 10);
-    const slot3 = Math.floor(Math.random() * 10);
+    const slot1: number = Math.floor(Math.random() * 10);
+    const slot2: number = Math.floor(Math.random() * 10);
+    const slot3: number = Math.floor(Math.random() * 10);
 
     return [
       [
@@ -94,180 +94,79 @@ export const subCommand = async (interaction) => {
   const spinArray: number[][] = slotRandomNumberList();
   console.log(spinArray);
 
-  const slotEmbedList = [];
+  const slotEmbedList: EmbedBuilder[] = [];
 
-  // winning line 1
-  const line1Embed = new EmbedBuilder().setColor(0xff0000).addFields(
-    {
-      name: "\u200B",
-      value: slotOneArray[spinArray[0][0]],
-      inline: true,
-    },
-    {
-      name: "\u200B",
-      value: slotTwoArray[spinArray[0][1]],
-      inline: true,
-    },
-    {
-      name: "\u200B",
-      value: slotThreeArray[spinArray[0][2]],
-      inline: true,
+  const winLine: Record<number, string> = {
+    0: "🔴",
+    1: "🔴",
+    2: "🔴",
+  };
+
+  for (let i: number = 0; i < 3; i++) {
+    // if there is a jackpot
+    if (
+      slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] &&
+      slotOneArray[spinArray[i][0]] === slotThreeArray[spinArray[i][2]] &&
+      slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]
+    ) {
+      console.log(
+        "jackpot!\n" +
+          slotOneArray[spinArray[i][0]] +
+          slotTwoArray[spinArray[i][1]] +
+          slotThreeArray[spinArray[i][2]]
+      );
+
+      winLine[i] = "🟢";
+
+      jackpotAmount += emojiToValue[slotOneArray[spinArray[0][0]]] * 2;
+      isJackpot = true;
+    } else if (
+      // if there are a pair next to each other, has not been refunded and is not a jackpot
+      (slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] ||
+        slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]) &&
+      !hasRefunded &&
+      !isJackpot
+    ) {
+      // line1Embed.setColor(0xffff00);
+      winLine[i] = "🟡";
+
+      if (bet > maxRefund) {
+        // you get your 10 qoins back
+        refundAmount += maxRefund;
+      } else if (bet <= maxRefund) {
+        // you get back your bet
+        refundAmount += bet;
+      }
+
+      hasRefunded = true;
     }
-  );
-
-  if (
-    // jackpot on line 1
-    slotOneArray[spinArray[0][0]] === slotTwoArray[spinArray[0][1]] &&
-    slotOneArray[spinArray[0][0]] === slotThreeArray[spinArray[0][2]] &&
-    slotTwoArray[spinArray[0][1]] === slotThreeArray[spinArray[0][2]]
-  ) {
-    console.log(
-      "jackpot!\n" +
-        slotOneArray[spinArray[0][0]] +
-        slotTwoArray[spinArray[0][1]] +
-        slotThreeArray[spinArray[0][2]]
-    );
-
-    line1Embed.setColor(0x00ff00);
-
-    jackpotAmount += emojiToValue[slotOneArray[spinArray[0][0]]] * 2;
-    isJackpot = true;
-  } else if (
-    // if there are a pair next to each other, has not been refunded and is not a jackpot
-    (slotOneArray[spinArray[0][0]] === slotTwoArray[spinArray[0][1]] ||
-      slotTwoArray[spinArray[0][1]] === slotThreeArray[spinArray[0][2]]) &&
-    !hasRefunded &&
-    !isJackpot
-  ) {
-    line1Embed.setColor(0xffff00);
-
-    if (bet > maxRefund) {
-      // you get your 10 qoins back
-      refundAmount += maxRefund;
-    } else if (bet <= maxRefund) {
-      // you get back your bet
-      refundAmount += bet;
-    }
-
-    hasRefunded = true;
   }
 
-  slotEmbedList.push(line1Embed);
-
-  // winning line 2
-  const line2Embed = new EmbedBuilder().setColor(0xff0000).addFields(
-    {
-      name: "\u200B",
-      value: slotOneArray[spinArray[1][0]],
-      inline: true,
-    },
-    {
-      name: "\u200B",
-      value: slotTwoArray[spinArray[1][1]],
-      inline: true,
-    },
-    {
-      name: "\u200B",
-      value: slotThreeArray[spinArray[1][2]],
-      inline: true,
-    }
-  );
-
-  if (
-    // jackpot on line 2
-    slotOneArray[spinArray[1][0]] === slotTwoArray[spinArray[1][1]] &&
-    slotOneArray[spinArray[1][0]] === slotThreeArray[spinArray[1][2]] &&
-    slotTwoArray[spinArray[1][1]] === slotThreeArray[spinArray[1][2]]
-  ) {
-    console.log(
-      "jackpot!\n" +
-        slotOneArray[spinArray[1][0]] +
-        slotTwoArray[spinArray[1][1]] +
-        slotThreeArray[spinArray[1][2]]
+  const slotEmbed: EmbedBuilder = new EmbedBuilder()
+    .setColor(isJackpot ? 0x00ff00 : hasRefunded ? 0xffff00 : 0xff0000)
+    .setTitle("Slots")
+    .setDescription(
+      "```" +
+        `${winLine[0]}| ${slotOneArray[spinArray[0][0]]}-${
+          slotTwoArray[spinArray[0][1]]
+        }-${slotThreeArray[spinArray[0][2]]}` +
+        "```" +
+        "\n" +
+        "```" +
+        `${winLine[1]}| ${slotOneArray[spinArray[1][0]]}-${
+          slotTwoArray[spinArray[1][1]]
+        }-${slotThreeArray[spinArray[1][2]]}` +
+        "```" +
+        "\n" +
+        "```" +
+        `${winLine[2]}| ${slotOneArray[spinArray[2][0]]}-${
+          slotTwoArray[spinArray[2][1]]
+        }-${slotThreeArray[spinArray[2][2]]}` +
+        "```"
     );
+  // 🟩🟢🟨🟡🔴🟥
 
-    line2Embed.setColor(0x00ff00);
-
-    jackpotAmount += emojiToValue[slotOneArray[spinArray[1][0]]] * 3;
-    isJackpot = true;
-  } else if (
-    // if there are a pair next to each other
-    (slotOneArray[spinArray[1][0]] === slotTwoArray[spinArray[1][1]] ||
-      slotTwoArray[spinArray[1][1]] === slotThreeArray[spinArray[1][2]]) &&
-    !hasRefunded &&
-    !isJackpot
-  ) {
-    line2Embed.setColor(0xffff00);
-
-    if (bet > maxRefund) {
-      // you get your 10 qoins back
-      refundAmount += maxRefund;
-    } else if (bet <= maxRefund) {
-      // you get back your bet
-      refundAmount += bet;
-    }
-
-    hasRefunded = true;
-  }
-
-  slotEmbedList.push(line2Embed);
-
-  // winning line 3
-  const line3Embed = new EmbedBuilder().setColor(0xff0000).addFields(
-    {
-      name: "\u200B",
-      value: slotOneArray[spinArray[2][0]],
-      inline: true,
-    },
-    {
-      name: "\u200B",
-      value: slotTwoArray[spinArray[2][1]],
-      inline: true,
-    },
-    {
-      name: "\u200B",
-      value: slotThreeArray[spinArray[2][2]],
-      inline: true,
-    }
-  );
-
-  if (
-    // jackpot on line 3
-    slotOneArray[spinArray[2][0]] === slotTwoArray[spinArray[2][1]] &&
-    slotOneArray[spinArray[2][0]] === slotThreeArray[spinArray[2][2]] &&
-    slotTwoArray[spinArray[2][1]] === slotThreeArray[spinArray[2][2]]
-  ) {
-    console.log(
-      "jackpot!\n" +
-        slotOneArray[spinArray[2][0]] +
-        slotTwoArray[spinArray[2][1]] +
-        slotThreeArray[spinArray[2][2]]
-    );
-
-    line3Embed.setColor(0x00ff00);
-
-    jackpotAmount += emojiToValue[slotOneArray[spinArray[2][0]]] * 1;
-    isJackpot = true;
-  } else if (
-    // if there are a pair next to each other
-    (slotOneArray[spinArray[2][0]] === slotTwoArray[spinArray[2][1]] ||
-      slotTwoArray[spinArray[2][1]] === slotThreeArray[spinArray[2][2]]) &&
-    !hasRefunded &&
-    !isJackpot
-  ) {
-    line3Embed.setColor(0xffff00);
-
-    if (bet > maxRefund) {
-      // you get your 10 qoins back
-      refundAmount += maxRefund;
-    } else if (bet <= maxRefund) {
-      // you get back your bet
-      refundAmount += bet;
-    }
-
-    hasRefunded = true;
-  }
-  slotEmbedList.push(line3Embed);
+  slotEmbedList.push(slotEmbed);
 
   if (isJackpot) {
     jackpotAmount += bet;
