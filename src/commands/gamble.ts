@@ -21,12 +21,29 @@ export const data: any = {
       subcommand
         .setName("collect-daily-qoins")
         .setDescription("Check in daily to collect your daily qoins")
+        .addStringOption((option) =>
+          option
+            .setName("hidden")
+            .setDescription("Only visible to you (default is false")
+            .setChoices(
+              { name: "true", value: "true" },
+              {
+                name: "false",
+                value: "false",
+              }
+            )
+            .setRequired(false)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand.setName("rules").setDescription("Rules of all gamble games")
     ),
 
   async execute(interaction) {
     const subCommand: string = interaction.options.getSubcommand();
+    const gameSubCommandList: string[] = ["slots"];
 
-    if (subCommand !== "collect-daily-qoins") {
+    if (gameSubCommandList.includes(subCommand)) {
       const bet: number = interaction.options.get("qoins").value;
 
       // check if user has enough qoins
@@ -64,6 +81,11 @@ export const data: any = {
       case "slots": {
         const slots = await import("../sub-commands/gamble/slots.js");
         slots.subCommand(interaction);
+        break;
+      }
+      case "rules": {
+        const rules = await import("../sub-commands/gamble/rules.js");
+        rules.subCommand(interaction);
         break;
       }
     }
