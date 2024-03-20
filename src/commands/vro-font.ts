@@ -75,6 +75,32 @@ export const data = {
       z: "𝔃",
     };
 
+    const maxWord: number = 50;
+    const maxChar: number = 250;
+
+    const isMoreThanMaxWord: boolean =
+      inputSentence.split(" ").length > maxWord;
+    const isMoreThanMaxChar: boolean = inputSentence.length > maxChar;
+
+    if (isMoreThanMaxWord) {
+      await interaction.reply({
+        content:
+          "Plese keep your sentence under 50 words. " +
+          `***(${inputSentence.split(" ").length} words)***`,
+        ephemeral: true,
+      });
+      return;
+    } else if (isMoreThanMaxChar) {
+      await interaction.reply({
+        content:
+          "Please keep your sentence under 250 characters. " +
+          `***(${inputSentence.length} characters)***`,
+
+        ephemeral: true,
+      });
+      return;
+    }
+
     const sentenceCharList: string[] = inputSentence.split("");
     const convertedSentenceList: string[] = sentenceCharList.map((char) => {
       const newFont: string = vroFont[char];
