@@ -118,16 +118,22 @@ export const subCommand = async (interaction) => {
 
       winLine[i] = "🟢";
 
-      jackpotAmount += emojiToValue[slotOneArray[spinArray[0][0]]] * 2;
+      // win line multiplier
+      if (i === 0) {
+        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 2;
+      } else if (i === 1) {
+        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 3;
+      } else if (i === 2) {
+        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 1;
+      }
       isJackpot = true;
     } else if (
-      // if there are a pair next to each other, has not been refunded and is not a jackpot
       (slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] ||
         slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]) &&
       !hasRefunded &&
       !isJackpot
     ) {
-      // line1Embed.setColor(0xffff00);
+      // if there are a pair next to each other, has not been refunded and is not a jackpot
       winLine[i] = "🟡";
 
       if (bet > maxRefund) {
@@ -151,13 +157,11 @@ export const subCommand = async (interaction) => {
           slotTwoArray[spinArray[0][1]]
         }-${slotThreeArray[spinArray[0][2]]}` +
         "```" +
-        "\n" +
         "```" +
         `${winLine[1]}| ${slotOneArray[spinArray[1][0]]}-${
           slotTwoArray[spinArray[1][1]]
         }-${slotThreeArray[spinArray[1][2]]}` +
         "```" +
-        "\n" +
         "```" +
         `${winLine[2]}| ${slotOneArray[spinArray[2][0]]}-${
           slotTwoArray[spinArray[2][1]]
@@ -193,7 +197,9 @@ export const subCommand = async (interaction) => {
     .addFields(
       { name: "Your bet:", value: `${bet.toString()}`, inline: true },
       {
-        name: "Winnings:",
+        name: `${
+          hasRefunded ? "Refund:" : isJackpot ? "JACKPOT:" : "Winnings:"
+        }`,
         value: `${
           jackpotAmount !== 0
             ? jackpotAmount.toString()
