@@ -77,8 +77,11 @@ export const handler: any = async (interaction) => {
         isFinal =
           $("div.match-header-vs-note").first().text().trim() === "final";
 
-        for (let i = 0; i < mapNameList.length; i += 2) {
-          groupedMapPointList.push([mapPointList[i], mapPointList[i + 1]]);
+        for (let i = 0; i < mapNameList.length; i++) {
+          groupedMapPointList.push([
+            mapPointList[i * 2],
+            mapPointList[i * 2 + 1],
+          ]);
         }
       } catch (error) {
         console.error(error);
