@@ -16,7 +16,14 @@ export const data = {
     ),
 
   async execute(interaction) {
-    const inputSentence: string = interaction.options.getString("sentence");
+    let inputSentence: string = interaction.options.getString("sentence");
+    inputSentence = inputSentence.replace(/bro/gi, (match) =>
+      match === "bro" ? "vro" : "Vro"
+    );
+    inputSentence = inputSentence.replace(/bros/gi, (match) =>
+      match === "bros" ? "vros" : "Vros"
+    );
+
     const pingUser: string = interaction.options.getMember("user");
 
     // 𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩 𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃
