@@ -78,6 +78,8 @@ export const handler: any = async (interaction) => {
           $("div.match-header-vs-note").first().text().trim() === "final";
 
         for (let i = 0; i < mapNameList.length; i++) {
+          if (!mapPointList[i * 2] || !mapPointList[i * 2 + 1]) return;
+
           groupedMapPointList.push([
             mapPointList[i * 2],
             mapPointList[i * 2 + 1],
