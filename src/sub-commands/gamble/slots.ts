@@ -133,7 +133,7 @@ export const subCommand = async (interaction) => {
       !hasRefunded &&
       !isJackpot
     ) {
-      // if there are a pair next to each other, has not been refunded and is not a jackpot
+      // if there is a pair next to each other, has not been refunded and is not a jackpot
       winLine[i] = "🟡";
 
       if (bet > maxRefund) {
@@ -153,19 +153,19 @@ export const subCommand = async (interaction) => {
     .setTitle("Slots")
     .setDescription(
       "```" +
-        `${winLine[0]}| ${slotOneArray[spinArray[0][0]]}-${
+        `${winLine[0]} |${slotOneArray[spinArray[0][0]]}| |${
           slotTwoArray[spinArray[0][1]]
-        }-${slotThreeArray[spinArray[0][2]]}` +
+        }| |${slotThreeArray[spinArray[0][2]]}|` +
         "```" +
         "```" +
-        `${winLine[1]}| ${slotOneArray[spinArray[1][0]]}-${
+        `${winLine[1]} |${slotOneArray[spinArray[1][0]]}| |${
           slotTwoArray[spinArray[1][1]]
-        }-${slotThreeArray[spinArray[1][2]]}` +
+        }| |${slotThreeArray[spinArray[1][2]]}|` +
         "```" +
         "```" +
-        `${winLine[2]}| ${slotOneArray[spinArray[2][0]]}-${
+        `${winLine[2]} |${slotOneArray[spinArray[2][0]]}| |${
           slotTwoArray[spinArray[2][1]]
-        }-${slotThreeArray[spinArray[2][2]]}` +
+        }| |${slotThreeArray[spinArray[2][2]]}|` +
         "```"
     );
   // 🟩🟢🟨🟡🔴🟥
