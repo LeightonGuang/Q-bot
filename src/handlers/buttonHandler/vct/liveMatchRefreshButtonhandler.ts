@@ -10,7 +10,7 @@ import cheerio from "cheerio";
 export const handler: any = async (interaction) => {
   console.log("FILE: \t" + "liveMatchRefreshButtonhandler.js");
 
-  const [command, button, replyObjId]: string[] =
+  const [command, button, messageId]: string[] =
     interaction.customId.split("-");
 
   if (command !== "vct") return;
@@ -36,9 +36,10 @@ export const handler: any = async (interaction) => {
       const groupedMapPointList: string[][] = [];
       let isFinal: boolean;
 
-      await interaction.message.delete(replyObjId);
-      const replyObj: any = await interaction.reply({
+      // await interaction.message.delete(messageId);
+      await interaction.message.edit({
         content: "Refreshing...",
+        embeds: [],
       });
 
       try {
@@ -90,12 +91,19 @@ export const handler: any = async (interaction) => {
       }
 
       const series: string = description.split("\n")[0];
+      const userTag: string = interaction.user.tag;
+      const userAvatar: string = interaction.user.displayAvatarURL();
 
       const liveMatchPointEmbed: EmbedBuilder = new EmbedBuilder()
         .setURL(matchPageUrl)
         .setDescription(
           `${series}\nMatch:\t${matchPoints[0]} - ${matchPoints[2]}`
-        );
+        )
+        .setFooter({
+          text: userTag + " refreshed",
+          iconURL: userAvatar,
+        })
+        .setTimestamp();
 
       if (isFinal) {
         liveMatchPointEmbed.setColor(0x000000);
@@ -114,7 +122,6 @@ export const handler: any = async (interaction) => {
         const liveMapPointEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xff0000)
           .setDescription(`${mapName}:\n${mapPoints[0]} - ${mapPoints[1]}`);
-
         if (isFinal) liveMapPointEmbed.setColor(0x000000);
 
         liveMatchEmbedList.push(liveMapPointEmbed);
@@ -123,17 +130,18 @@ export const handler: any = async (interaction) => {
       const refreshRow: ActionRowBuilder = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setLabel("Refresh")
-          .setCustomId(`vct-refresh-${replyObj.id}`)
+          .setCustomId(`vct-refresh-${interaction.id}`)
           .setStyle(ButtonStyle.Primary)
       );
 
-      await interaction.editReply({
+      await interaction.message.edit({
         content: "",
         embeds: liveMatchEmbedList,
         components: isFinal ? [] : [refreshRow],
         fetchReply: true,
       });
 
+      await interaction.deferUpdate();
       break;
     }
   }
