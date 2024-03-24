@@ -27,7 +27,7 @@ export const subCommand = async (interaction) => {
           `
         If you have 2 of the same symbols next to each other, you get a refund up to 10 Qoins
       Example:\n` +
-          "```|-7️⃣-7️⃣-🍊-|```" +
+          "```🟡 | 7️⃣-7️⃣-🍊```" +
           `
         Your bet 30 Qoins -> 10 Qoins refund.
         Your bet 10 Qoins -> 10 Qoins refund.
