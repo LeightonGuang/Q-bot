@@ -150,8 +150,6 @@ export const subCommand = async (interaction) => {
     for (let i = 0; i < mapPointList.length; i += 2) {
       groupedMapPointList.push([mapPointList[i], mapPointList[i + 1]]);
     }
-
-    console.log(mapPointList);
   } catch (error) {
     console.error(error);
   }
