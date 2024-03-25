@@ -1,38 +1,34 @@
-import fs from "node:fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import axios from "axios";
 
 export const data = (client) => {
   client.on("interactionCreate", async (interaction) => {
     console.log("FILE: \t" + "commandHandler.js");
 
-    const { guild } = interaction;
+    const { guild }: { guild: any } = interaction;
 
-    const curretFilePath = fileURLToPath(import.meta.url);
-    const dataFilePath = path.resolve(
-      path.dirname(curretFilePath),
-      "../../public/data.json"
-    );
-
-    const dataFile = fs.readFileSync(dataFilePath, "utf-8");
-    const dataObj = JSON.parse(dataFile);
-    const playerList = dataObj.playerList;
-
-    let userId = interaction.user.id;
-    let guildId = interaction.guildId;
+    const discordId: string = interaction.user.id;
+    const guildId: string = interaction.guildId;
 
     //list of commands that can be used in general chat
-    let generalCommands = ["help", "account", "poll", "credit"];
-
+    const generalCommands: string[] = ["help", "account", "poll", "credit"];
     //list of commands that only mods can use
-    let modCommands = ["mod-help", "mod"];
+    const modCommands: string[] = ["mod-help", "mod"];
+    let userRegistered: boolean;
 
     //check if member is in playerList already
-    let playerExist = playerList.find((obj) => obj.id === userId);
+    try {
+      userRegistered = await axios.get(
+        "http://localhost:8080/api/account/registered/" + discordId
+      );
+    } catch (error) {
+      console.error(error);
+    }
 
     //=========================interaction is a command===========================
     if (!interaction.isChatInputCommand()) return;
-    const command = interaction.client.commands.get(interaction.commandName);
+    const command: any = interaction.client.commands.get(
+      interaction.commandName
+    );
 
     if (!command) {
       console.log(`No ${interaction.commandName} found`);
@@ -41,12 +37,12 @@ export const data = (client) => {
 
     if (guildId === "1065216119641755668") {
       //if guild is Qs
-      let mod = interaction.guild.roles.cache.find(
+      const mod: any = interaction.guild.roles.cache.find(
         (role) => role.name === "mod"
       );
-      let isMod = interaction.member.roles.cache.has(mod.id);
+      const isMod: boolean = interaction.member.roles.cache.has(mod.id);
 
-      let commandChannelId = "1095144647023661166";
+      const commandChannelId: string = "1095144647023661166";
 
       //if interaction commands are help and player-profile
       if (generalCommands.some((item) => item === interaction.commandName)) {
@@ -68,7 +64,7 @@ export const data = (client) => {
               await command.execute(interaction);
             } else {
               //if its not in command channel
-              let modCommandChannel = guild.channels.cache.find(
+              const modCommandChannel: any = guild.channels.cache.find(
                 (channel) => channel.name === "⌨｜command"
               );
               interaction.reply({
@@ -94,7 +90,7 @@ export const data = (client) => {
         //if command is /queue
       } else if (interaction.commandName === "queue") {
         //if /queue is in queue channel
-        let queueId = "1090741922185887754";
+        const queueId: string = "1090741922185887754";
         if (interaction.channel.id === queueId) {
           console.log("LOG: \t" + "running /" + interaction.commandName);
           await command.execute(interaction);
@@ -109,7 +105,7 @@ export const data = (client) => {
         //if command is in command channel
       } else if (interaction.channel.id === commandChannelId) {
         //
-        if (playerExist) {
+        if (userRegistered) {
           console.log("LOG: \t" + "running /" + interaction.commandName);
           await command.execute(interaction);
 
@@ -129,7 +125,7 @@ export const data = (client) => {
     } else if (guildId === "1061462082140262400") {
       //if gulid is shruge
 
-      let disabledCommands = await command.execute(interaction);
+      const disabledCommands = await command.execute(interaction);
     }
   });
 };
