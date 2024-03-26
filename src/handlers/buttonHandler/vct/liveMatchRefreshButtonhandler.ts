@@ -10,8 +10,7 @@ import cheerio from "cheerio";
 export const handler: any = async (interaction) => {
   console.log("FILE: \t" + "liveMatchRefreshButtonhandler.js");
 
-  const [command, button, messageId]: string[] =
-    interaction.customId.split("-");
+  const [command, button]: string[] = interaction.customId.split("-");
 
   if (command !== "vct") return;
 
@@ -36,7 +35,6 @@ export const handler: any = async (interaction) => {
       const groupedMapPointList: string[][] = [];
       let isFinal: boolean;
 
-      // await interaction.message.delete(messageId);
       await interaction.message.edit({
         content: "Refreshing...",
         embeds: [],
