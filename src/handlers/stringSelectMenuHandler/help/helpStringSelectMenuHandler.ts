@@ -11,7 +11,7 @@ export const handler = async (client) => {
     const menuSubCommand: string = interaction.values[0];
 
     switch (menuSubCommand) {
-      case "help":
+      case "help": {
         const helpEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xffffff)
           .setAuthor({ name: "Q bot" })
@@ -45,8 +45,9 @@ export const handler = async (client) => {
         console.log("LOG:\t" + "changed the /help command embed to helpEmbed");
         await interaction.deferUpdate();
         break;
+      }
 
-      case "account":
+      case "account": {
         const accountEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xffff00)
           .setAuthor({ name: "Q bot" })
@@ -88,8 +89,9 @@ export const handler = async (client) => {
         );
         await interaction.deferUpdate();
         break;
+      }
 
-      case "valorant":
+      case "valorant": {
         const valorantEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xff4553)
           .setAuthor({ name: "Q bot" })
@@ -121,6 +123,7 @@ export const handler = async (client) => {
         );
         await interaction.deferUpdate();
         break;
+      }
 
       case "vct": {
         const vctEmbed: EmbedBuilder = new EmbedBuilder()
@@ -147,7 +150,7 @@ export const handler = async (client) => {
         break;
       }
 
-      case "private-vc":
+      case "private-vc": {
         const privateVcEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0x7dd181)
           .setAuthor({ name: "Q bot" })
@@ -167,6 +170,26 @@ export const handler = async (client) => {
         );
         await interaction.deferUpdate();
         break;
+      }
+      case "gamble": {
+        const gambleEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0xffd700)
+          .setAuthor({ name: "Q bot" })
+          .setTitle("/gamble ***sub-command***")
+          .setDescription("List of all sub commands availble for `/gamble`")
+          .addFields({
+            name: "***slots***",
+            value: "Play slots",
+          })
+          .setTimestamp();
+
+        interaction.message.edit({ embeds: [gambleEmbed] });
+        console.log(
+          "LOG:\t" + "changed the /help command embed to gambleEmbed"
+        );
+        await interaction.deferUpdate();
+        break;
+      }
     }
   });
 };
