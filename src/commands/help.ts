@@ -33,7 +33,10 @@ export const data = {
           name: "/vct [***sub-command***]",
           value: "Commands for VCT related stuff",
         },
-        { name: "/cs2-event", value: "Get any tier 1 csgo event" },
+        {
+          name: "/cs2-event [***sub-command***]",
+          value: "Get any tier 1 csgo event",
+        },
         { name: "/gamble [***sub-command***]", value: "Commands for gambling" },
         {
           name: "/private-vc [***sub-command***]",
@@ -77,7 +80,7 @@ export const data = {
             new StringSelectMenuOptionBuilder()
               .setLabel("/cs2-event")
               .setDescription("Counter Strike 2 event related sub commands")
-              .setValue("gamble"),
+              .setValue("cs2-event"),
             new StringSelectMenuOptionBuilder()
               .setLabel("/gamble")
               .setDescription("Gambling related sub commands")
