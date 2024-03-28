@@ -96,7 +96,7 @@ export const subCommand = async (interaction) => {
 
   const slotEmbedList: EmbedBuilder[] = [];
 
-  const winLine: Record<number, string> = {
+  const payline: Record<number, string> = {
     0: "🔴",
     1: "🔴",
     2: "🔴",
@@ -119,7 +119,7 @@ export const subCommand = async (interaction) => {
           slotThreeArray[spinArray[paylineIndex][2]]
       );
 
-      winLine[paylineIndex] = "🟢";
+      payline[paylineIndex] = "🟢";
 
       // win line multiplier
       if (paylineIndex === 0) {
@@ -136,13 +136,14 @@ export const subCommand = async (interaction) => {
       isJackpot = true;
     } else if (
       // if there is a pair next to each other, has not been refunded and is not a jackpot
-
-      (slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] ||
-        slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]) &&
+      (slotOneArray[spinArray[paylineIndex][0]] ===
+        slotTwoArray[spinArray[paylineIndex][1]] ||
+        slotTwoArray[spinArray[paylineIndex][1]] ===
+          slotThreeArray[spinArray[paylineIndex][2]]) &&
       !hasRefunded &&
       !isJackpot
     ) {
-      winLine[i] = "🟡";
+      payline[paylineIndex] = "🟡";
 
       if (bet > maxRefund) {
         // you get your 10 qoins back
@@ -161,17 +162,17 @@ export const subCommand = async (interaction) => {
     .setTitle("Slots")
     .setDescription(
       "```" +
-        `${winLine[0]} |${slotOneArray[spinArray[0][0]]}| |${
+        `${payline[0]} |${slotOneArray[spinArray[0][0]]}| |${
           slotTwoArray[spinArray[0][1]]
         }| |${slotThreeArray[spinArray[0][2]]}|` +
         "```" +
         "```" +
-        `${winLine[1]} |${slotOneArray[spinArray[1][0]]}| |${
+        `${payline[1]} |${slotOneArray[spinArray[1][0]]}| |${
           slotTwoArray[spinArray[1][1]]
         }| |${slotThreeArray[spinArray[1][2]]}|` +
         "```" +
         "```" +
-        `${winLine[2]} |${slotOneArray[spinArray[2][0]]}| |${
+        `${payline[2]} |${slotOneArray[spinArray[2][0]]}| |${
           slotTwoArray[spinArray[2][1]]
         }| |${slotThreeArray[spinArray[2][2]]}|` +
         "```"
