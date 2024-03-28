@@ -102,38 +102,46 @@ export const subCommand = async (interaction) => {
     2: "🔴",
   };
 
-  for (let i: number = 0; i < 3; i++) {
+  for (let paylineIndex: number = 0; paylineIndex < 3; paylineIndex++) {
     // if there is a jackpot
     if (
-      slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] &&
-      slotOneArray[spinArray[i][0]] === slotThreeArray[spinArray[i][2]] &&
-      slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]
+      slotOneArray[spinArray[paylineIndex][0]] ===
+        slotTwoArray[spinArray[paylineIndex][1]] &&
+      slotOneArray[spinArray[paylineIndex][0]] ===
+        slotThreeArray[spinArray[paylineIndex][2]] &&
+      slotTwoArray[spinArray[paylineIndex][1]] ===
+        slotThreeArray[spinArray[paylineIndex][2]]
     ) {
       console.log(
         "jackpot!\n" +
-          slotOneArray[spinArray[i][0]] +
-          slotTwoArray[spinArray[i][1]] +
-          slotThreeArray[spinArray[i][2]]
+          slotOneArray[spinArray[paylineIndex][0]] +
+          slotTwoArray[spinArray[paylineIndex][1]] +
+          slotThreeArray[spinArray[paylineIndex][2]]
       );
 
-      winLine[i] = "🟢";
+      winLine[paylineIndex] = "🟢";
 
       // win line multiplier
-      if (i === 0) {
-        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 2;
-      } else if (i === 1) {
-        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 3;
-      } else if (i === 2) {
-        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 1;
+      if (paylineIndex === 0) {
+        // get the value of the first slot icon for jackpot
+        jackpotAmount +=
+          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 2;
+      } else if (paylineIndex === 1) {
+        jackpotAmount +=
+          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 3;
+      } else if (paylineIndex === 2) {
+        jackpotAmount +=
+          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 1;
       }
       isJackpot = true;
     } else if (
+      // if there is a pair next to each other, has not been refunded and is not a jackpot
+
       (slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] ||
         slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]) &&
       !hasRefunded &&
       !isJackpot
     ) {
-      // if there is a pair next to each other, has not been refunded and is not a jackpot
       winLine[i] = "🟡";
 
       if (bet > maxRefund) {
