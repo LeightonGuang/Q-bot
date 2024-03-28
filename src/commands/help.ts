@@ -4,6 +4,7 @@ import {
   ActionRowBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  Interaction,
 } from "discord.js";
 
 export const data = {
@@ -29,15 +30,27 @@ export const data = {
           value: "Commands for Valorant related stuff",
         },
         {
+          name: "/vct [***sub-command***]",
+          value: "Commands for VCT related stuff",
+        },
+        {
+          name: "/cs2-event [***sub-command***]",
+          value: "Get any tier 1 csgo event",
+        },
+        { name: "/gamble [***sub-command***]", value: "Commands for gambling" },
+        {
           name: "/private-vc [***sub-command***]",
           value: "Creates a private vc for you and the people you want",
         },
+        { name: "/poll", value: "Make a poll" },
+        { name: "/coin-flip", value: "Flip a coin" },
+        { name: "/vro-font", value: "Convert your text to a vro font" },
         { name: "/ping", value: "Ping the bot to check online status" },
         { name: "/credit", value: "The people who contributed to this server" }
       )
       .setTimestamp();
 
-    const replyObj = await interaction.reply({
+    const replyObj: Interaction = await interaction.reply({
       embeds: [helpEmbed],
       fetchReply: true,
     });
@@ -64,6 +77,14 @@ export const data = {
               .setLabel("/vct")
               .setDescription("Valorant Champions Tour related sub commands")
               .setValue("vct"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/cs2-event")
+              .setDescription("Counter Strike 2 event related sub commands")
+              .setValue("cs2-event"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/gamble")
+              .setDescription("Gambling related sub commands")
+              .setValue("gamble"),
             new StringSelectMenuOptionBuilder()
               .setLabel("/private-vc")
               .setDescription("Private vc related sub commands")

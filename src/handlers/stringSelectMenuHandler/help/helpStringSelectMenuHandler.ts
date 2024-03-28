@@ -11,7 +11,7 @@ export const handler = async (client) => {
     const menuSubCommand: string = interaction.values[0];
 
     switch (menuSubCommand) {
-      case "help":
+      case "help": {
         const helpEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xffffff)
           .setAuthor({ name: "Q bot" })
@@ -45,8 +45,9 @@ export const handler = async (client) => {
         console.log("LOG:\t" + "changed the /help command embed to helpEmbed");
         await interaction.deferUpdate();
         break;
+      }
 
-      case "account":
+      case "account": {
         const accountEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xffff00)
           .setAuthor({ name: "Q bot" })
@@ -88,8 +89,9 @@ export const handler = async (client) => {
         );
         await interaction.deferUpdate();
         break;
+      }
 
-      case "valorant":
+      case "valorant": {
         const valorantEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xff4553)
           .setAuthor({ name: "Q bot" })
@@ -98,19 +100,19 @@ export const handler = async (client) => {
           .addFields(
             {
               name: "***check-rank***",
-              value: "Shows your current rank and peak rank",
+              value: "Get your current rank and peak rank",
             },
             {
               name: "***last-game-stats***",
-              value: "Shows your last game stats",
+              value: "Get your last game stats",
             },
             {
               name: "***win-percentage***",
-              value: "Shows your current act rank win percentage",
+              value: "Get your current act rank win percentage",
             },
             {
               name: "***map-win-percentage***",
-              value: "Shows your maps win percentage",
+              value: "Get your maps win percentage",
             }
           )
           .setTimestamp();
@@ -121,6 +123,7 @@ export const handler = async (client) => {
         );
         await interaction.deferUpdate();
         break;
+      }
 
       case "vct": {
         const vctEmbed: EmbedBuilder = new EmbedBuilder()
@@ -131,14 +134,14 @@ export const handler = async (client) => {
           .addFields(
             {
               name: "***live-matches***",
-              value: "Show VCT matches that are live right now",
+              value: "Get VCT matches that are live right now",
             },
             {
               name: "***upcoming-matches***",
-              value: "Show upcoming VCT matches",
+              value: "Get upcoming VCT matches",
             },
-            { name: "***ongoing-events***", value: "Show ongoing VCT events" },
-            { name: "***upcoming-events***", value: "Show upcoming VCT events" }
+            { name: "***ongoing-events***", value: "Get ongoing VCT events" },
+            { name: "***upcoming-events***", value: "Get upcoming VCT events" }
           );
 
         interaction.message.edit({ embeds: [vctEmbed] });
@@ -147,7 +150,7 @@ export const handler = async (client) => {
         break;
       }
 
-      case "private-vc":
+      case "private-vc": {
         const privateVcEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0x7dd181)
           .setAuthor({ name: "Q bot" })
@@ -167,6 +170,50 @@ export const handler = async (client) => {
         );
         await interaction.deferUpdate();
         break;
+      }
+      case "gamble": {
+        const gambleEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0xffd700)
+          .setAuthor({ name: "Q bot" })
+          .setTitle("/gamble ***sub-command***")
+          .setDescription("List of all sub commands availble for `/gamble`")
+          .addFields(
+            {
+              name: "***slots***",
+              value: "Play slots",
+            },
+            { name: "***rules***", value: "Gamble rules" }
+          )
+          .setTimestamp();
+
+        interaction.message.edit({ embeds: [gambleEmbed] });
+        console.log(
+          "LOG:\t" + "changed the /help command embed to gambleEmbed"
+        );
+        await interaction.deferUpdate();
+        break;
+      }
+      case "cs2-event": {
+        const cs2EventEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0xf6af06)
+          .setAuthor({ name: "Q bot" })
+          .setTitle("/cs2-event ***sub-command***")
+          .setDescription("List of all sub commands availble for `/cs2-event`")
+          .addFields(
+            {
+              name: "***ongoing-events***",
+              value: "Get ongoing cs2 events",
+            },
+            { name: "***upcoming-events***", value: "Get upcoming cs2 events" }
+          )
+          .setTimestamp();
+        interaction.message.edit({ embeds: [cs2EventEmbed] });
+        console.log(
+          "LOG:\t" + "changed the /help command embed to cs2EventEmbed"
+        );
+        await interaction.deferUpdate();
+        break;
+      }
     }
   });
 };

@@ -96,45 +96,54 @@ export const subCommand = async (interaction) => {
 
   const slotEmbedList: EmbedBuilder[] = [];
 
-  const winLine: Record<number, string> = {
+  const payline: Record<number, string> = {
     0: "🔴",
     1: "🔴",
     2: "🔴",
   };
 
-  for (let i: number = 0; i < 3; i++) {
+  for (let paylineIndex: number = 0; paylineIndex < 3; paylineIndex++) {
     // if there is a jackpot
     if (
-      slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] &&
-      slotOneArray[spinArray[i][0]] === slotThreeArray[spinArray[i][2]] &&
-      slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]
+      slotOneArray[spinArray[paylineIndex][0]] ===
+        slotTwoArray[spinArray[paylineIndex][1]] &&
+      slotOneArray[spinArray[paylineIndex][0]] ===
+        slotThreeArray[spinArray[paylineIndex][2]] &&
+      slotTwoArray[spinArray[paylineIndex][1]] ===
+        slotThreeArray[spinArray[paylineIndex][2]]
     ) {
       console.log(
         "jackpot!\n" +
-          slotOneArray[spinArray[i][0]] +
-          slotTwoArray[spinArray[i][1]] +
-          slotThreeArray[spinArray[i][2]]
+          slotOneArray[spinArray[paylineIndex][0]] +
+          slotTwoArray[spinArray[paylineIndex][1]] +
+          slotThreeArray[spinArray[paylineIndex][2]]
       );
 
-      winLine[i] = "🟢";
+      payline[paylineIndex] = "🟢";
 
       // win line multiplier
-      if (i === 0) {
-        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 2;
-      } else if (i === 1) {
-        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 3;
-      } else if (i === 2) {
-        jackpotAmount += emojiToValue[slotOneArray[spinArray[i][0]]] * 1;
+      if (paylineIndex === 0) {
+        // get the value of the first slot icon for jackpot
+        jackpotAmount +=
+          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 2;
+      } else if (paylineIndex === 1) {
+        jackpotAmount +=
+          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 3;
+      } else if (paylineIndex === 2) {
+        jackpotAmount +=
+          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 1;
       }
       isJackpot = true;
     } else if (
-      (slotOneArray[spinArray[i][0]] === slotTwoArray[spinArray[i][1]] ||
-        slotTwoArray[spinArray[i][1]] === slotThreeArray[spinArray[i][2]]) &&
+      // if there is a pair next to each other, has not been refunded and is not a jackpot
+      (slotOneArray[spinArray[paylineIndex][0]] ===
+        slotTwoArray[spinArray[paylineIndex][1]] ||
+        slotTwoArray[spinArray[paylineIndex][1]] ===
+          slotThreeArray[spinArray[paylineIndex][2]]) &&
       !hasRefunded &&
       !isJackpot
     ) {
-      // if there is a pair next to each other, has not been refunded and is not a jackpot
-      winLine[i] = "🟡";
+      payline[paylineIndex] = "🟡";
 
       if (bet > maxRefund) {
         // you get your 10 qoins back
@@ -153,17 +162,17 @@ export const subCommand = async (interaction) => {
     .setTitle("Slots")
     .setDescription(
       "```" +
-        `${winLine[0]} |${slotOneArray[spinArray[0][0]]}| |${
+        `${payline[0]} |${slotOneArray[spinArray[0][0]]}| |${
           slotTwoArray[spinArray[0][1]]
         }| |${slotThreeArray[spinArray[0][2]]}|` +
         "```" +
         "```" +
-        `${winLine[1]} |${slotOneArray[spinArray[1][0]]}| |${
+        `${payline[1]} |${slotOneArray[spinArray[1][0]]}| |${
           slotTwoArray[spinArray[1][1]]
         }| |${slotThreeArray[spinArray[1][2]]}|` +
         "```" +
         "```" +
-        `${winLine[2]} |${slotOneArray[spinArray[2][0]]}| |${
+        `${payline[2]} |${slotOneArray[spinArray[2][0]]}| |${
           slotTwoArray[spinArray[2][1]]
         }| |${slotThreeArray[spinArray[2][2]]}|` +
         "```"
