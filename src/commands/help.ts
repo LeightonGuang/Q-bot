@@ -4,6 +4,7 @@ import {
   ActionRowBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  Interaction,
 } from "discord.js";
 
 export const data = {
@@ -29,6 +30,11 @@ export const data = {
           value: "Commands for Valorant related stuff",
         },
         {
+          name: "/vct [***sub-command***]",
+          value: "Commands for VCT related stuff",
+        },
+        { name: "/gamble [***sub-command***]", value: "Commands for gambling" },
+        {
           name: "/private-vc [***sub-command***]",
           value: "Creates a private vc for you and the people you want",
         },
@@ -37,7 +43,7 @@ export const data = {
       )
       .setTimestamp();
 
-    const replyObj = await interaction.reply({
+    const replyObj: Interaction = await interaction.reply({
       embeds: [helpEmbed],
       fetchReply: true,
     });
@@ -67,7 +73,11 @@ export const data = {
             new StringSelectMenuOptionBuilder()
               .setLabel("/private-vc")
               .setDescription("Private vc related sub commands")
-              .setValue("private-vc")
+              .setValue("private-vc"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/gamble")
+              .setDescription("Gambling related sub commands")
+              .setValue("gamble")
           )
       );
 
