@@ -3,7 +3,7 @@ import axios from "axios";
 import { Balance } from "../../types/Balance.js";
 
 export const subCommand = async (interaction) => {
-  const slotOneArray: string[] = [
+  const reelOneArray: string[] = [
     "💎",
     "⭐️",
     "7️⃣",
@@ -16,7 +16,7 @@ export const subCommand = async (interaction) => {
     "🍒",
   ];
 
-  const slotTwoArray: string[] = [
+  const reelTwoArray: string[] = [
     "⭐️",
     "🍌",
     "🔔",
@@ -29,7 +29,7 @@ export const subCommand = async (interaction) => {
     "🍊",
   ];
 
-  const slotThreeArray: string[] = [
+  const reelThreeArray: string[] = [
     "🔔",
     "🍒",
     "🍉",
@@ -63,21 +63,21 @@ export const subCommand = async (interaction) => {
   const maxRefund: number = 10;
 
   const slotRandomNumberList = () => {
-    const slot1: number = Math.floor(Math.random() * 10);
-    const slot2: number = Math.floor(Math.random() * 10);
-    const slot3: number = Math.floor(Math.random() * 10);
+    const reelOneIndex: number = Math.floor(Math.random() * 10);
+    const reelTwoIndex: number = Math.floor(Math.random() * 10);
+    const reelThreeIndex: number = Math.floor(Math.random() * 10);
 
     return [
       [
-        slot1 - 1 < 0 ? 9 : slot1 - 1,
-        slot2 - 1 < 0 ? 9 : slot2 - 1,
-        slot3 - 1 < 0 ? 9 : slot3 - 1,
+        reelOneIndex - 1 < 0 ? 9 : reelOneIndex - 1,
+        reelTwoIndex - 1 < 0 ? 9 : reelTwoIndex - 1,
+        reelThreeIndex - 1 < 0 ? 9 : reelThreeIndex - 1,
       ],
-      [slot1, slot2, slot3],
+      [reelOneIndex, reelTwoIndex, reelThreeIndex],
       [
-        slot1 + 1 > 9 ? 0 : slot1 + 1,
-        slot2 + 1 > 9 ? 0 : slot2 + 1,
-        slot3 + 1 > 9 ? 0 : slot3 + 1,
+        reelOneIndex + 1 > 9 ? 0 : reelOneIndex + 1,
+        reelTwoIndex + 1 > 9 ? 0 : reelTwoIndex + 1,
+        reelThreeIndex + 1 > 9 ? 0 : reelThreeIndex + 1,
       ],
     ];
   };
@@ -103,20 +103,29 @@ export const subCommand = async (interaction) => {
   };
 
   for (let paylineIndex: number = 0; paylineIndex < 3; paylineIndex++) {
-    // if there is a jackpot
+    // check payline for jackpot
+    const reelOne = (paylineIndex) => {
+      return reelOneArray[spinArray[paylineIndex][0]];
+    };
+
+    const reelTwo = (paylineIndex) => {
+      return reelTwoArray[spinArray[paylineIndex][1]];
+    };
+
+    const reelThree = (paylineIndex) => {
+      return reelThreeArray[spinArray[paylineIndex][2]];
+    };
+
     if (
-      slotOneArray[spinArray[paylineIndex][0]] ===
-        slotTwoArray[spinArray[paylineIndex][1]] &&
-      slotOneArray[spinArray[paylineIndex][0]] ===
-        slotThreeArray[spinArray[paylineIndex][2]] &&
-      slotTwoArray[spinArray[paylineIndex][1]] ===
-        slotThreeArray[spinArray[paylineIndex][2]]
+      reelOne(paylineIndex) === reelTwo(paylineIndex) &&
+      reelOne(paylineIndex) === reelThree(paylineIndex) &&
+      reelTwo(paylineIndex) === reelThree(paylineIndex)
     ) {
       console.log(
         "jackpot!\n" +
-          slotOneArray[spinArray[paylineIndex][0]] +
-          slotTwoArray[spinArray[paylineIndex][1]] +
-          slotThreeArray[spinArray[paylineIndex][2]]
+          reelOneArray[spinArray[paylineIndex][0]] +
+          reelTwoArray[spinArray[paylineIndex][1]] +
+          reelThreeArray[spinArray[paylineIndex][2]]
       );
 
       payline[paylineIndex] = "🟢";
@@ -125,21 +134,21 @@ export const subCommand = async (interaction) => {
       if (paylineIndex === 0) {
         // get the value of the first slot icon for jackpot
         jackpotAmount +=
-          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 2;
+          emojiToValue[reelOneArray[spinArray[paylineIndex][0]]] * 2;
       } else if (paylineIndex === 1) {
         jackpotAmount +=
-          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 3;
+          emojiToValue[reelOneArray[spinArray[paylineIndex][0]]] * 3;
       } else if (paylineIndex === 2) {
         jackpotAmount +=
-          emojiToValue[slotOneArray[spinArray[paylineIndex][0]]] * 1;
+          emojiToValue[reelOneArray[spinArray[paylineIndex][0]]] * 1;
       }
       isJackpot = true;
     } else if (
       // if there is a pair next to each other, has not been refunded and is not a jackpot
-      (slotOneArray[spinArray[paylineIndex][0]] ===
-        slotTwoArray[spinArray[paylineIndex][1]] ||
-        slotTwoArray[spinArray[paylineIndex][1]] ===
-          slotThreeArray[spinArray[paylineIndex][2]]) &&
+      (reelOneArray[spinArray[paylineIndex][0]] ===
+        reelTwoArray[spinArray[paylineIndex][1]] ||
+        reelTwoArray[spinArray[paylineIndex][1]] ===
+          reelThreeArray[spinArray[paylineIndex][2]]) &&
       !hasRefunded &&
       !isJackpot
     ) {
@@ -162,19 +171,19 @@ export const subCommand = async (interaction) => {
     .setTitle("Slots")
     .setDescription(
       "```" +
-        `${payline[0]} |${slotOneArray[spinArray[0][0]]}| |${
-          slotTwoArray[spinArray[0][1]]
-        }| |${slotThreeArray[spinArray[0][2]]}|` +
+        `${payline[0]} |${reelOneArray[spinArray[0][0]]}| |${
+          reelTwoArray[spinArray[0][1]]
+        }| |${reelThreeArray[spinArray[0][2]]}|` +
         "```" +
         "```" +
-        `${payline[1]} |${slotOneArray[spinArray[1][0]]}| |${
-          slotTwoArray[spinArray[1][1]]
-        }| |${slotThreeArray[spinArray[1][2]]}|` +
+        `${payline[1]} |${reelOneArray[spinArray[1][0]]}| |${
+          reelTwoArray[spinArray[1][1]]
+        }| |${reelThreeArray[spinArray[1][2]]}|` +
         "```" +
         "```" +
-        `${payline[2]} |${slotOneArray[spinArray[2][0]]}| |${
-          slotTwoArray[spinArray[2][1]]
-        }| |${slotThreeArray[spinArray[2][2]]}|` +
+        `${payline[2]} |${reelOneArray[spinArray[2][0]]}| |${
+          reelTwoArray[spinArray[2][1]]
+        }| |${reelThreeArray[spinArray[2][2]]}|` +
         "```"
     );
   // 🟩🟢🟨🟡🔴🟥
