@@ -29,7 +29,7 @@ export const subCommand = async (interaction) => {
   try {
     console.log("check if user exist");
     const { data: userExist } = await axios.get(
-      "http://localhost:8080/api/account/registered/" + discordId
+      "http://localhost:8080/api/account/isRegistered/" + discordId
     );
 
     if (!userExist) {

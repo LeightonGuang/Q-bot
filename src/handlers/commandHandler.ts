@@ -18,7 +18,7 @@ export const data = (client) => {
     //check if member is in playerList already
     try {
       userRegistered = await axios.get(
-        "http://localhost:8080/api/account/registered/" + discordId
+        "http://localhost:8080/api/account/isRegistered/" + discordId
       );
     } catch (error) {
       console.error(error);

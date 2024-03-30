@@ -4,7 +4,7 @@ import { RiotAccount } from "../../types/RiotAccount.js";
 export async function registered(interaction: any, discordId: string) {
   try {
     const playerRegistered: boolean = await axios.get(
-      "http://localhost:8080/api/account/registered/" + discordId
+      "http://localhost:8080/api/account/isRegistered/" + discordId
     );
     if (playerRegistered) {
       try {
