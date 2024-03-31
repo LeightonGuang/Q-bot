@@ -49,7 +49,7 @@ export const subCommand = async (interaction) => {
               },
               {
                 name: "Active:",
-                value: riotAccountObj.active.toString(),
+                value: riotAccountObj.active === 1 ? "Yes" : "No",
                 inline: true,
               },
             ]);
