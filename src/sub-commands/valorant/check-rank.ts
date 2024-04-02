@@ -43,10 +43,12 @@ export const subCommand = async (interaction) => {
   await interaction.reply({ content: "Loading info..." });
 
   const browser: any = await (puppeteer as any).launch({
-    //headless: false,
+    userDataDir: `/tmp/myChromeSession`,
+    headless: false,
     //args: ['--disable-setuid-sandbox', '--disable-extensions']
   });
   const page: any = await browser.newPage();
+  await page.setViewport({ width: 1920, height: 1080 });
   await page.goto(trackerProfileUrl);
 
   await page.screenshot({ path: "screenshot.png", fullPage: true });
