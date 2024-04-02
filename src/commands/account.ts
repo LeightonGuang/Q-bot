@@ -177,6 +177,10 @@ export const data = {
             )
         )
     )
+    //create an account
+    .addSubcommand((addSubcommand) =>
+      addSubcommand.setName("create").setDescription("create an account in Qs")
+    )
     //delete an existing account
     .addSubcommand((addSubcommand) =>
       addSubcommand
@@ -238,6 +242,11 @@ export const data = {
       case "select": {
         const select = await import("../sub-commands/account/select.js");
         select.subCommand(interaction);
+        break;
+      }
+      case "create": {
+        const create = await import("../sub-commands/account/create.js");
+        create.subCommand(interaction);
         break;
       }
       case "delete": {
