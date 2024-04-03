@@ -6,8 +6,6 @@ export const subCommand: any = async (interaction) => {
       "http://localhost:8080/api/account/isRegistered/" + interaction.member.id
     );
 
-    console.log("LOG: \t" + "isRegistered: " + isRegistered);
-
     if (isRegistered) {
       await interaction.reply({
         content: "You already have an account",
