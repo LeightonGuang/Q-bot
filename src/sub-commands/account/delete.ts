@@ -144,14 +144,30 @@ export const subCommand = async (interaction) => {
     case "account": {
       //delete all accounts from database
 
-      await axios.delete(
-        "http://localhost:8080/api/account/delete/" + interaction.member.id
-      );
+      try {
+        const { data: isRegistered }: { data: boolean } = await axios.get(
+          "http://localhost:8080/api/account/isRegistered/" + playerId
+        );
 
-      await interaction.reply({
-        content: "All accounts have been deleted!",
-        ephemeral: true,
-      });
+        if (isRegistered) {
+          await axios.delete(
+            "http://localhost:8080/api/account/delete/" + interaction.member.id
+          );
+
+          await interaction.reply({
+            content: "***All accounts have been deleted!***",
+            ephemeral: true,
+          });
+        } else if (!isRegistered) {
+          await interaction.reply({
+            content: "You don't have an account",
+            ephemeral: true,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
       break;
     }
   }
