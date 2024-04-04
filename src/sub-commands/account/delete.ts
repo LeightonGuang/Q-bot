@@ -154,13 +154,23 @@ export const subCommand = async (interaction) => {
             "http://localhost:8080/api/account/delete/" + interaction.member.id
           );
 
+          const deleteAccountEmbed: EmbedBuilder = new EmbedBuilder()
+            .setColor(0x55ff55)
+            .setTitle("Success")
+            .setDescription("***All accounts have been deleted!***");
+
           await interaction.reply({
-            content: "***All accounts have been deleted!***",
+            embeds: [deleteAccountEmbed],
             ephemeral: true,
           });
         } else if (!isRegistered) {
+          const errorEmbed: EmbedBuilder = new EmbedBuilder()
+            .setColor(0xff4553)
+            .setTitle("Error")
+            .setDescription("You don't have an account!");
+
           await interaction.reply({
-            content: "You don't have an account",
+            embeds: [errorEmbed],
             ephemeral: true,
           });
         }
