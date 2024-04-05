@@ -178,13 +178,14 @@ export const subCommand = async (interaction) => {
 
   const MatchInfoEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0xffffff)
-    .setTitle(matchInfo[0])
+    .setTitle(matchInfo[0] + " (tracker.gg)")
     .setURL(trackerProfileUrl)
-    .addFields([
-      { name: "Team A", value: matchInfo[1], inline: true },
-      { name: "\u200B", value: `-`, inline: true },
-      { name: "Team B", value: matchInfo[2], inline: true },
-    ]);
+    .setDescription("```" + `${matchInfo[1]} - ${matchInfo[2]}` + "```");
+  // .addFields([
+  //   { name: "Team A", value: matchInfo[1], inline: true },
+  //   { name: "\u200B", value: `-`, inline: true },
+  //   { name: "Team B", value: matchInfo[2], inline: true },
+  // ]);
 
   interaction.editReply({ content: "", embeds: [MatchInfoEmbed] });
 
