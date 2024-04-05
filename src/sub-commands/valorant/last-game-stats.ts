@@ -44,11 +44,14 @@ export const subCommand = async (interaction) => {
   const browser: any = await (puppeteer as any).launch({
     userDataDir: "./user_data",
     product: "chrome",
-    headless: false,
+    headless: true,
   });
 
   const page: any = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0"
+  );
   await page.goto(trackerProfileUrl);
   await page.waitForSelector(".vmr");
   //first game on the list
@@ -147,17 +150,22 @@ export const subCommand = async (interaction) => {
         iconURL: playerObj.agentIconUrl,
       })
       .setThumbnail(playerObj.rankIconUrl)
-      .addFields([
-        { name: "Kills: ", value: playerObj.kill, inline: true },
-        { name: "Deaths:", value: playerObj.death, inline: true },
-        { name: "Assists:", value: playerObj.assist, inline: true },
-        { name: "ACS:    ", value: playerObj.acs, inline: true },
-        { name: "K/D:", value: playerObj.kd, inline: true },
-        { name: "Headshot%:", value: playerObj.hs, inline: true },
-        { name: "ADR: ", value: playerObj.adr, inline: true },
-        { name: "First Blood:", value: playerObj.fb, inline: true },
-        { name: "First Death:", value: playerObj.fd, inline: true },
-      ]);
+      .setDescription(
+        "```" +
+          `KDA: ${playerObj.kill}/${playerObj.death}/${playerObj.assist}\tACS: ${playerObj.acs}\tHS%: ${playerObj.hs}\tADR: ${playerObj.adr}` +
+          "```"
+      );
+    // .addFields([
+    //   { name: "Kills: ", value: playerObj.kill, inline: true },
+    //   { name: "Deaths:", value: playerObj.death, inline: true },
+    //   { name: "Assists:", value: playerObj.assist, inline: true },
+    //   { name: "ACS:    ", value: playerObj.acs, inline: true },
+    //   { name: "K/D:", value: playerObj.kd, inline: true },
+    //   { name: "Headshot%:", value: playerObj.hs, inline: true },
+    //   { name: "ADR: ", value: playerObj.adr, inline: true },
+    //   { name: "First Blood:", value: playerObj.fb, inline: true },
+    //   { name: "First Death:", value: playerObj.fd, inline: true },
+    // ]);
 
     if (i < 5) {
       playerEmbed.setColor(0x49c6b8);
