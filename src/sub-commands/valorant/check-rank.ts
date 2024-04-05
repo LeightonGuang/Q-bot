@@ -43,16 +43,15 @@ export const subCommand = async (interaction) => {
   await interaction.reply({ content: "Loading info..." });
 
   const browser: any = await (puppeteer as any).launch({
-    userDataDir: `/tmp/myChromeSession`,
-    headless: false,
-    //args: ['--disable-setuid-sandbox', '--disable-extensions']
+    userDataDir: `./user_data`,
+    headless: true,
   });
   const page: any = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0"
+  );
   await page.goto(trackerProfileUrl);
-
-  await page.screenshot({ path: "screenshot.png", fullPage: true });
-  console.log("LOG: \t" + "screenshot");
 
   const currentRankImgElement: any = await page.$(
     "#app > div.trn-wrapper > div.trn-container > div > main > div.content.no-card-margin > div.site-container.trn-grid.trn-grid--vertical.trn-grid--small > div.trn-grid.container > div.area-sidebar > div.rating-summary.trn-card.trn-card--bordered.area-rating.has-primary > div > div > div > div > div > div.rating-entry__rank-icon > img"
