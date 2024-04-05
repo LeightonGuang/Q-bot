@@ -75,6 +75,9 @@ let stringSelectMenuHandler: any = await import(
 stringSelectMenuHandler =
   stringSelectMenuHandler.stringSelectMenuHandler(client);
 
+let wordleHandler: any = await import("./handlers/wordleHandler.js");
+wordleHandler = wordleHandler.wordleHandler(client);
+
 //announce the bot is going offline
 process.on("SIGINT", async () => {
   const annoucmentChannel = await client.channels.fetch("1210495684575498271");
