@@ -33,12 +33,12 @@ export const subCommand: any = async (interaction) => {
 
   const embedList: EmbedBuilder[] = [];
 
-  const embedHeader: EmbedBuilder = new EmbedBuilder()
-    .setTitle(activeRiotAccount.riot_id)
-    .setURL(trackerProfileMapsUrl)
-    .setDescription("Map Win %");
+  // const embedHeader: EmbedBuilder = new EmbedBuilder()
+  //   .setTitle(activeRiotAccount.riot_id)
+  //   .setURL(trackerProfileMapsUrl)
+  //   .setDescription("Map Win %");
 
-  embedList.push(embedHeader);
+  // embedList.push(embedHeader);
 
   await interaction.reply({
     embeds: embedList,
@@ -155,41 +155,51 @@ export const subCommand: any = async (interaction) => {
         });
       }
       const mapEmbed: EmbedBuilder = new EmbedBuilder()
+        .setTitle(activeRiotAccount.riot_id + " (tracker.gg)")
+        .setURL(trackerProfileMapsUrl)
         .setAuthor({
           name: map.mapName,
         })
-        .addFields(
-          {
-            name: "Win %",
-            value: map.winPercentage,
-            inline: true,
-          },
-          {
-            name: "Wins",
-            value: map.wins,
-            inline: true,
-          },
-          {
-            name: "Losses",
-            value: map.losses,
-            inline: true,
-          },
-          {
-            name: "K/D",
-            value: map.kd,
-            inline: true,
-          },
-          {
-            name: "ADR",
-            value: map.adr,
-            inline: true,
-          },
-          {
-            name: "ACS",
-            value: map.acs,
-            inline: true,
-          }
+        .setDescription(
+          "```" +
+            `Win%: ${map.winPercentage}\tWins: ${map.wins}\tLosses: ${map.losses}\t` +
+            "```" +
+            "```" +
+            `K/D: ${map.kd}\tADR: ${map.adr}\tACS: ${map.acs}` +
+            "```"
         )
+        // .addFields(
+        //   {
+        //     name: "Win %",
+        //     value: map.winPercentage,
+        //     inline: true,
+        //   },
+        //   {
+        //     name: "Wins",
+        //     value: map.wins,
+        //     inline: true,
+        //   },
+        //   {
+        //     name: "Losses",
+        //     value: map.losses,
+        //     inline: true,
+        //   },
+        //   {
+        //     name: "K/D",
+        //     value: map.kd,
+        //     inline: true,
+        //   },
+        //   {
+        //     name: "ADR",
+        //     value: map.adr,
+        //     inline: true,
+        //   },
+        //   {
+        //     name: "ACS",
+        //     value: map.acs,
+        //     inline: true,
+        //   }
+        // )
         .setImage(map.mapImg);
 
       embedList.push(mapEmbed);
