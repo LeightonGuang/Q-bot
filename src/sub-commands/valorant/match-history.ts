@@ -47,6 +47,9 @@ export const subCommand = async (interaction) => {
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0"
+  );
   await page.goto(trackerProfileUrl);
   await page.waitForSelector(".vmr");
 
@@ -106,11 +109,14 @@ export const subCommand = async (interaction) => {
     }
   }
 
-  embedHeader.addFields(
-    { name: "Wins:", value: winCounter.toString(), inline: true },
-    { name: "\u200B", value: "-", inline: true },
-    { name: "Losses:", value: lossCounter.toString(), inline: true }
+  embedHeader.setDescription(
+    "Past 10 matches history" + "```" + `${winCounter} - ${lossCounter}` + "```"
   );
+  // .addFields(
+  //   { name: "Wins:", value: winCounter.toString(), inline: true },
+  //   { name: "\u200B", value: "-", inline: true },
+  //   { name: "Losses:", value: lossCounter.toString(), inline: true }
+  // );
 
   interaction.editReply({ embeds: [embedHeader] });
 
@@ -118,7 +124,7 @@ export const subCommand = async (interaction) => {
   console.log("LOG: \t" + "screenshot");
 
   const matchEmbedList = [];
-  console.log("Match Results: " + JSON.stringify(matchResults[0]));
+  // console.log("Match Results: " + JSON.stringify(matchResults[0]));
 
   matchResults.forEach((match) => {
     const matchEmbed = new EmbedBuilder()
@@ -126,19 +132,22 @@ export const subCommand = async (interaction) => {
         name: match.winLoss.split("-")[5].toUpperCase(),
         iconURL: match.agenticonUrl,
       })
-      .addFields(
-        {
-          name: "Game Point:",
-          value: match.mapPoints,
-          inline: true,
-        },
-        {
-          name: "Map:",
-          value: match.mapName,
-          inline: true,
-        },
-        { name: "KDA:", value: match.kda, inline: true }
+      .setDescription(
+        "```" + `${match.mapName}\t${match.mapPoints}\t${match.kda}` + "```"
       );
+    // .addFields(
+    //   {
+    //     name: "Game Point:",
+    //     value: match.mapPoints,
+    //     inline: true,
+    //   },
+    //   {
+    //     name: "Map:",
+    //     value: match.mapName,
+    //     inline: true,
+    //   },
+    //   { name: "KDA:", value: match.kda, inline: true }
+    // );
 
     if (match.winLoss.split("-")[5] === "win") {
       matchEmbed.setColor(0x74da97);
