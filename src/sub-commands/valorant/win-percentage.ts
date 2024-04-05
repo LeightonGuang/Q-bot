@@ -34,6 +34,9 @@ export const subCommand = async (interaction) => {
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0"
+  );
   await page.goto(trackerProfileUrl);
 
   const playerIconSelector =
@@ -72,16 +75,20 @@ export const subCommand = async (interaction) => {
     .setTitle(activeRiotAccount.riot_id)
     .setURL(trackerProfileUrl)
     .setThumbnail(playerIconUrl)
-    .setDescription(`Win Percentage: ${winPercentage}%`)
-    .addFields([
-      { name: "Wins: ", value: winNumString, inline: true },
-      { name: "Loses: ", value: loseNumString, inline: true },
-      {
-        name: "Games: ",
-        value: (winNum + loseNum).toString(),
-        inline: true,
-      },
-    ]);
+    .setDescription(
+      "```" +
+        `Wins: ${winNumString}\tLoses: ${loseNumString}\nWin%: ${winPercentage}%` +
+        "```"
+    );
+  // .addFields([
+  //   { name: "Wins: ", value: winNumString, inline: true },
+  //   { name: "Loses: ", value: loseNumString, inline: true },
+  //   {
+  //     name: "Games: ",
+  //     value: (winNum + loseNum).toString(),
+  //     inline: true,
+  //   },
+  // ]);
 
   await page.screenshot({ path: "screenshot.png", fullPage: true });
   console.log("LOG: \t" + "screenshot");
