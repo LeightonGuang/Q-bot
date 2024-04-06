@@ -35,6 +35,8 @@ export const handler: any = async (interaction) => {
       const groupedMapPointList: string[][] = [];
       let isFinal: boolean;
 
+      await interaction.deferUpdate();
+
       await interaction.message.edit({
         content: "Refreshing...",
         embeds: [],
@@ -139,7 +141,6 @@ export const handler: any = async (interaction) => {
         fetchReply: true,
       });
 
-      await interaction.deferUpdate();
       break;
     }
   }
