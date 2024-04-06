@@ -9,12 +9,15 @@ export const subCommand = async (interaction) => {
   const { channel } = interaction;
 
   let selectedDiscordId: any = interaction.options.getMember("player");
-
+  let isAllPlayerStats: boolean | null =
+    interaction.options.getBoolean("all-players-stats");
   if (selectedDiscordId === null) {
     selectedDiscordId = interaction.user.id;
-  } else {
+  } else if (selectedDiscordId) {
     selectedDiscordId = selectedDiscordId.id;
   }
+
+  isAllPlayerStats === null ? (isAllPlayerStats = false) : "";
 
   if (!registered(interaction, selectedDiscordId)) return;
 
@@ -26,7 +29,7 @@ export const subCommand = async (interaction) => {
     );
 
     if (userData.length === 0) {
-      interaction.reply({
+      await interaction.reply({
         content: "The selected account does not exist.",
         ephemeral: true,
       });
@@ -125,21 +128,21 @@ export const subCommand = async (interaction) => {
 
   const teamAEmbedList: EmbedBuilder[] = [];
   // add team A embed
-  const teamAEmbed: EmbedBuilder = new EmbedBuilder()
-    .setColor(0x49c6b8)
-    .setTitle("Team A")
-    .setDescription(`Map Points: ${matchInfo[1]}`);
+  // const teamAEmbed: EmbedBuilder = new EmbedBuilder()
+  //   .setColor(0x49c6b8)
+  //   .setTitle("Team A")
+  //   .setDescription(`Map Points: ${matchInfo[1]}`);
 
-  teamAEmbedList.push(teamAEmbed);
+  // teamAEmbedList.push(teamAEmbed);
 
   const teamBEmbedList: EmbedBuilder[] = [];
-  // add team B embed
-  const teamBEmbed: EmbedBuilder = new EmbedBuilder()
-    .setColor(0xb95564)
-    .setTitle("Team B")
-    .setDescription(`Map Points: ${matchInfo[2]}`);
+  // // add team B embed
+  // const teamBEmbed: EmbedBuilder = new EmbedBuilder()
+  //   .setColor(0xb95564)
+  //   .setTitle("Team B")
+  //   .setDescription(`Map Points: ${matchInfo[2]}`);
 
-  teamBEmbedList.push(teamBEmbed);
+  // teamBEmbedList.push(teamBEmbed);
 
   for (let i = 0; i < 10; i++) {
     const playerObj: any = allPlayerInfo[i];
@@ -189,9 +192,26 @@ export const subCommand = async (interaction) => {
 
   interaction.editReply({ content: "", embeds: [MatchInfoEmbed] });
 
-  channel.send({ embeds: teamAEmbedList });
-  channel.send({ embeds: teamBEmbedList });
+  if (isAllPlayerStats) {
+    channel.send({ embeds: teamAEmbedList });
+    channel.send({ embeds: teamBEmbedList });
+  } else if (!isAllPlayerStats) {
+    teamAEmbedList.forEach((embed) => {
+      const embedRiotId = embed.data.author.name;
 
+      if (embedRiotId === activeRiotAccount.riot_id) {
+        return channel.send({ embeds: teamAEmbedList });
+      }
+    });
+
+    teamBEmbedList.forEach((embed) => {
+      const embedRiotId = embed.data.author.name;
+
+      if (embedRiotId === activeRiotAccount.riot_id) {
+        return channel.send({ embeds: teamBEmbedList });
+      }
+    });
+  }
   await page.screenshot({ path: "screenshot.png", fullPage: true });
   console.log("LOG: \t" + "screenshot");
 
