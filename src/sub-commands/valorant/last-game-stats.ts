@@ -6,6 +6,7 @@ import profileUrl from "../../utils/valorant/profileUrl.js";
 import { RiotAccount } from "../../types/RiotAccount.js";
 
 export const subCommand = async (interaction) => {
+  console.log("LOG: \tlast-game-stats.ts");
   const { channel } = interaction;
 
   let selectedDiscordId: any = interaction.options.getMember("player");
@@ -17,7 +18,9 @@ export const subCommand = async (interaction) => {
     selectedDiscordId = selectedDiscordId.id;
   }
 
-  isAllPlayerStats === null ? (isAllPlayerStats = false) : "";
+  isAllPlayerStats === null
+    ? (isAllPlayerStats = false)
+    : interaction.options.getBoolean("all-players-stats");
 
   if (!registered(interaction, selectedDiscordId)) return;
 
@@ -45,7 +48,7 @@ export const subCommand = async (interaction) => {
   const trackerProfileUrl: string = profileUrl(activeRiotAccount.riot_id);
 
   const browser: any = await (puppeteer as any).launch({
-    userDataDir: "./user_data",
+    userDataDir: "/home/lg/Documents/github/Q-bot/userData",
     product: "chrome",
     headless: true,
   });
@@ -78,74 +81,74 @@ export const subCommand = async (interaction) => {
   //console.log(matchInfo);
 
   //allPlayerInfo is a list of object with player stats
-  const allPlayerInfo: any = await page.evaluate(() => {
-    //playerInfo is list of players' stats container
-    const playerInfo: any = Array.from(
-      document.querySelectorAll(".vm-table .st-content__item")
+  const allPlayerInfo: PlayerObj[] = await page.evaluate(() => {
+    const allPlayerStatsElement: any = Array.from(
+      document.querySelectorAll(".scoreboard .st-content__item")
     );
 
     //allPlayerStats is a list full of numbers stats in order
-    const allPlayerStats: any = Array.from(
-      document.querySelectorAll(".scoreboard .st-content__item")
-    )
-      .flatMap((item) => Array.from(item.querySelectorAll(".value")))
-      .map((element) => element.textContent);
+    const allPlayerStats: string[][] = allPlayerStatsElement.map((el: any) => {
+      return Array.from(el.querySelectorAll(".value")).map(
+        (value: any) => value.textContent
+      );
+    });
 
-    const stats: string[] = playerInfo.map((player, playerNum) => ({
-      riotName: player
-        .querySelector(".st-content__item .trn-ign .trn-ign__username")
-        .textContent.trim(),
-      riotId: player
-        .querySelector(".st-content__item .trn-ign .trn-ign__discriminator")
-        .textContent.trim(),
-      agentIconUrl: player
-        .querySelector(
-          ".scoreboard .st-content__item .st-custom-name .image img"
-        )
-        .getAttribute("src"),
-      rank: player.querySelector(
-        ".scoreboard .st-content__item .info .rank span"
-      ).textContent,
-      rankIconUrl: player
-        .querySelector(
-          ".scoreboard .st-content__item .st__item--align-center .image img"
-        )
-        .getAttribute("src"),
-      acs: allPlayerStats[playerNum * 14 + 1],
-      kill: allPlayerStats[playerNum * 14 + 2],
-      death: allPlayerStats[playerNum * 14 + 3],
-      assist: allPlayerStats[playerNum * 14 + 4],
-      kd: allPlayerStats[playerNum * 14 + 6],
-      adr: allPlayerStats[playerNum * 14 + 8],
-      hs: allPlayerStats[playerNum * 14 + 9],
-      fb: allPlayerStats[playerNum * 14 + 11],
-      fd: allPlayerStats[playerNum * 14 + 12],
-    }));
+    const stats: string[] = allPlayerStatsElement.map(
+      (player: any, playerIndex: number) => ({
+        riotName: player
+          .querySelector(".st-content__item .trn-ign .trn-ign__username")
+          .textContent.trim(),
+        riotId: player
+          .querySelector(".st-content__item .trn-ign .trn-ign__discriminator")
+          .textContent.trim(),
+        agentIconUrl: player
+          .querySelector(
+            ".scoreboard .st-content__item .st-custom-name .image img"
+          )
+          .getAttribute("src"),
+        rank: player.querySelector(
+          ".scoreboard .st-content__item .info .rank span"
+        ).textContent,
+        rankIconUrl: player
+          .querySelector(
+            ".scoreboard .st-content__item .st__item--align-center .image img"
+          )
+          .getAttribute("src"),
+        acs: allPlayerStats[playerIndex][1],
+        kill: allPlayerStats[playerIndex][2],
+        death: allPlayerStats[playerIndex][3],
+        assist: allPlayerStats[playerIndex][4],
+        kd: allPlayerStats[playerIndex][6],
+        adr: allPlayerStats[playerIndex][8],
+        hs: allPlayerStats[playerIndex][9],
+        fb: allPlayerStats[playerIndex][11],
+        fd: allPlayerStats[playerIndex][12],
+      })
+    );
     return stats;
   });
 
-  //console.log(allPlayerInfo);
-
   const teamAEmbedList: EmbedBuilder[] = [];
-  // add team A embed
-  // const teamAEmbed: EmbedBuilder = new EmbedBuilder()
-  //   .setColor(0x49c6b8)
-  //   .setTitle("Team A")
-  //   .setDescription(`Map Points: ${matchInfo[1]}`);
-
-  // teamAEmbedList.push(teamAEmbed);
-
   const teamBEmbedList: EmbedBuilder[] = [];
-  // // add team B embed
-  // const teamBEmbed: EmbedBuilder = new EmbedBuilder()
-  //   .setColor(0xb95564)
-  //   .setTitle("Team B")
-  //   .setDescription(`Map Points: ${matchInfo[2]}`);
 
-  // teamBEmbedList.push(teamBEmbed);
+  type PlayerObj = {
+    riotName: string;
+    riotId: string;
+    agentIconUrl: string;
+    rankIconUrl: string;
+    acs: string;
+    kill: string;
+    death: string;
+    assist: string;
+    kd: string;
+    adr: string;
+    hs: string;
+    fb: string;
+    fd: string;
+  };
 
   for (let i = 0; i < 10; i++) {
-    const playerObj: any = allPlayerInfo[i];
+    const playerObj: PlayerObj = allPlayerInfo[i];
 
     const playerEmbed: EmbedBuilder = new EmbedBuilder()
       .setAuthor({
@@ -158,17 +161,6 @@ export const subCommand = async (interaction) => {
           `KDA: ${playerObj.kill}/${playerObj.death}/${playerObj.assist}\tACS: ${playerObj.acs}\tHS%: ${playerObj.hs}\tADR: ${playerObj.adr}` +
           "```"
       );
-    // .addFields([
-    //   { name: "Kills: ", value: playerObj.kill, inline: true },
-    //   { name: "Deaths:", value: playerObj.death, inline: true },
-    //   { name: "Assists:", value: playerObj.assist, inline: true },
-    //   { name: "ACS:    ", value: playerObj.acs, inline: true },
-    //   { name: "K/D:", value: playerObj.kd, inline: true },
-    //   { name: "Headshot%:", value: playerObj.hs, inline: true },
-    //   { name: "ADR: ", value: playerObj.adr, inline: true },
-    //   { name: "First Blood:", value: playerObj.fb, inline: true },
-    //   { name: "First Death:", value: playerObj.fd, inline: true },
-    // ]);
 
     if (i < 5) {
       playerEmbed.setColor(0x49c6b8);
@@ -184,11 +176,6 @@ export const subCommand = async (interaction) => {
     .setTitle(matchInfo[0] + " (tracker.gg)")
     .setURL(trackerProfileUrl)
     .setDescription("```" + `${matchInfo[1]} - ${matchInfo[2]}` + "```");
-  // .addFields([
-  //   { name: "Team A", value: matchInfo[1], inline: true },
-  //   { name: "\u200B", value: `-`, inline: true },
-  //   { name: "Team B", value: matchInfo[2], inline: true },
-  // ]);
 
   interaction.editReply({ content: "", embeds: [MatchInfoEmbed] });
 
