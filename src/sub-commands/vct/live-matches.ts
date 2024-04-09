@@ -156,7 +156,9 @@ export const subCommand = async (interaction) => {
 
   const liveMatchPointEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0xff0000)
-    .setTitle(`🔴 ${liveMatchList[0].team1} vs ${liveMatchList[0].team2}`)
+    .setTitle(
+      `🔴 ${liveMatchList[0].team1} vs ${liveMatchList[0].team2} (vlr.gg)`
+    )
     .setURL(liveMatchList[0].matchPageUrl)
     .setDescription(
       "Series: " +
