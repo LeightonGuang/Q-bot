@@ -39,7 +39,6 @@ export const handler: any = async (interaction) => {
 
       await interaction.message.edit({
         content: "Refreshing...",
-        embeds: [],
         components: [],
       });
 
