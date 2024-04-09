@@ -35,9 +35,11 @@ export const handler: any = async (interaction) => {
       const groupedMapPointList: string[][] = [];
       let isFinal: boolean;
 
+      await interaction.deferUpdate();
+
       await interaction.message.edit({
         content: "Refreshing...",
-        embeds: [],
+        components: [],
       });
 
       try {
@@ -70,13 +72,13 @@ export const handler: any = async (interaction) => {
 
         // get points from different page
         $("div.score").each((i, el) => {
-          mapPointList.push($(el).text());
+          mapPointList.push($(el).text().trim());
         });
 
         isFinal =
           $("div.match-header-vs-note").first().text().trim() === "final";
 
-        for (let i = 0; i < mapNameList.length; i++) {
+        for (let i: number = 0; i < mapNameList.length; i++) {
           if (!mapPointList[i * 2] || !mapPointList[i * 2 + 1]) return;
 
           groupedMapPointList.push([
@@ -119,7 +121,7 @@ export const handler: any = async (interaction) => {
 
         const liveMapPointEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xff0000)
-          .setDescription(`${mapName}:\n${mapPoints[0]} - ${mapPoints[1]}`);
+          .setDescription(`${mapName}:\t${mapPoints[0]} - ${mapPoints[1]}`);
         if (isFinal) liveMapPointEmbed.setColor(0x000000);
 
         liveMatchEmbedList.push(liveMapPointEmbed);
@@ -139,7 +141,6 @@ export const handler: any = async (interaction) => {
         fetchReply: true,
       });
 
-      await interaction.deferUpdate();
       break;
     }
   }

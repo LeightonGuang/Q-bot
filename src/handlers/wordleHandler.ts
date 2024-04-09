@@ -1,5 +1,4 @@
 export const wordleHandler: any = (client) => {
-  console.log("FILE: \t" + "wordleHandler.js");
   client.on("messageCreate", async (message) => {
     if (!message.content.includes("Wordle")) return;
 

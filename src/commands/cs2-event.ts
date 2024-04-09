@@ -34,15 +34,16 @@ export const data = {
     switch (subCommand) {
       case "ongoing-events": {
         const browser = await (puppeteer as any).launch({
+          defaultViewport: { width: 1920, height: 1080 },
+          userDataDir: "/home/lg/Documents/github/Q-bot/userData",
           headless: false,
-          userDataDir: "../../public/cookies",
         });
 
         const page = await browser.newPage();
+        // await page.setViewport({ width: 1920, height: 1080 });
         await page.setUserAgent(
           "Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20100101 Firefox/6.0"
         );
-        await page.setViewport({ width: 1920, height: 1080 });
         await page.goto(url + "/events");
         await page.waitForSelector(".big", { timeout: 30000 });
 
@@ -53,7 +54,7 @@ export const data = {
           return Array.from(document.querySelectorAll(".big-event-name"));
         });
 
-        console.log(bigEventElementsList);
+        // console.log(bigEventElementsList);
 
         await browser.close();
 

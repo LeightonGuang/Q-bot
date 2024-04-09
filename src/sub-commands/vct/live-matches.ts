@@ -144,7 +144,7 @@ export const subCommand = async (interaction) => {
 
     // get points from different page
     $("div.score").each((i, el) => {
-      mapPointList.push($(el).text());
+      mapPointList.push($(el).text().trim());
     });
 
     for (let i = 0; i < mapPointList.length; i += 2) {
@@ -156,7 +156,9 @@ export const subCommand = async (interaction) => {
 
   const liveMatchPointEmbed: EmbedBuilder = new EmbedBuilder()
     .setColor(0xff0000)
-    .setTitle(`🔴 ${liveMatchList[0].team1} vs ${liveMatchList[0].team2}`)
+    .setTitle(
+      `🔴 ${liveMatchList[0].team1} vs ${liveMatchList[0].team2} (vlr.gg)`
+    )
     .setURL(liveMatchList[0].matchPageUrl)
     .setDescription(
       "Series: " +
@@ -185,7 +187,7 @@ export const subCommand = async (interaction) => {
 
     const liveMapPointEmbed: EmbedBuilder = new EmbedBuilder()
       .setColor(0xff0000)
-      .setDescription(`${mapName}:\n${mapPoints[0]} - ${mapPoints[1]}`);
+      .setDescription(`${mapName}:\t${mapPoints[0]} - ${mapPoints[1]}`);
     // .addFields(
     //   {
     //     name: mapName,

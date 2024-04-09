@@ -33,6 +33,14 @@ export const data = {
             .setName("player")
             .setDescription("default(empty) will be yourself")
         )
+        .addBooleanOption((option) =>
+          option
+            .setName("all-players-stats")
+            .setDescription(
+              "Get stats for both opponent and your team (default: false)"
+            )
+            .setRequired(false)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand

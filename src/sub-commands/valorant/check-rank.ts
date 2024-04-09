@@ -43,7 +43,7 @@ export const subCommand = async (interaction) => {
   await interaction.reply({ content: "Loading info..." });
 
   const browser: any = await (puppeteer as any).launch({
-    userDataDir: `./user_data`,
+    userDataDir: "/home/lg/Documents/github/Q-bot/userData",
     headless: true,
   });
   const page: any = await browser.newPage();
