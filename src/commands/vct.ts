@@ -48,6 +48,30 @@ export const data = {
             )
             .setRequired(true)
         )
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("emea")
+        .setDescription("VCT EMEA teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "Karmine Corp", value: "KC" },
+              { name: "FNATIC", value: "FNC" },
+              { name: "Team Vitality", value: "VIT" },
+              { name: "Team Liquid", value: "TL" },
+              { name: "BBL Esports", value: "BBL" },
+              { name: "Team Heretics", value: "TH" },
+              { name: "Natus Vincere", value: "NAVI" },
+              { name: "Movistar KOI", value: "KOI" },
+              { name: "FUT Esports", value: "FUT" },
+              { name: "Gentle Mates", value: "M8" },
+              { name: "GIANTX", value: "GX" }
+            )
+            .setRequired(true)
+        )
     ),
   async execute(interaction) {
     console.log("FILE:\t" + "vct.js");
@@ -83,6 +107,11 @@ export const data = {
       case "americas": {
         const americas = await import("../sub-commands/vct/americas.js");
         americas.subCommand(interaction);
+        break;
+      }
+      case "emea": {
+        const emea = await import("../sub-commands/vct/emea.js");
+        emea.subCommand(interaction);
         break;
       }
     }
