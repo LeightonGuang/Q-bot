@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "discord.js";
-import { subCommand } from "../sub-commands/account/add-riot-account.js";
 
 export const data = {
   data: new SlashCommandBuilder()
@@ -24,6 +23,102 @@ export const data = {
       subCommand
         .setName("upcoming-matches")
         .setDescription("Upcoming Valorant Champions Tour matches.")
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("americas")
+        .setDescription("VCT Americas teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "Sentinels", value: "SEN" },
+              { name: "Cloud9", value: "C9" },
+              { name: "G2 Esports", value: "G2" },
+              { name: "KRÜ Esports", value: "KRÜ" },
+              { name: "NRG Esports", value: "NRG" },
+              { name: "Leviatán", value: "LEV" },
+              { name: "LOUD", value: "LOUD" },
+              { name: "100 Thieves", value: "100T" },
+              { name: "MIBR", value: "MIBR" },
+              { name: "FUIRIA", value: "FUR" },
+              { name: "Evil Geniuses", value: "EG" }
+            )
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("emea")
+        .setDescription("VCT EMEA teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "Karmine Corp", value: "KC" },
+              { name: "FNATIC", value: "FNC" },
+              { name: "Team Vitality", value: "VIT" },
+              { name: "Team Liquid", value: "TL" },
+              { name: "BBL Esports", value: "BBL" },
+              { name: "Team Heretics", value: "TH" },
+              { name: "Natus Vincere", value: "NAVI" },
+              { name: "Movistar KOI", value: "KOI" },
+              { name: "FUT Esports", value: "FUT" },
+              { name: "Gentle Mates", value: "M8" },
+              { name: "GIANTX", value: "GX" }
+            )
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("pacific")
+        .setDescription("VCT Pacific teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "DetonatioN FocusMe", value: "DFM" },
+              { name: "DRX", value: "DRX" },
+              { name: "Gen.G", value: "GEN" },
+              { name: "Global Esports", value: "GE" },
+              { name: "Paper Rex", value: "PRX" },
+              { name: "Rex Regum Qeon", value: "RRQ" },
+              { name: "T1", value: "T1" },
+              { name: "Talon Esports", value: "TLN" },
+              { name: "Team Secret", value: "TS" },
+              { name: "ZETA DIVISION", value: "ZETA" },
+              { name: "BLEED", value: "BLD" }
+            )
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("china")
+        .setDescription("VCT Chinese teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "All Gamers", value: "AG" },
+              { name: "Bilibili Gaming ", value: "BLG" },
+              { name: "EDward Gaming", value: "EDG" },
+              { name: "FunPlus Phoenix", value: "FPX" },
+              { name: "JD Gaming", value: "JDG" },
+              { name: "Nova Esports", value: "NOVA" },
+              { name: "Titan Esports Club", value: "TEC" },
+              { name: "Trace Esports", value: "TE" },
+              { name: "TYLOO", value: "TYL" },
+              { name: "Wolves Esports", value: "WOL" },
+              { name: "Dragon Ranger Gaming", value: "DRG" }
+            )
+            .setRequired(true)
+        )
     ),
   async execute(interaction) {
     console.log("FILE:\t" + "vct.js");
@@ -54,6 +149,26 @@ export const data = {
           "../sub-commands/vct/upcoming-matches.js"
         );
         upcomingMatches.subCommand(interaction);
+        break;
+      }
+      case "americas": {
+        const americas = await import("../sub-commands/vct/americas.js");
+        americas.subCommand(interaction);
+        break;
+      }
+      case "emea": {
+        const emea = await import("../sub-commands/vct/emea.js");
+        emea.subCommand(interaction);
+        break;
+      }
+      case "pacific": {
+        const pacific = await import("../sub-commands/vct/pacific.js");
+        pacific.subCommand(interaction);
+        break;
+      }
+      case "china": {
+        const china = await import("../sub-commands/vct/china.js");
+        china.subCommand(interaction);
         break;
       }
     }
