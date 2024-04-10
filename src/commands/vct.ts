@@ -24,6 +24,30 @@ export const data = {
       subCommand
         .setName("upcoming-matches")
         .setDescription("Upcoming Valorant Champions Tour matches.")
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("americas")
+        .setDescription("VCT Americas teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "Sentinels", value: "SEN" },
+              { name: "Cloud9", value: "C9" },
+              { name: "G2 Esports", value: "G2" },
+              { name: "KRÜ Esports", value: "KRÜ" },
+              { name: "NRG Esports", value: "NRG" },
+              { name: "Leviatán", value: "LEV" },
+              { name: "LOUD", value: "LOUD" },
+              { name: "100 Thieves", value: "100T" },
+              { name: "MIBR", value: "MIBR" },
+              { name: "FUIRIA", value: "FUR" },
+              { name: "Evil Geniuses", value: "EG" }
+            )
+            .setRequired(true)
+        )
     ),
   async execute(interaction) {
     console.log("FILE:\t" + "vct.js");
@@ -54,6 +78,11 @@ export const data = {
           "../sub-commands/vct/upcoming-matches.js"
         );
         upcomingMatches.subCommand(interaction);
+        break;
+      }
+      case "americas": {
+        const americas = await import("../sub-commands/vct/americas.js");
+        americas.subCommand(interaction);
         break;
       }
     }
