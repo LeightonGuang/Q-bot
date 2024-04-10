@@ -1,5 +1,4 @@
 import { SlashCommandBuilder } from "discord.js";
-import { subCommand } from "../sub-commands/account/add-riot-account.js";
 
 export const data = {
   data: new SlashCommandBuilder()
@@ -72,6 +71,30 @@ export const data = {
             )
             .setRequired(true)
         )
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("pacific")
+        .setDescription("VCT Pacific teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "DetonatioN FocusMe", value: "DFM" },
+              { name: "DRX", value: "DRX" },
+              { name: "Gen.G", value: "GEN" },
+              { name: "Global Esports", value: "GE" },
+              { name: "Paper Rex", value: "PRX" },
+              { name: "Rex Regum Qeon", value: "RRQ" },
+              { name: "T1", value: "T1" },
+              { name: "Talon Esports", value: "TLN" },
+              { name: "Team Secret", value: "TS" },
+              { name: "ZETA DIVISION", value: "ZETA" },
+              { name: "BLEED", value: "BLD" }
+            )
+            .setRequired(true)
+        )
     ),
   async execute(interaction) {
     console.log("FILE:\t" + "vct.js");
@@ -112,6 +135,11 @@ export const data = {
       case "emea": {
         const emea = await import("../sub-commands/vct/emea.js");
         emea.subCommand(interaction);
+        break;
+      }
+      case "pacific": {
+        const pacific = await import("../sub-commands/vct/pacific.js");
+        pacific.subCommand(interaction);
         break;
       }
     }
