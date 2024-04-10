@@ -95,6 +95,30 @@ export const data = {
             )
             .setRequired(true)
         )
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("china")
+        .setDescription("VCT Chinese teams")
+        .addStringOption((option) =>
+          option
+            .setName("team")
+            .setDescription("Select a team")
+            .setChoices(
+              { name: "All Gamers", value: "AG" },
+              { name: "Bilibili Gaming ", value: "BLG" },
+              { name: "EDward Gaming", value: "EDG" },
+              { name: "FunPlus Phoenix", value: "FPX" },
+              { name: "JD Gaming", value: "JDG" },
+              { name: "Nova Esports", value: "NOVA" },
+              { name: "Titan Esports Club", value: "TEC" },
+              { name: "Trace Esports", value: "TE" },
+              { name: "TYLOO", value: "TYL" },
+              { name: "Wolves Esports", value: "WOL" },
+              { name: "Dragon Ranger Gaming", value: "DRG" }
+            )
+            .setRequired(true)
+        )
     ),
   async execute(interaction) {
     console.log("FILE:\t" + "vct.js");
@@ -140,6 +164,11 @@ export const data = {
       case "pacific": {
         const pacific = await import("../sub-commands/vct/pacific.js");
         pacific.subCommand(interaction);
+        break;
+      }
+      case "china": {
+        const china = await import("../sub-commands/vct/china.js");
+        china.subCommand(interaction);
         break;
       }
     }
