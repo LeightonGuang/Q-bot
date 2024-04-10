@@ -24,7 +24,11 @@ export const replyInfos: (
       regionColour = 0x01d2d7;
       break;
     }
+    case "china": {
+      regionColour = 0xe73056;
+    }
   }
+
   type MatchObj = {
     matchPageUrl: string;
     selectedTeamName: string;
@@ -34,7 +38,7 @@ export const replyInfos: (
     date: string;
     time: string;
   };
-  let matchDataList: MatchObj[] = null;
+  let matchDataList: MatchObj[] = [];
 
   try {
     const { data }: { data: any } = await axios.get(url);
