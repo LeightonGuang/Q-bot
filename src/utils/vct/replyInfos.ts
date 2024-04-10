@@ -3,8 +3,24 @@ import axios from "axios";
 import cheerio from "cheerio";
 
 export const replyInfos: (
-  url: string
-) => Promise<{ embeds: EmbedBuilder[] }> = async (url: string) => {
+  url: string,
+  region: string
+) => Promise<{ embeds: EmbedBuilder[] }> = async (
+  url: string,
+  region: string
+) => {
+  let regionColour: any;
+
+  switch (region) {
+    case "americas": {
+      regionColour = 0xff570c;
+      break;
+    }
+    case "emea": {
+      regionColour = 0xcdf620;
+      break;
+    }
+  }
   type MatchObj = {
     matchPageUrl: string;
     selectedTeamName: string;
@@ -73,7 +89,7 @@ export const replyInfos: (
       new Date(`${matchObj.date} ${matchObj.time}`).getTime() / 1000;
 
     return new EmbedBuilder()
-      .setColor(0xff570c)
+      .setColor(regionColour)
       .setAuthor({
         name: matchObj.selectedTeamName,
         iconURL: matchObj.selectedTeamLogoUrl,
