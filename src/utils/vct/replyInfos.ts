@@ -20,6 +20,10 @@ export const replyInfos: (
       regionColour = 0xcdf620;
       break;
     }
+    case "pacific": {
+      regionColour = 0x01d2d7;
+      break;
+    }
   }
   type MatchObj = {
     matchPageUrl: string;
