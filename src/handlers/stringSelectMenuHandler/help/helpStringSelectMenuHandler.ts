@@ -141,7 +141,11 @@ export const handler = async (client) => {
               value: "Get upcoming VCT matches",
             },
             { name: "***ongoing-events***", value: "Get ongoing VCT events" },
-            { name: "***upcoming-events***", value: "Get upcoming VCT events" }
+            { name: "***upcoming-events***", value: "Get upcoming VCT events" },
+            {
+              name: "***americas, emea, pacific and china***",
+              value: "Select any teams to get their upcoming matches",
+            }
           );
 
         interaction.message.edit({ embeds: [vctEmbed] });
