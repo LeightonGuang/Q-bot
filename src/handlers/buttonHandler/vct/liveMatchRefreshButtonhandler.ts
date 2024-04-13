@@ -122,7 +122,23 @@ export const handler: any = async (interaction) => {
         const liveMapPointEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xff0000)
           .setDescription(`${mapName}:\t${mapPoints[0]} - ${mapPoints[1]}`);
-        if (isFinal) liveMapPointEmbed.setColor(0x000000);
+
+        const mapPointsSum: number =
+          parseInt(mapPoints[0]) + parseInt(mapPoints[1]);
+        const mapPointsDiff: number = Math.abs(
+          parseInt(mapPoints[0]) - parseInt(mapPoints[1])
+        );
+
+        if (isFinal) {
+          liveMapPointEmbed.setColor(0x000000);
+        } else if (
+          (mapPointsSum < 25 &&
+            (mapPoints[0] === "13" || mapPoints[1] === "13")) ||
+          (mapPointsSum > 25 && mapPointsDiff === 2)
+        ) {
+          // if map is in overtime and score difference is 2
+          liveMapPointEmbed.setColor(0x535c65);
+        }
 
         liveMatchEmbedList.push(liveMapPointEmbed);
       });
