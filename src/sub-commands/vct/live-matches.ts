@@ -20,12 +20,6 @@ export const subCommand = async (interaction) => {
   });
 
   const vlrUrl: string = "https://vlr.gg";
-
-  const mapNameList: string[] = [];
-  const mapUrlList: string[] = [];
-  const groupedMapPointList: string[][] = [];
-  const liveMatchEmbedList: EmbedBuilder[] = [];
-
   const ongoingEventList: OngoingEvent[] = await fetchEvents(
     interaction,
     "ongoing"
@@ -119,107 +113,94 @@ export const subCommand = async (interaction) => {
     return;
   }
 
-  // get all map points from match page
-  try {
-    const response: any = await axios.get(liveMatchList[0].matchPageUrl);
-    const html: string = response.data;
-    const $: cheerio.Root = cheerio.load(html);
+  const scrapeLiveMatch = async (liveMatch, index) => {
+    const mapNameList: string[] = [];
+    const mapUrlList: string[] = [];
+    const groupedMapPointList: string[][] = [];
+    const liveMatchEmbedList: EmbedBuilder[] = [];
 
-    const mapPointList: string[] = [];
+    try {
+      const response: any = await axios.get(liveMatch.matchPageUrl);
+      const html: string = response.data;
+      const $: cheerio.Root = cheerio.load(html);
 
-    // get all map names to mapNameList
-    $("div.vm-stats-gamesnav-container div.vm-stats-gamesnav-item").each(
-      (i, mapName) => {
-        // skip the first element
-        if (i === 0) return;
+      const mapPointList: string[] = [];
 
-        let map: string = $(mapName).find("div").text().trim();
-        map = map.replace(/[0-9\t\n]/g, "");
-        mapNameList.push(map);
+      // get all map names to mapNameList
+      $("div.vm-stats-gamesnav-container div.vm-stats-gamesnav-item").each(
+        (i, mapName) => {
+          // skip the first element
+          if (i === 0) return;
 
-        const mapUrl: string = vlrUrl + $(mapName).attr("data-href");
-        mapUrlList.push(mapUrl);
+          let map: string = $(mapName).find("div").text().trim();
+          map = map.replace(/[0-9\t\n]/g, "");
+          mapNameList.push(map);
+
+          const mapUrl: string = vlrUrl + $(mapName).attr("data-href");
+          mapUrlList.push(mapUrl);
+        }
+      );
+
+      // get points from different page
+      $("div.score").each((i, el) => {
+        mapPointList.push($(el).text().trim());
+      });
+
+      for (let i: number = 0; i < mapPointList.length; i += 2) {
+        groupedMapPointList.push([mapPointList[i], mapPointList[i + 1]]);
       }
-    );
+    } catch (error) {
+      console.error(error);
+    }
 
-    // get points from different page
-    $("div.score").each((i, el) => {
-      mapPointList.push($(el).text().trim());
+    const liveMatchPointEmbed: EmbedBuilder = new EmbedBuilder()
+      .setColor(0xff0000)
+      .setTitle(`🔴 ${liveMatch.team1} vs ${liveMatch.team2} (vlr.gg)`)
+      .setURL(liveMatch.matchPageUrl)
+      .setDescription(
+        "Series: " +
+          liveMatch.series +
+          "\n" +
+          `Match:\t${liveMatch.team1Point} - ${liveMatch.team2Point}`
+      );
+    liveMatchEmbedList.push(liveMatchPointEmbed);
+
+    groupedMapPointList.forEach((mapPoints, i) => {
+      const mapName: string = mapNameList[i];
+      if (mapPoints.includes("0")) return;
+
+      const liveMapPointEmbed: EmbedBuilder = new EmbedBuilder()
+        .setColor(0xff0000)
+        .setDescription(`${mapName}:\t${mapPoints[0]} - ${mapPoints[1]}`);
+
+      liveMatchEmbedList.push(liveMapPointEmbed);
     });
 
-    for (let i = 0; i < mapPointList.length; i += 2) {
-      groupedMapPointList.push([mapPointList[i], mapPointList[i + 1]]);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-
-  const liveMatchPointEmbed: EmbedBuilder = new EmbedBuilder()
-    .setColor(0xff0000)
-    .setTitle(
-      `🔴 ${liveMatchList[0].team1} vs ${liveMatchList[0].team2} (vlr.gg)`
-    )
-    .setURL(liveMatchList[0].matchPageUrl)
-    .setDescription(
-      "Series: " +
-        liveMatchList[0].series +
-        "\n" +
-        `Match:\t${liveMatchList[0].team1Point} - ${liveMatchList[0].team2Point}`
+    const refreshRow: ActionRowBuilder = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel("Refresh")
+        .setCustomId(`vct-refresh-${replyObj.id}`)
+        .setStyle(ButtonStyle.Primary)
     );
-  // .addFields(
-  //   {
-  //     name: liveMatchList[0].team1,
-  //     value: liveMatchList[0].team1Point,
-  //     inline: true,
-  //   },
-  //   { name: "\u200B", value: ":", inline: true },
-  //   {
-  //     name: liveMatchList[0].team2,
-  //     value: liveMatchList[0].team2Point,
-  //     inline: true,
-  //   }
-  // )
-  liveMatchEmbedList.push(liveMatchPointEmbed);
 
-  groupedMapPointList.forEach((mapPoints, i) => {
-    const mapName: string = mapNameList[i];
-    if (mapPoints.includes("0")) return;
+    if (index === 0) {
+      await interaction.editReply({
+        content: "",
+        embeds: liveMatchEmbedList,
+        components: [refreshRow],
+        fetchReply: true,
+      });
+    } else if (index > 0) {
+      await interaction.channel.send({
+        embeds: liveMatchEmbedList,
+        components: [refreshRow],
+        fetchReply: true,
+      });
+    }
+  };
 
-    const liveMapPointEmbed: EmbedBuilder = new EmbedBuilder()
-      .setColor(0xff0000)
-      .setDescription(`${mapName}:\t${mapPoints[0]} - ${mapPoints[1]}`);
-    // .addFields(
-    //   {
-    //     name: mapName,
-    //     value: mapPoints[0],
-    //     inline: true,
-    //   },
-    //   {
-    //     name: "\u200B",
-    //     value: ":",
-    //     inline: true,
-    //   },
-    //   {
-    //     name: "\u200B",
-    //     value: mapPoints[1],
-    //     inline: true,
-    //   }
-    // );
-
-    liveMatchEmbedList.push(liveMapPointEmbed);
-  });
-
-  const refreshRow: ActionRowBuilder = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setLabel("Refresh")
-      .setCustomId(`vct-refresh-${replyObj.id}`)
-      .setStyle(ButtonStyle.Primary)
-  );
-
-  await interaction.editReply({
-    content: "",
-    embeds: liveMatchEmbedList,
-    components: [refreshRow],
-    fetchReply: true,
+  liveMatchList.forEach((liveMatch, i) => {
+    // get all map points from match page
+    scrapeLiveMatch(liveMatch, i);
   });
 };
