@@ -1,12 +1,14 @@
 import { replyInfos } from "../../utils/vct/replyInfos.js";
 export const subCommand = async (interaction) => {
   const team: string = interaction.options.get("team").value;
+  const matchStatus: string = interaction.options.get("match-status").value;
 
   switch (team) {
     case "KC": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/8877/karmine-corp",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -14,7 +16,8 @@ export const subCommand = async (interaction) => {
     case "FNC": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/2593/fnatic",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -22,7 +25,8 @@ export const subCommand = async (interaction) => {
     case "VIT": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/2059/team-vitality",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -30,7 +34,8 @@ export const subCommand = async (interaction) => {
     case "TL": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/474/team-liquid",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -38,7 +43,8 @@ export const subCommand = async (interaction) => {
     case "BBL": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/397/bbl-esports",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -46,7 +52,8 @@ export const subCommand = async (interaction) => {
     case "TH": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/1001/team-heretics-n",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -54,7 +61,8 @@ export const subCommand = async (interaction) => {
     case "NAVI": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/4915/natus-vincere",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -62,7 +70,8 @@ export const subCommand = async (interaction) => {
     case "KOI": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/7035/koi",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -70,7 +79,8 @@ export const subCommand = async (interaction) => {
     case "FUT": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/1184/fut-esports",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -78,7 +88,8 @@ export const subCommand = async (interaction) => {
     case "M8": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/12694/gentle-mates",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -86,7 +97,8 @@ export const subCommand = async (interaction) => {
     case "GX": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/14419/giantx",
-        "emea"
+        "emea",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;

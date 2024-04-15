@@ -1,12 +1,14 @@
 import { replyInfos } from "../../utils/vct/replyInfos.js";
 export const subCommand = async (interaction) => {
   const team: string = interaction.options.get("team").value;
+  const matchStatus: string = interaction.options.get("match-status").value;
 
   switch (team) {
     case "DFM": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/278/detonation-focusme",
-        "americas"
+        "americas",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -14,7 +16,8 @@ export const subCommand = async (interaction) => {
     case "DRX": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/8185/drx",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -22,7 +25,8 @@ export const subCommand = async (interaction) => {
     case "GEN": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/17/gen-g",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -30,7 +34,8 @@ export const subCommand = async (interaction) => {
     case "GE": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/918/global-esports",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -38,7 +43,8 @@ export const subCommand = async (interaction) => {
     case "PRX": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/624/paper-rex",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -46,7 +52,8 @@ export const subCommand = async (interaction) => {
     case "RRQ": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/878/rex-regum-qeon",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -54,7 +61,8 @@ export const subCommand = async (interaction) => {
     case "T1": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/14/t1",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -62,7 +70,8 @@ export const subCommand = async (interaction) => {
     case "TLN": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/8304/talon-esports",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -70,7 +79,8 @@ export const subCommand = async (interaction) => {
     case "TS": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/6199/team-secret",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -78,7 +88,8 @@ export const subCommand = async (interaction) => {
     case "ZETA": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/5448/zeta-division",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -86,7 +97,8 @@ export const subCommand = async (interaction) => {
     case "BLD": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/6387/bleed",
-        "pacific"
+        "pacific",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;

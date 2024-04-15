@@ -1,12 +1,14 @@
 import { replyInfos } from "../../utils/vct/replyInfos.js";
 export const subCommand = async (interaction) => {
   const team: string = interaction.options.get("team").value;
+  const matchStatus: string = interaction.options.get("match-status").value;
 
   switch (team) {
     case "AG": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/1119/all-gamers",
-        "americas"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -14,7 +16,8 @@ export const subCommand = async (interaction) => {
     case "BLG": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/12010/bilibili-gaming",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -22,7 +25,8 @@ export const subCommand = async (interaction) => {
     case "EDG": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/1120/edward-gaming",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -30,7 +34,8 @@ export const subCommand = async (interaction) => {
     case "FPX": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/11328/funplus-phoenix",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -38,7 +43,8 @@ export const subCommand = async (interaction) => {
     case "JDG": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/13576/jd-gaming",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -46,7 +52,8 @@ export const subCommand = async (interaction) => {
     case "NOVA": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/12064/nova-esports",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -54,7 +61,8 @@ export const subCommand = async (interaction) => {
     case "TEC": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/14137/titan-esports-club",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -62,7 +70,8 @@ export const subCommand = async (interaction) => {
     case "TE": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/12685/trace-esports",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -70,7 +79,8 @@ export const subCommand = async (interaction) => {
     case "TYL": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/731/tyloo",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -78,7 +88,8 @@ export const subCommand = async (interaction) => {
     case "WOL": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/13790/wolves-esports",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
@@ -86,7 +97,8 @@ export const subCommand = async (interaction) => {
     case "DRG": {
       const replyObj: object = await replyInfos(
         "https://www.vlr.gg/team/11981/dragon-ranger-gaming",
-        "china"
+        "china",
+        matchStatus
       );
       await interaction.reply(replyObj);
       break;
