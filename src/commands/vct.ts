@@ -47,6 +47,16 @@ export const data = {
             )
             .setRequired(true)
         )
+        .addStringOption((option) =>
+          option
+            .setName("match-status")
+            .setDescription("Get upcoming matches or results")
+            .setChoices(
+              { name: "upcoming-matches", value: "upcoming-matches" },
+              { name: "results", value: "results" }
+            )
+            .setRequired(true)
+        )
     )
     .addSubcommand((subCommand) =>
       subCommand
