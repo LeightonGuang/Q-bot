@@ -10,6 +10,11 @@ export const data: any = {
     )
     .addSubcommand((subcommand) =>
       subcommand.setName("server-status").setDescription("get server status")
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("player-online")
+        .setDescription("check who is online in the server")
     ),
 
   async execute(interaction) {
@@ -26,6 +31,13 @@ export const data: any = {
           "../sub-commands/minecraft/server-status.js"
         );
         serverStatus.subCommand(interaction);
+        break;
+      }
+      case "player-online": {
+        const playerOnline = await import(
+          "../sub-commands/minecraft/player-online.js"
+        );
+        playerOnline.subCommand(interaction);
         break;
       }
     }
