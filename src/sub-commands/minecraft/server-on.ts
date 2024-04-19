@@ -47,11 +47,51 @@ export const subCommand = async (interaction) => {
       await browser.close();
       return;
     } else if (statusText === "Offline") {
+      // click on the start button
       await page.waitForSelector("#start", { timeout: 0 });
       await page.click("#start");
 
+      try {
+        await page.waitForSelector("span.alert-title", { timeout: 30000 });
+
+        const alertElement: any = await page.$("span.alert-title");
+        const alertText: string = await alertElement.evaluate(
+          (element) => element.textContent.trim(),
+          alertElement
+        );
+
+        if (alertText === "Advertisement") {
+          await page.click(".alert-buttons button.btn-success");
+
+          const adsEmbed: EmbedBuilder = new EmbedBuilder()
+            .setColor(0xffff00)
+            .setTitle("Watching advertisements...");
+          await interaction.editReply({ content: "", embeds: [adsEmbed] });
+
+          // wait for ad to end
+          await page.waitForFunction(() => {
+            const element = document.querySelector(
+              "div.rewardedAdUiAttribution"
+            );
+            return element && element.textContent === "";
+          });
+
+          // popup ad skip button class
+          // skip button selector button.videoAdUiSkipButton
+
+          // close button selector div#close_button
+
+          // if div#count_down or style="visibility: hidden;"
+          // click div#close_button
+
+          console.log("ad ended");
+        }
+      } catch (error) {
+        // no alert
+      }
+
       const loadingEmbed: EmbedBuilder = new EmbedBuilder()
-        .setColor(0xff0000)
+        .setColor(0xffff00)
         .setTitle("Server is starting...");
       await interaction.editReply({ content: "", embeds: [loadingEmbed] });
 
