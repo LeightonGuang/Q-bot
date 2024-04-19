@@ -31,7 +31,7 @@ export const subCommand = async (interaction) => {
     if (statusText === "Offline") {
       const offlineEmbed: EmbedBuilder = new EmbedBuilder()
         .setColor(0x222222)
-        .setDescription("Server is offline and no players are online.");
+        .setDescription("Server is offline. No players are online.");
       await interaction.editReply({ content: "", embeds: [offlineEmbed] });
 
       await browser.close();
