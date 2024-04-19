@@ -43,12 +43,11 @@ export const subCommand = async (interaction) => {
       // click on players button
       await page.click(playersButton);
 
-      const onlinePlayerContainerElement: string = "div.playercardlist.online";
+      const onlinePlayerCard: string = "div.playercardlist.online a.playercard";
 
-      await page.waitForSelector(onlinePlayerContainerElement, { timeout: 0 });
+      await page.waitForSelector(onlinePlayerCard, { timeout: 0 });
 
-      const playerElements: any = await page.$$(onlinePlayerContainerElement);
-
+      const playerElements: any = await page.$$(onlinePlayerCard);
       const embedList: EmbedBuilder[] = [];
 
       for (const playerElement of playerElements) {
