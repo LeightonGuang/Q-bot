@@ -62,8 +62,11 @@ export const data = (client) => {
       const qGeneralChannelId: string = "1078356156159889528";
       const qCommandChannelId: string = "1095144647023661166";
       const qModCommandChannelId: string = "1075104362176729128";
+      const qCommandTestChannelId: string = "1221632361700130866";
 
-      if (modCommandList.includes(commandName)) {
+      if (interaction.channel.id === qCommandTestChannelId) {
+        await command.execute(interaction);
+      } else if (modCommandList.includes(commandName)) {
         // if commands are mod commands
         if (isMod) {
           await command.execute(interaction);
