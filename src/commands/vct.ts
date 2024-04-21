@@ -81,6 +81,16 @@ export const data = {
             )
             .setRequired(true)
         )
+        .addStringOption((option) =>
+          option
+            .setName("match-status")
+            .setDescription("Get upcoming matches or results")
+            .setChoices(
+              { name: "upcoming-matches", value: "upcoming-matches" },
+              { name: "results", value: "results" }
+            )
+            .setRequired(true)
+        )
     )
     .addSubcommand((subCommand) =>
       subCommand
@@ -105,6 +115,16 @@ export const data = {
             )
             .setRequired(true)
         )
+        .addStringOption((option) =>
+          option
+            .setName("match-status")
+            .setDescription("Get upcoming matches or results")
+            .setChoices(
+              { name: "upcoming-matches", value: "upcoming-matches" },
+              { name: "results", value: "results" }
+            )
+            .setRequired(true)
+        )
     )
     .addSubcommand((subCommand) =>
       subCommand
@@ -126,6 +146,16 @@ export const data = {
               { name: "TYLOO", value: "TYL" },
               { name: "Wolves Esports", value: "WOL" },
               { name: "Dragon Ranger Gaming", value: "DRG" }
+            )
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("match-status")
+            .setDescription("Get upcoming matches or results")
+            .setChoices(
+              { name: "upcoming-matches", value: "upcoming-matches" },
+              { name: "results", value: "results" }
             )
             .setRequired(true)
         )
