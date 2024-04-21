@@ -45,9 +45,21 @@ export const subCommand = async (interaction) => {
 
       const onlinePlayerCard: string = "div.playercardlist.online a.playercard";
 
-      await page.waitForSelector(onlinePlayerCard, { timeout: 0 });
+      try {
+        await page.waitForSelector(onlinePlayerCard, { timeout: 2000 });
+      } catch (error) {
+        await browser.close();
+
+        const emptySeverEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0x00ff00)
+          .setTitle("No players online");
+        await interaction.editReply({ content: "", embeds: [emptySeverEmbed] });
+        return;
+      }
 
       const playerElements: any = await page.$$(onlinePlayerCard);
+      console.log("playerElements: " + playerElements);
+
       const embedList: EmbedBuilder[] = [];
 
       for (const playerElement of playerElements) {
