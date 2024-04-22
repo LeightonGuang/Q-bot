@@ -42,6 +42,10 @@ export const data = {
           name: "/private-vc [***sub-command***]",
           value: "Creates a private vc for you and the people you want",
         },
+        {
+          name: "/minecraft [***sub-command***]",
+          value: "Commands for minecraft",
+        },
         { name: "/poll", value: "Make a poll" },
         { name: "/coin-flip", value: "Flip a coin" },
         { name: "/vro-font", value: "Convert your text to a vro font" },
@@ -88,7 +92,11 @@ export const data = {
             new StringSelectMenuOptionBuilder()
               .setLabel("/private-vc")
               .setDescription("Private vc related sub commands")
-              .setValue("private-vc")
+              .setValue("private-vc"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/minecraft")
+              .setDescription("Minecraft related sub commands")
+              .setValue("minecraft")
           )
       );
 

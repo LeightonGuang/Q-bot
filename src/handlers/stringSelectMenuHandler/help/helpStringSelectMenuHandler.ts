@@ -154,27 +154,6 @@ export const handler = async (client) => {
         break;
       }
 
-      case "private-vc": {
-        const privateVcEmbed: EmbedBuilder = new EmbedBuilder()
-          .setColor(0x7dd181)
-          .setAuthor({ name: "Q bot" })
-          .setTitle("/private-vc ***sub-command***")
-          .setDescription("List of all sub commands availble for `/valorant`")
-          .addFields(
-            { name: "***duo***", value: "Select a duo to private vc with" },
-            { name: "***trio***", value: "Select 2 trios to private vc with" },
-            { name: "***quad***", value: "Select 3 people to private vc with" },
-            { name: "***stack***", value: "Select 4 people to private vc with" }
-          )
-          .setTimestamp();
-
-        interaction.message.edit({ embeds: [privateVcEmbed] });
-        console.log(
-          "LOG:\t" + "changed the /help command embed to valorantEmbed"
-        );
-        await interaction.deferUpdate();
-        break;
-      }
       case "gamble": {
         const gambleEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xffd700)
@@ -197,6 +176,7 @@ export const handler = async (client) => {
         await interaction.deferUpdate();
         break;
       }
+
       case "cs2-event": {
         const cs2EventEmbed: EmbedBuilder = new EmbedBuilder()
           .setColor(0xf6af06)
@@ -214,6 +194,51 @@ export const handler = async (client) => {
         interaction.message.edit({ embeds: [cs2EventEmbed] });
         console.log(
           "LOG:\t" + "changed the /help command embed to cs2EventEmbed"
+        );
+        await interaction.deferUpdate();
+        break;
+      }
+
+      case "private-vc": {
+        const privateVcEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0x7dd181)
+          .setAuthor({ name: "Q bot" })
+          .setTitle("/private-vc ***sub-command***")
+          .setDescription("List of all sub commands availble for `/valorant`")
+          .addFields(
+            { name: "***duo***", value: "Select a duo to private vc with" },
+            { name: "***trio***", value: "Select 2 trios to private vc with" },
+            { name: "***quad***", value: "Select 3 people to private vc with" },
+            { name: "***stack***", value: "Select 4 people to private vc with" }
+          )
+          .setTimestamp();
+
+        interaction.message.edit({ embeds: [privateVcEmbed] });
+        console.log(
+          "LOG:\t" + "changed the /help command embed to valorantEmbed"
+        );
+        await interaction.deferUpdate();
+        break;
+      }
+
+      case "minecraft": {
+        const minecraftEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0x52a535)
+          .setAuthor({ name: "Q bot" })
+          .setTitle("/minecraft ***sub-command***")
+          .setDescription("List of all sub commands availble for `/minecraft`")
+          .addFields(
+            { name: "***server-on***", value: "Turn minecraft server on" },
+            { name: "***server-status***", value: "Check server status" },
+            {
+              name: "***players-online***",
+              value: "Check who is online in the server",
+            }
+          )
+          .setTimestamp();
+        interaction.message.edit({ embeds: [minecraftEmbed] });
+        console.log(
+          "LOG:\t" + "changed the /help command embed to minecraftEmbed"
         );
         await interaction.deferUpdate();
         break;
