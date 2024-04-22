@@ -17,10 +17,9 @@ export const handler = async (client) => {
           .setAuthor({ name: "Q bot" })
           .setTitle("/help")
           .setDescription(
-            "All commands that are available to use in the server"
+            "All the commands that are available to use in the server"
           )
           .addFields(
-            { name: "/help", value: "THIS" },
             {
               name: "/account [***sub-command***]",
               value: "Set up and manage your accounts",
@@ -30,9 +29,28 @@ export const handler = async (client) => {
               value: "Commands for Valorant related stuff",
             },
             {
+              name: "/vct [***sub-command***]",
+              value: "Commands for VCT related stuff",
+            },
+            {
+              name: "/cs2-event [***sub-command***]",
+              value: "Get any tier 1 csgo event",
+            },
+            {
+              name: "/gamble [***sub-command***]",
+              value: "Commands for gambling",
+            },
+            {
               name: "/private-vc [***sub-command***]",
               value: "Creates a private vc for you and the people you want",
             },
+            {
+              name: "/minecraft [***sub-command***]",
+              value: "Commands for minecraft",
+            },
+            { name: "/poll", value: "Make a poll" },
+            { name: "/coin-flip", value: "Flip a coin" },
+            { name: "/vro-font", value: "Convert your text to a vro font" },
             { name: "/ping", value: "Ping the bot to check online status" },
             {
               name: "/credit",
