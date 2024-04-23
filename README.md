@@ -11,19 +11,20 @@ manage Valorant accounts you've added, create private voice channels in the serv
 
 ## Commands
 
-| Commands                   | Actions                                          |
-| -------------------------- | ------------------------------------------------ |
-| `/help`                    | List all availble commands                       |
-| `/account [sub-command]`   | Manage accounts added to Q bot                   |
-| `/valorant [sub-command]`  | Check player's Valorant stats                    |
-| `/vct [sub-command]`       | Check VCT related info                           |
-| `/cs2-event [sub-command]` | Check cs2 event related info                     |
-| `private-vc [sub-command]` | Create private voice channel (only in Qs server) |
-| `/poll`                    | Make a poll                                      |
-| `/coin-flip`               | Flip a coin                                      |
-| `/vro-font`                | Convert your text to a vro font                  |
-| `/ping`                    | Ping to check bot's online status                |
-| `/credit`                  | Shoutout to the people that contributed          |
+| Commands                    | Actions                                          |
+| --------------------------- | ------------------------------------------------ |
+| `/help`                     | List all availble commands                       |
+| `/account [sub-command]`    | Manage accounts added to Q bot                   |
+| `/valorant [sub-command]`   | Check player's Valorant stats                    |
+| `/vct [sub-command]`        | Check VCT related info                           |
+| `/cs2-event [sub-command]`  | Check cs2 event related info                     |
+| `/private-vc [sub-command]` | Create private voice channel (only in Qs server) |
+| `/minecraft [sub-command]`  | Actions to mange minecraft server                |
+| `/poll`                     | Make a poll                                      |
+| `/coin-flip`                | Flip a coin                                      |
+| `/vro-font`                 | Convert your text to a vro font                  |
+| `/ping`                     | Ping to check bot's online status                |
+| `/credit`                   | Shoutout to the people that contributed          |
 
 ### Sub Commands
 
@@ -45,6 +46,9 @@ manage Valorant accounts you've added, create private voice channels in the serv
 | `/vct`        | `upcoming-events`    | `/`                                 | Get upcoming VCT events                                          |
 | `/gamble`     | `slots`              | `qoins`                             | Play slots                                                       |
 | `/gamble`     | `rules`              | `/`                                 | Get gamble rules                                                 |
+| `/minecraft`  | `server-on`          | `/`                                 | Turn on minecraft server                                         |
+| `/minecraft`  | `server-status`      | `/`                                 | Get server online status                                         |
+| `/minecraft`  | `players-online`     | `/`                                 | Get players online                                               |
 | `/private-vc` | `duo` (only in Qs)   | `duo`                               | Get in a private voice channel with a duo                        |
 | `/private-vc` | `trio` (only in Qs)  | `trio1` `trio2`                     | Get in a private voice channel with 2 other players              |
 | `/private-vc` | `quad` (only in Qs)  | `quad1` `quad2` `quad3`             | Get in a private voice channel with 3 other players              |
