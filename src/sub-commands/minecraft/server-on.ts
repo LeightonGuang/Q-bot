@@ -52,7 +52,7 @@ export const subCommand = async (interaction) => {
       await page.click("#start");
 
       try {
-        await page.waitForSelector("span.alert-title", { timeout: 30000 });
+        await page.waitForSelector("span.alert-title", { timeout: 20000 });
 
         const alertElement: any = await page.$("span.alert-title");
         const alertText: string = await alertElement.evaluate(
@@ -62,29 +62,54 @@ export const subCommand = async (interaction) => {
 
         if (alertText === "Advertisement") {
           await page.click(".alert-buttons button.btn-success");
+          console.log("click start ad button");
 
           const adsEmbed: EmbedBuilder = new EmbedBuilder()
             .setColor(0xffff00)
             .setTitle("Watching advertisements...");
           await interaction.editReply({ content: "", embeds: [adsEmbed] });
 
-          // wait for ad to end
-          await page.waitForFunction(() => {
-            const element = document.querySelector(
-              "div.rewardedAdUiAttribution"
-            );
-            return element && element.textContent === "";
-          });
+          // wait for ads to popup
+          await page.waitForSelector(
+            "div.ad-video",
+            "div.#google-reward-video",
+            {
+              timeout: 30000,
+            }
+          );
 
-          // popup ad skip button class
-          // skip button selector button.videoAdUiSkipButton
+          const googlePopupAdElement: any = await page.$(
+            "div#google-rewarded-video"
+          );
 
-          // close button selector div#close_button
+          await interaction.channel.send(
+            "googlePopupAdElement: " + googlePopupAdElement
+          );
+          // console.log("googlePopupAdElement: " + googlePopupAdElement);
+          // detect what kind of ads
+          if (googlePopupAdElement) {
+            console.log("google popup ads");
+            // google popup ads
+            // popup element div.ad-video and div#google-reward-video
+            // count down element that contains the number div.rewardedAdUiAttribution (Reward in 15 seconds)
 
-          // if div#count_down or style="visibility: hidden;"
-          // click div#close_button
+            let countDownText: string;
 
-          console.log("ad ended");
+            while (countDownText !== "") {
+              const coundDownTextElement: any = await page.$(
+                "div.rewardedAdUiAttribution"
+              );
+              countDownText = await coundDownTextElement.evaluate((element) =>
+                element.textContent.trim()
+              );
+              console.log(countDownText);
+            }
+
+            const closeAd: string = "div.ad-video button";
+            await page.click(closeAd);
+          }
+        } else if (alertText === "no advertisements") {
+          console.log("no ads");
         }
       } catch (error) {
         // no alert
