@@ -26,7 +26,7 @@ export const data = {
     .addSubcommand((addSubcommand) =>
       addSubcommand
         .setName("kg-to-lbs")
-        .setDescription("convert kg to lbs")
+        .setDescription("convert kilograms to pounds")
         .addNumberOption((option) =>
           option.setName("kg").setDescription("kg").setRequired(true)
         )
@@ -34,7 +34,7 @@ export const data = {
     .addSubcommand((addSubcommand) =>
       addSubcommand
         .setName("lbs-to-kg")
-        .setDescription("convert lbs to kg")
+        .setDescription("convert pounds to kilograms")
         .addNumberOption((option) =>
           option.setName("lbs").setDescription("lbs").setRequired(true)
         )
