@@ -45,13 +45,17 @@ export const data = {
 
     switch (subCommand) {
       case "celsius-to-fehrenheit": {
-        const celsiusToFehrenheit = await import(
+        const celsiusToFehrenheit: any = await import(
           "../sub-commands/conversion/celsius-to-fehrenheit.js"
         );
         celsiusToFehrenheit.subCommand(interaction);
         break;
       }
       case "fehrenheit-to-celsius": {
+        const fehrenheitToCelsius: any = await import(
+          "../sub-commands/conversion/fehrenheit-to-celsius.js"
+        );
+        fehrenheitToCelsius.subCommand(interaction);
         break;
       }
       case "kg-to-lbs": {
