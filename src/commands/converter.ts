@@ -66,6 +66,10 @@ export const data = {
         break;
       }
       case "lbs-to-kg": {
+        const lbsToKg: any = await import(
+          "../sub-commands/conversion/lbs-to-kg.js"
+        );
+        lbsToKg.subCommand(interaction);
         break;
       }
     }
