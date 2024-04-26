@@ -6,7 +6,7 @@ export const data = {
     .setDescription("Commands for converting metric and imperial units")
     .addSubcommand((addSubcommand) =>
       addSubcommand
-        .setName("celsius-to-fehrenheit")
+        .setName("celsius-to-fahrenheit")
         .setDescription("convert celsius to fahrenheit")
         .addNumberOption((option) =>
           option.setName("celsius").setDescription("celsius").setRequired(true)
@@ -14,12 +14,12 @@ export const data = {
     )
     .addSubcommand((addSubcommand) =>
       addSubcommand
-        .setName("fehrenheit-to-celsius")
+        .setName("fahrenheit-to-celsius")
         .setDescription("convert fahrenheit to celsius")
         .addNumberOption((option) =>
           option
-            .setName("fehrenheit")
-            .setDescription("fehrenheit")
+            .setName("fahrenheit")
+            .setDescription("fahrenheit")
             .setRequired(true)
         )
     )
@@ -44,21 +44,25 @@ export const data = {
     const subCommand: string = interaction.options.getSubcommand();
 
     switch (subCommand) {
-      case "celsius-to-fehrenheit": {
-        const celsiusToFehrenheit: any = await import(
-          "../sub-commands/conversion/celsius-to-fehrenheit.js"
+      case "celsius-to-fahrenheit": {
+        const celsiusTofahrenheit: any = await import(
+          "../sub-commands/conversion/celsius-to-fahrenheit.js"
         );
-        celsiusToFehrenheit.subCommand(interaction);
+        celsiusTofahrenheit.subCommand(interaction);
         break;
       }
-      case "fehrenheit-to-celsius": {
-        const fehrenheitToCelsius: any = await import(
-          "../sub-commands/conversion/fehrenheit-to-celsius.js"
+      case "fahrenheit-to-celsius": {
+        const fahrenheitToCelsius: any = await import(
+          "../sub-commands/conversion/fahrenheit-to-celsius.js"
         );
-        fehrenheitToCelsius.subCommand(interaction);
+        fahrenheitToCelsius.subCommand(interaction);
         break;
       }
       case "kg-to-lbs": {
+        const kgToLbs: any = await import(
+          "../sub-commands/conversion/kg-to-lbs.js"
+        );
+        kgToLbs.subCommand(interaction);
         break;
       }
       case "lbs-to-kg": {
