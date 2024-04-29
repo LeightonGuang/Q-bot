@@ -38,6 +38,52 @@ export const data = {
         .addNumberOption((option) =>
           option.setName("lbs").setDescription("lbs").setRequired(true)
         )
+    )
+    .addSubcommand((addSubcommand) =>
+      addSubcommand
+        .setName("currency")
+        .setDescription("convert any currency")
+        .addNumberOption((option) =>
+          option.setName("amount").setDescription("amount").setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("from")
+            .setDescription("from")
+            .setChoices(
+              { name: "Chinese Yuan", value: "CNY" },
+              { name: "Euros", value: "EUR" },
+              { name: "Hong Kong Dollars", value: "HKD" },
+              { name: "Great British Pounds", value: "GBP" },
+              { name: "Indian Rupee", value: "INR" },
+              { name: "Indonesian Rupiah", value: "IDR" },
+              { name: "Japanese Yen", value: "JPY" },
+              { name: "Korean Won", value: "KRW" },
+              { name: "Malaysian Ringgit", value: "MYR" },
+              { name: "Philippine Peso", value: "PHP" },
+              { name: "US Dollars", value: "USD" }
+            )
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("to")
+            .setDescription("to")
+            .setChoices(
+              { name: "Chinese Yuan", value: "CNY" },
+              { name: "Euros", value: "EUR" },
+              { name: "Hong Kong Dollars", value: "HKD" },
+              { name: "Great British Pounds", value: "GBP" },
+              { name: "Indian Rupee", value: "INR" },
+              { name: "Indonesian Rupiah", value: "IDR" },
+              { name: "Japanese Yen", value: "JPY" },
+              { name: "Korean Won", value: "KRW" },
+              { name: "Malaysian Ringgit", value: "MYR" },
+              { name: "Philippine Peso", value: "PHP" },
+              { name: "US Dollars", value: "USD" }
+            )
+            .setRequired(true)
+        )
     ),
 
   async execute(interaction) {
@@ -46,30 +92,37 @@ export const data = {
     switch (subCommand) {
       case "celsius-to-fahrenheit": {
         const celsiusTofahrenheit: any = await import(
-          "../sub-commands/conversion/celsius-to-fahrenheit.js"
+          "../sub-commands/converter/celsius-to-fahrenheit.js"
         );
         celsiusTofahrenheit.subCommand(interaction);
         break;
       }
       case "fahrenheit-to-celsius": {
         const fahrenheitToCelsius: any = await import(
-          "../sub-commands/conversion/fahrenheit-to-celsius.js"
+          "../sub-commands/converter/fahrenheit-to-celsius.js"
         );
         fahrenheitToCelsius.subCommand(interaction);
         break;
       }
       case "kg-to-lbs": {
         const kgToLbs: any = await import(
-          "../sub-commands/conversion/kg-to-lbs.js"
+          "../sub-commands/converter/kg-to-lbs.js"
         );
         kgToLbs.subCommand(interaction);
         break;
       }
       case "lbs-to-kg": {
         const lbsToKg: any = await import(
-          "../sub-commands/conversion/lbs-to-kg.js"
+          "../sub-commands/converter/lbs-to-kg.js"
         );
         lbsToKg.subCommand(interaction);
+        break;
+      }
+      case "currency": {
+        const currency: any = await import(
+          "../sub-commands/converter/currency.js"
+        );
+        currency.subCommand(interaction);
         break;
       }
     }
