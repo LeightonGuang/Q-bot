@@ -53,6 +53,7 @@ export const data = {
             .setName("from")
             .setDescription("from")
             .setChoices(
+              { name: "Canadian Dollars", value: "CAD" },
               { name: "Chinese Yuan", value: "CNY" },
               { name: "Euros", value: "EUR" },
               { name: "Hong Kong Dollars", value: "HKD" },
@@ -72,6 +73,7 @@ export const data = {
             .setName("to")
             .setDescription("to")
             .setChoices(
+              { name: "Canadian Dollars", value: "CAD" },
               { name: "Chinese Yuan", value: "CNY" },
               { name: "Euros", value: "EUR" },
               { name: "Hong Kong Dollars", value: "HKD" },
