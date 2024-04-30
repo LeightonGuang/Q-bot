@@ -20,6 +20,7 @@ export const data = (client) => {
       "vro-font",
       "ping",
       "credit",
+      "converter",
     ];
 
     const commandChannelCommandList: string[] = [
