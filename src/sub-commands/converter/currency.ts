@@ -8,9 +8,13 @@ export const subCommand = async (interaction) => {
 
   if (fromCurrency === toCurrency) {
     // they're both the same currency
-    await interaction.reply({
-      content: "You are trying to convert to the same currency",
-    });
+    const convertedEmbed: EmbedBuilder = new EmbedBuilder()
+      .setColor(0xffffff)
+      .setTitle("Currency Conversion")
+      .setDescription(
+        "```" + `${amount} ${fromCurrency} = ${amount} ${toCurrency}` + "```"
+      );
+    await interaction.reply({ embeds: [convertedEmbed] });
     return;
   }
 
