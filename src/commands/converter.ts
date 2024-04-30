@@ -3,7 +3,9 @@ import { SlashCommandBuilder } from "discord.js";
 export const data = {
   data: new SlashCommandBuilder()
     .setName("converter")
-    .setDescription("Commands for converting metric and imperial units")
+    .setDescription(
+      "Commands for converting metric to imperial units, currency, etc."
+    )
     .addSubcommand((addSubcommand) =>
       addSubcommand
         .setName("celsius-to-fahrenheit")
