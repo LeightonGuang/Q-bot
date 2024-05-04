@@ -46,6 +46,10 @@ export const data = {
           name: "/minecraft [***sub-command***]",
           value: "Commands for minecraft",
         },
+        {
+          name: "/football [***sub-command***]",
+          value: "Commands for football",
+        },
         { name: "/poll", value: "Make a poll" },
         { name: "/coin-flip", value: "Flip a coin" },
         { name: "/vro-font", value: "Convert your text to a vro font" },
@@ -96,7 +100,11 @@ export const data = {
             new StringSelectMenuOptionBuilder()
               .setLabel("/minecraft")
               .setDescription("Minecraft related sub commands")
-              .setValue("minecraft")
+              .setValue("minecraft"),
+            new StringSelectMenuOptionBuilder()
+              .setLabel("/football")
+              .setDescription("Football related sub commands")
+              .setValue("football")
           )
       );
 
