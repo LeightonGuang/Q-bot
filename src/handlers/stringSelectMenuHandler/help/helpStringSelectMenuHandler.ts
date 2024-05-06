@@ -261,6 +261,24 @@ export const handler = async (client) => {
         await interaction.deferUpdate();
         break;
       }
+      case "football": {
+        const footballEmbed: EmbedBuilder = new EmbedBuilder()
+          .setColor(0x00ffff)
+          .setAuthor({ name: "Q bot" })
+          .setTitle("/football ***sub-command***")
+          .setDescription("List of all sub commands availble for `/football`")
+          .addFields({
+            name: "***league-fixtures***",
+            value: "Get league fixtures",
+          })
+          .setTimestamp();
+        interaction.message.edit({ embeds: [footballEmbed] });
+        console.log(
+          "LOG:\t" + "changed the /help command embed to footballEmbed"
+        );
+        await interaction.deferUpdate();
+        break;
+      }
     }
   });
 };
