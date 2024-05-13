@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import axios from "axios";
 
 export const subCommnand = async (interaction) => {
-  const league: string = interaction.options.getString("league");
+  const leagueValue: string = interaction.options.get("league").value;
 
   const FOOTBALLDATA_API_KEY = process.env.FOOTBALLDATA_API_KEY;
   const footballDataApiUrl = "https://api.football-data.org/v4";
@@ -13,11 +13,13 @@ export const subCommnand = async (interaction) => {
   const {
     data: { competition, matches },
   }: { data: any; competitions: any; matches: any } = await axios.get(
-    footballDataApiUrl + "/competitions/CL/matches",
-    {
-      headers,
-    }
+    footballDataApiUrl + "/competitions/" + leagueValue + "/matches",
+    { headers }
   );
+
+  const groupedMatchStages: any = {};
+
+  matches.forEach((match) => {});
 
   const upcomingMatches: any[] = matches.filter((match: any) => {
     return (
