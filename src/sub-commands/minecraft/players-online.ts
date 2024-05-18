@@ -16,8 +16,7 @@ export const subCommand = async (interaction) => {
     );
     await page.goto("https://aternos.org/servers");
 
-    const serverButton: string =
-      "#theme-switch > div.body > main > div > div.main-content-wrapper > section > div.page-content.page-servers > div > div.list-action > div.servercardlist > div:nth-child(2) > div";
+    const serverButton: any = `[data-id="dWbhfoHQfc5aGfmt"]`;
     // click on the second server
     await page.click(serverButton);
 

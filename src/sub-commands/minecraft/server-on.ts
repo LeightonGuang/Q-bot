@@ -24,7 +24,7 @@ export const subCommand = async (interaction) => {
 
     // click on the second server
     const serverButton: any =
-      "#theme-switch > div.body > main > div > div.main-content-wrapper > section > div.page-content.page-servers > div > div.list-action > div.servercardlist > div:nth-child(2) > div";
+      `[data-id="dWbhfoHQfc5aGfmt"]`
     await page.click(serverButton);
 
     await page.waitForSelector("span.statuslabel-label", { timeout: 0 });
