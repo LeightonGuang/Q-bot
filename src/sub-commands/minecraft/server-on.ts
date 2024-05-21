@@ -23,8 +23,7 @@ export const subCommand = async (interaction) => {
     await page.goto("https://aternos.org/servers");
 
     // click on the second server
-    const serverButton: any =
-      `[data-id="dWbhfoHQfc5aGfmt"]`
+    const serverButton: any = `[data-id="dWbhfoHQfc5aGfmt"]`;
     await page.click(serverButton);
 
     await page.waitForSelector("span.statuslabel-label", { timeout: 0 });
@@ -69,14 +68,28 @@ export const subCommand = async (interaction) => {
             .setTitle("Watching advertisements...");
           await interaction.editReply({ content: "", embeds: [adsEmbed] });
 
-          // wait for ads to popup
-          await page.waitForSelector(
+          const adsList: string[] = [
             "div.ad-video",
-            "div.#google-reward-video",
-            {
-              timeout: 30000,
-            }
+            "div#google-rewarded-video",
+          ];
+
+          const foundAds: any = await Promise.allSettled(
+            adsList.map((selector) =>
+              page.waitForSelector(selector, { timeout: 0 })
+            )
           );
+
+          switch (foundAds._selector) {
+            case "div.ad-video": {
+              console.log("div.ad-video");
+              break;
+            }
+
+            case "div#google-rewarded-video": {
+              console.log("div#google-rewarded-video");
+              break;
+            }
+          }
 
           const googlePopupAdElement: any = await page.$(
             "div#google-rewarded-video"
