@@ -64,6 +64,7 @@ export const data = {
               { name: "Korean Won", value: "KRW" },
               { name: "Malaysian Ringgit", value: "MYR" },
               { name: "Philippine Peso", value: "PHP" },
+              { name: "Singapore Dollars", value: "SGD" },
               { name: "US Dollars", value: "USD" }
             )
             .setRequired(true)
@@ -84,6 +85,7 @@ export const data = {
               { name: "Korean Won", value: "KRW" },
               { name: "Malaysian Ringgit", value: "MYR" },
               { name: "Philippine Peso", value: "PHP" },
+              { name: "Singapore Dollars", value: "SGD" },
               { name: "US Dollars", value: "USD" }
             )
             .setRequired(true)
