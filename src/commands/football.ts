@@ -7,7 +7,7 @@ export const data = {
     .setDescription("sends a random football image")
     .addSubcommand((addSubCommand) =>
       addSubCommand
-        .setName("league-fixtures")
+        .setName("fixtures")
         .setDescription("get upcoming fixtures from a league")
         .addStringOption((option) =>
           option
@@ -64,11 +64,11 @@ export const data = {
     const subCommand: string = interaction.options.getSubcommand();
 
     switch (subCommand) {
-      case "league-fixtures": {
-        const leagueFixtures: any = await import(
-          "../sub-commands/football/league-fixtures.js"
+      case "fixtures": {
+        const fixtures: any = await import(
+          "../sub-commands/football/fixtures.js"
         );
-        leagueFixtures.subCommnand(interaction, footballDataApiUrl, headers);
+        fixtures.subCommnand(interaction, footballDataApiUrl, headers);
         break;
       }
 
