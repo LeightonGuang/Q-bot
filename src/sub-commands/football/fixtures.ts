@@ -29,10 +29,14 @@ export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
     const upcomingMatchesList: EmbedBuilder[] = [];
 
     upcomingMatches.forEach((match) => {
+      const utcDate: Date = new Date(match.utcDate);
+      const unixTimestamp: Date | number = Math.floor(utcDate.getTime() / 1000);
+
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
         .setColor(0x00ff00)
         .setTitle(match.group.replace(/_/g, " "))
-        .setTitle(`${match.homeTeam.name} vs ${match.awayTeam.name}`);
+        .setTitle(`${match.homeTeam.name} vs ${match.awayTeam.name}`)
+        .setDescription(`<t:${unixTimestamp}:d> <t:${unixTimestamp}:t>`);
 
       upcomingMatchesList.push(matchEmbed);
     });
