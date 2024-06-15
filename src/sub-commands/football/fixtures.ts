@@ -31,11 +31,8 @@ export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
     upcomingMatches.forEach((match) => {
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
         .setColor(0x00ff00)
-        .setAuthor({ name: match.group, iconURL: match.homeTeam.crest })
-        .setTitle(`${match.homeTeam.name} vs ${match.awayTeam.name}`)
-        .setDescription(
-          `${match.score.fullTime.home} - ${match.score.fullTime.away}`
-        );
+        .setTitle(match.group.replace(/_/g, " "))
+        .setTitle(`${match.homeTeam.name} vs ${match.awayTeam.name}`);
 
       upcomingMatchesList.push(matchEmbed);
     });
@@ -52,10 +49,9 @@ export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
     liveMatches.forEach((match) => {
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
         .setColor(0xff0000)
-        .setAuthor({ name: match.group, iconURL: match.homeTeam.crest })
-        .setTitle(`${match.homeTeam.name} vs ${match.awayTeam.name}`)
+        .setTitle("🔴 Live: " + match.group.replace(/_/g, " "))
         .setDescription(
-          `${match.score.fullTime.home} - ${match.score.fullTime.away}`
+          `${match.homeTeam.name} ${match.score.fullTime.home} - ${match.score.fullTime.away} ${match.awayTeam.name}`
         );
 
       liveMatchesList.push(matchEmbed);
