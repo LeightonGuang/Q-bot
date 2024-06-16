@@ -30,17 +30,9 @@ export const subCommand = async (interaction, footballDataApiUrl, headers) => {
 
     finishedMatches.forEach((match) => {
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
-        .setTitle(
-          `${match.group.replace(/_/g, " ")}    ${match.homeTeam.name} vs ${
-            match.awayTeam.name
-          }`
-        )
+        .setTitle(match.group.replace(/_/g, " "))
         .setDescription(
-          "```" +
-            match.score.halfTime.home +
-            " - " +
-            match.score.halfTime.away +
-            "```"
+          `${match.homeTeam.name} ${match.score.halfTime.home} - ${match.score.halfTime.away} ${match.awayTeam.name}`
         );
 
       finishedMatchesList.push(matchEmbed);
