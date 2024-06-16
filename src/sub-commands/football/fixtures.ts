@@ -1,5 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import axios from "axios";
+import { convertCountryToEmoji } from "../../utils/football/convertCountryToEmoji.js";
 
 export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
   const leagueValue: string = interaction.options.get("league").value;
@@ -29,11 +30,19 @@ export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
     const liveMatchesList: EmbedBuilder[] = [];
 
     liveMatches.forEach((match) => {
+      let homeFlagEmoji: string = "";
+      let awayFlagEmoji: string = "";
+
+      if (competition.name === "European Championship") {
+        homeFlagEmoji = convertCountryToEmoji(match.homeTeam.name);
+        awayFlagEmoji = convertCountryToEmoji(match.awayTeam.name);
+      }
+
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
         .setColor(0xff0000)
         .setTitle("🔴 Live: " + match.group.replace(/_/g, " "))
         .setDescription(
-          `${match.homeTeam.name} ${match.score.fullTime.home} - ${match.score.fullTime.away} ${match.awayTeam.name}`
+          `${homeFlagEmoji}${match.homeTeam.name} ${match.score.fullTime.home} - ${match.score.fullTime.away} ${match.awayTeam.name}${awayFlagEmoji}`
         );
 
       liveMatchesList.push(matchEmbed);
@@ -60,11 +69,19 @@ export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
       const utcDate: Date = new Date(match.utcDate);
       const unixTimestamp: Date | number = Math.floor(utcDate.getTime() / 1000);
 
+      let homeFlagEmoji: string = "";
+      let awayFlagEmoji: string = "";
+
+      if (competition.name === "European Championship") {
+        homeFlagEmoji = convertCountryToEmoji(match.homeTeam.name);
+        awayFlagEmoji = convertCountryToEmoji(match.awayTeam.name);
+      }
+
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
         .setColor(0x00ff00)
         .setTitle(
           match.group.replace(/_/g, " ") +
-            `  ${match.homeTeam.name} vs ${match.awayTeam.name}`
+            `  ${homeFlagEmoji}${match.homeTeam.name} vs ${match.awayTeam.name}${awayFlagEmoji}`
         )
         .setDescription(`<t:${unixTimestamp}:d> <t:${unixTimestamp}:t>`);
 
