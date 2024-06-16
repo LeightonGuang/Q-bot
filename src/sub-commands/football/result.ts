@@ -1,5 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import axios from "axios";
+import { convertCountryToEmoji } from "../../utils/football/convertCountryToEmoji.js";
 
 export const subCommand = async (interaction, footballDataApiUrl, headers) => {
   const leagueValue: string = interaction.options.get("league").value;
@@ -29,10 +30,18 @@ export const subCommand = async (interaction, footballDataApiUrl, headers) => {
       .setColor(0xffffff);
 
     finishedMatches.forEach((match) => {
+      let homeFlagEmoji: string = "";
+      let awayFlagEmoji: string = "";
+
+      if (competition.name === "European Championship") {
+        homeFlagEmoji = convertCountryToEmoji(match.homeTeam.name);
+        awayFlagEmoji = convertCountryToEmoji(match.awayTeam.name);
+      }
+
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
         .setTitle(match.group.replace(/_/g, " "))
         .setDescription(
-          `${match.homeTeam.name} ${match.score.halfTime.home} - ${match.score.halfTime.away} ${match.awayTeam.name}`
+          `${homeFlagEmoji}${match.homeTeam.name} ${match.score.halfTime.home} - ${match.score.halfTime.away} ${match.awayTeam.name}${awayFlagEmoji}`
         );
 
       finishedMatchesList.push(matchEmbed);
@@ -42,6 +51,8 @@ export const subCommand = async (interaction, footballDataApiUrl, headers) => {
       // if there are more than 5 matches get the last 5
       finishedMatchesList = finishedMatchesList.slice(-5);
     }
+
+    finishedMatchesList.reverse();
 
     try {
       await interaction.reply({
