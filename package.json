@@ -26,7 +26,8 @@
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.5",
+    "table": "^6.8.2"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.35",
