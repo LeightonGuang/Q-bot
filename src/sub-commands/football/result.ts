@@ -23,10 +23,8 @@ export const subCommand = async (interaction, footballDataApiUrl, headers) => {
     let finishedMatchesList: EmbedBuilder[] = [];
 
     const footballHeaderEmbed = new EmbedBuilder()
-      .setAuthor({
-        name: competition.name,
-        iconURL: competition.emblem,
-      })
+      .setTitle(competition.name)
+      .setThumbnail(competition.emblem)
       .setColor(0xffffff);
 
     finishedMatches.forEach((match) => {
@@ -41,7 +39,7 @@ export const subCommand = async (interaction, footballDataApiUrl, headers) => {
       const matchEmbed: EmbedBuilder = new EmbedBuilder()
         .setTitle(match.group.replace(/_/g, " "))
         .setDescription(
-          `${homeFlagEmoji}${match.homeTeam.name} ${match.score.halfTime.home} - ${match.score.halfTime.away} ${match.awayTeam.name}${awayFlagEmoji}`
+          `${homeFlagEmoji} ${match.homeTeam.name} ${match.score.fullTime.home} - ${match.score.fullTime.away} ${match.awayTeam.name} ${awayFlagEmoji}`
         );
 
       finishedMatchesList.push(matchEmbed);
