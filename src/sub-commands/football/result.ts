@@ -6,28 +6,31 @@ export const subCommand = async (interaction, footballDataApiUrl, headers) => {
   const leagueValue: string = interaction.options.get("league").value;
 
   try {
-    const {
+    let {
       data: { competition, matches },
     }: { data: any; competitions: any; matches: any } = await axios.get(
-      footballDataApiUrl + "/competitions/" + leagueValue + "/matches",
+      footballDataApiUrl +
+        "/competitions/" +
+        leagueValue +
+        "/matches?status=FINISHED",
       { headers }
     );
 
-    const finishedMatches: any[] = matches.filter((match: any) => {
-      return (
-        match.status === "FINISHED" &&
-        (match.homeTeam.name !== null || match.awayTeam.name !== null)
-      );
-    });
+    if (matches.length > 5) {
+      // if there are more than 5 matches get the last 5
+      matches = matches.slice(-5);
+    }
 
-    let finishedMatchesList: EmbedBuilder[] = [];
+    matches.reverse();
+
+    const finishedMatchesList: EmbedBuilder[] = [];
 
     const footballHeaderEmbed = new EmbedBuilder()
       .setTitle(competition.name)
       .setThumbnail(competition.emblem)
       .setColor(0xffffff);
 
-    finishedMatches.forEach((match) => {
+    matches.forEach((match) => {
       let homeFlagEmoji: string = "";
       let awayFlagEmoji: string = "";
 
@@ -44,13 +47,6 @@ export const subCommand = async (interaction, footballDataApiUrl, headers) => {
 
       finishedMatchesList.push(matchEmbed);
     });
-
-    if (finishedMatchesList.length > 5) {
-      // if there are more than 5 matches get the last 5
-      finishedMatchesList = finishedMatchesList.slice(-5);
-    }
-
-    finishedMatchesList.reverse();
 
     try {
       await interaction.reply({
