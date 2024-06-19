@@ -42,7 +42,7 @@ export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
         .setColor(0xff0000)
         .setTitle("🔴 Live: " + match.group.replace(/_/g, " "))
         .setDescription(
-          `${homeFlagEmoji}${match.homeTeam.name} ${match.score.fullTime.home} - ${match.score.fullTime.away} ${match.awayTeam.name}${awayFlagEmoji}`
+          `${homeFlagEmoji} ${match.homeTeam.name} ${match.score.fullTime.home} - ${match.score.fullTime.away} ${match.awayTeam.name} ${awayFlagEmoji}`
         );
 
       liveMatchesList.push(matchEmbed);
@@ -81,7 +81,7 @@ export const subCommnand = async (interaction, footballDataApiUrl, headers) => {
         .setColor(0x00ff00)
         .setTitle(
           match.group.replace(/_/g, " ") +
-            `  ${homeFlagEmoji}${match.homeTeam.name} vs ${match.awayTeam.name}${awayFlagEmoji}`
+            `  ${homeFlagEmoji} ${match.homeTeam.name} vs ${match.awayTeam.name} ${awayFlagEmoji}`
         )
         .setDescription(`<t:${unixTimestamp}:d> <t:${unixTimestamp}:t>`);
 
