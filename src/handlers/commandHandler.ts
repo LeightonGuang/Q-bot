@@ -11,21 +11,24 @@ export const data = (client) => {
 
     //list of commands that can be used in general chat
     const generalChatCommandList: string[] = [
+      "coin-flip",
+      "converter",
+      "credit",
+      "cs2-event",
+      "football",
       "help",
+      "ping",
+      "poll",
+      "spam-ping",
       "valorant",
       "vct",
-      "cs2-event",
-      "poll",
-      "coin-flip",
       "vro-font",
-      "ping",
-      "credit",
-      "converter",
     ];
 
     const commandChannelCommandList: string[] = [
       "account",
       "gamble",
+      "minecraft",
       "private-vc",
     ];
 
